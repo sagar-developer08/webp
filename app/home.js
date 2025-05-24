@@ -20,7 +20,6 @@ import "swiper/css";
 import "swiper/css/navigation";
 import Collection from "../components/collection";
 import SkeletonLoader from "../components/SkeletonLoader";
-import PerformanceMonitor from "../components/PerformanceMonitor";
 import { useRouter } from "next/navigation";
 import Testimonials from "../components/testimonials";
 
@@ -124,7 +123,7 @@ const Home = () => {
 
   return (
     <div className="w-full relative bg-white text-black overflow-hidden flex flex-col items-center justify-center leading-[normal] tracking-[normal] text-center text-xs font-h5-24">
-      <PerformanceMonitor />
+      {/* <PerformanceMonitor /> */}
       {/* <div className="self-stretch bg-white text-black overflow-hidden flex flex-row items-start justify-start py-[13px] px-10 box-border max-w-full mq750:h-auto mq450:px-4">
         <div className="w-[1360px] flex flex-row items-center justify-between gap-5 max-w-full mq750:flex-wrap">
           <Image

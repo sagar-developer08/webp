@@ -65,7 +65,7 @@ const Banner = ({ className = "", property1 = "Default" }) => {
       >
         {/* Hero poster image for immediate LCP */}
         <Image
-          src="/hero-poster.jpg"
+          src="/hero.webp"
           alt="Torando Watches Hero"
           fill
           priority

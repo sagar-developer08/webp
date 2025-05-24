@@ -100,8 +100,8 @@ const Banner = ({ className = "", property1 = "Default" }) => {
               willChange: 'opacity'
             }}
           >
-            <source src="https://d2gp6k9qqqnc7a.cloudfront.net/063b93952ece47428eca788e0aa933fd.HD-1080p-7.2Mbps-40953848.mp4" type="video/mp4" />
-            Your browser does not support the video tag.
+            <source src="https://d2gp6k9qqqnc7a.cloudfront.net/new.mp4" type="video/mp4" />
+           
           </video>
         )}
       </div>

@@ -70,6 +70,7 @@ const Card = ({
     router.push(`/products-details?productId=${productId}`);
   };
 
+  
   return (
     <div
       onClick={handleProductClick}

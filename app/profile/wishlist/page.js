@@ -33,7 +33,7 @@ const WishlistPage = () => {
       setLoading(true);
       const response = await axiosInstance.get('/wishlist');
 
-      
+      console.log('Wishlist API response:', response.data);
 
       if (response.data?.success) {
         // Handle the API response structure

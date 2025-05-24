@@ -15,7 +15,7 @@ export function CountryProvider({ children }) {
 
   useEffect(() => {
     if (typeof window !== 'undefined') {
-      
+      console.log('🔄 Country updated in context to:', selectedCountry);
       localStorage.setItem('selectedCountry', selectedCountry);
       
       // Force a custom event to ensure all components know about the change
@@ -27,7 +27,7 @@ export function CountryProvider({ children }) {
   // Listen for the custom event
   useEffect(() => {
     const handleCountryChange = () => {
-      
+      console.log('📢 countryChange event detected');
     };
     
     if (typeof window !== 'undefined') {
@@ -42,7 +42,7 @@ export function CountryProvider({ children }) {
   }, []);
 
   const updateCountry = (country) => {
-    
+    console.log('🔄 updateCountry called with:', country);
     setSelectedCountry(country);
   };
 

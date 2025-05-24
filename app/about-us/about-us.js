@@ -20,7 +20,7 @@ const AboutUs = () => {
       setLoading(true);
       setError(null);
       const response = await axios.get(`https://0vm9jauvgc.execute-api.us-east-1.amazonaws.com/stag/api/about/`);
-      
+      console.log(response.data, "Products data from API");
       setHome(response.data);
     } catch (error) {
       console.error("Error fetching products:", error);
@@ -33,15 +33,15 @@ const AboutUs = () => {
   useEffect(() => {
     if (home && home[0]) {
       const countrySpecificData = home[0]?.[selectedCountry];
-      
+      console.log('Country specific data:', countrySpecificData);
       if (countrySpecificData) {
         setCountryData(countrySpecificData);
-        
+        console.log('Updated country data:', countrySpecificData);
       } else {
-        
+        console.log('No data found for country:', selectedCountry);
       }
     } else {
-      
+      console.log('No home data available yet');
     }
   }, [selectedCountry, home.data]);
 

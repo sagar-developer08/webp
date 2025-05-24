@@ -137,7 +137,7 @@ const Main1 = ({
                       <div className="self-stretch flex flex-col items-start justify-start gap-2">
                         <div className="self-stretch flex flex-row items-start justify-between text-[rgba(0,0,0,0.8)]">
                           <div className="self-stretch flex-1 relative leading-[150%] font-medium flex items-center">
-                            {/* {
+                            {/* {console.log("Item collection:", item)}; */}
                             {item?.collection?.name || 'Product'}
                           </div>
                         </div>

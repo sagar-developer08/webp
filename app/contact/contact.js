@@ -22,7 +22,7 @@ const Contact = () => {
       setLoading(true);
       setError(null);
       const response = await axios.get(`https://0vm9jauvgc.execute-api.us-east-1.amazonaws.com/stag/api/contactContent/all`);
-      
+      console.log(response.data, "Products data from API");
       setHome(response.data);
     } catch (error) {
       console.error("Error fetching products:", error);
@@ -35,15 +35,15 @@ const Contact = () => {
   useEffect(() => {
     if (home?.data && home?.data[0]) {
       const countrySpecificData = home?.data[0]?.[selectedCountry];
-      
+      console.log('Country specific data:', countrySpecificData);
       if (countrySpecificData) {
         setCountryData(countrySpecificData);
-        
+        console.log('Updated country data:', countrySpecificData);
       } else {
-        
+        console.log('No data found for country:', selectedCountry);
       }
     } else {
-      
+      console.log('No home data available yet');
     }
   }, [selectedCountry, home.data]);
 
@@ -55,9 +55,9 @@ const Contact = () => {
     fetchHome();
   }, []);
 
-  
-  
-  // 
+  console.log("Selected country:", selectedCountry);
+  console.log("Country data:", countryData);
+  // console.log("Home data:", home.data);
   return (
     <div className="w-full relative bg-white text-black overflow-hidden flex flex-col items-start justify-start leading-[normal] tracking-[normal]">
       {/* <header className="self-stretch bg-black text-white overflow-hidden flex flex-row items-start justify-start py-[13px] px-10 box-border top-[0] z-[99] sticky max-w-full text-center text-xs font-h5-24">

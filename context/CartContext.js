@@ -31,7 +31,7 @@ const currencyToCountryMap = Object.entries(countryCurrencyMap).reduce((acc, [co
 const getInitialCurrency = () => {
   if (typeof window !== 'undefined') {
     const storedCountry = localStorage.getItem('selectedCountry');
-    
+    console.log('Initial country from localStorage:', storedCountry);
     return countryCurrencyMap[storedCountry] || 'AED';
   }
   return 'AED';
@@ -66,7 +66,7 @@ function CartProvider({ children }) {
     if (typeof window !== 'undefined') {
       const storedCountry = localStorage.getItem('selectedCountry');
       const newCurrency = countryCurrencyMap[storedCountry] || 'AED';
-      
+      console.log('Setting currency on mount:', newCurrency, 'from country:', storedCountry);
       setCurrency(newCurrency);
       lastStoredCountry.current = storedCountry;
     }
@@ -80,7 +80,7 @@ function CartProvider({ children }) {
       
       // Only update if changed to prevent re-renders
       if (newCurrency !== currency) {
-        
+        console.log('Country changed via event to:', newCountry, 'updating currency to:', newCurrency);
         setCurrency(newCurrency);
         lastStoredCountry.current = newCountry;
         
@@ -111,7 +111,7 @@ function CartProvider({ children }) {
         // Only proceed if the country has actually changed
         if (storedCountry && storedCountry !== lastStoredCountry.current) {
           const newCurrency = countryCurrencyMap[storedCountry] || 'AED';
-          
+          console.log('Country poll detected change:', storedCountry, 'updating currency to:', newCurrency);
           setCurrency(newCurrency);
           lastStoredCountry.current = storedCountry;
           
@@ -243,11 +243,11 @@ function CartProvider({ children }) {
       // Save current page URL for redirect after login
       if (typeof window !== 'undefined') {
         // Save product details for adding to cart after login
-        
+        console.log('Saving product for later:', product);
         localStorage.setItem("pendingCartItem", JSON.stringify(product));
         // Make sure we're saving the full URL including any query parameters
         const currentUrl = window.location.pathname + window.location.search;
-        
+        console.log('Saving redirect URL:', currentUrl);
         localStorage.setItem("redirectAfterLogin", currentUrl);
       }
       router.push('/login');
@@ -257,7 +257,7 @@ function CartProvider({ children }) {
     try {
       const currentCurrency = getCurrency();
       const currentCountry = getCountry();
-      
+      console.log("Adding to cart with currency:", currentCurrency, "country:", currentCountry);
       
       setLoading(true);
       const response = await axiosInstance.post(`/cart`, {
@@ -323,7 +323,7 @@ function CartProvider({ children }) {
     try {
       const currentCurrency = getCurrency();
       const currentCountry = getCountry();
-      
+      console.log("Updating quantity with currency:", currentCurrency, "country:", currentCountry);
       
       setLoading(true);
       const response = await axiosInstance.put(`/cart/${itemId}`, 
@@ -392,7 +392,7 @@ function CartProvider({ children }) {
     try {
       const currentCurrency = getCurrency();
       const currentCountry = getCountry();
-      
+      console.log("Creating order with currency:", currentCurrency, "country:", currentCountry);
       
       setOrderProcessing(true);
       setLoading(true);

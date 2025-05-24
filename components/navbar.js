@@ -76,7 +76,7 @@ const Navbar = ({
 
   const handleCountryChange = (e) => {
     const newCountry = e.target.value;
-    
+    console.log('🌐 Navbar: Country dropdown changed to:', newCountry);
 
     // Update country in context
     updateCountry(newCountry);
@@ -89,7 +89,7 @@ const Navbar = ({
       const event = new CustomEvent('countryChange', { detail: { country: newCountry } });
       window.dispatchEvent(event);
 
-      
+      console.log('🌐 Navbar: Country change events dispatched');
 
       // Remove the forced page reload - it's causing excessive API calls
       // The custom event and context update should be enough
@@ -244,9 +244,9 @@ const Navbar = ({
       if (searchQuery.trim().length >= 3) {
         setIsSearching(true);
         try {
-          
+          console.log('Searching for:', searchQuery);
           const results = await searchProducts(searchQuery);
-          
+          console.log('Search results received:', results);
 
           if (results && Array.isArray(results)) {
             setSearchResults(results);
@@ -340,7 +340,7 @@ const Navbar = ({
                 className="bg-transparent border-0 p-0 cursor-pointer flex items-center justify-center"
                 onClick={(e) => {
                   e.stopPropagation();
-                  
+                  console.log('Search icon clicked');
                   setShowSearch(!showSearch);
                   if (!showSearch) {
                     setSearchQuery('');
@@ -813,7 +813,7 @@ const Navbar = ({
                   className="bg-transparent border-0 p-0 cursor-pointer flex items-center justify-center"
                   onClick={(e) => {
                     e.stopPropagation();
-                    
+                    console.log('Search icon clicked');
                     setShowSearch(!showSearch);
                     if (!showSearch) {
                       setSearchQuery('');
@@ -844,7 +844,7 @@ const Navbar = ({
                   className="flex items-center justify-center bg-transparent border-none cursor-pointer p-0"
                   onClick={(e) => {
                     e.stopPropagation();
-                    
+                    console.log('Account icon clicked');
                     setShowAccountDropdown(!showAccountDropdown);
                   }}
                   aria-label="Account menu"

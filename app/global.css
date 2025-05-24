@@ -1,4 +1,5 @@
-@import url("https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&display=swap");
+/* Local Inter font - No external requests, zero render blocking */
+@import url("/fonts/inter-local.css");
 /* @import url("https://fonts.googleapis.com/css2?family=Helvetica+Neue:wght@500&display=swap"); */
 /* @import url("https://fonts.googleapis.com/css2?family=DM+Sans:wght@400&display=swap"); */
 /* @import url("https://fonts.googleapis.com/css2?family=Montserrat:wght@500&display=swap"); */
@@ -8,13 +9,13 @@
 body {
   @apply leading-[normal] m-0;
   scroll-behavior: smooth;
-  font-family: 'Inter', sans-serif;
+  font-family: 'Inter', -apple-system, BlinkMacSystemFont, 'Segoe UI', 'Roboto', sans-serif;
 }
 *,
 ::before,
 ::after {
   border-width: 0;
-  font-family: 'Inter', sans-serif;
+  font-family: 'Inter', -apple-system, BlinkMacSystemFont, 'Segoe UI', 'Roboto', sans-serif;
 }
 
 /* Add smooth transitions for all elements */

@@ -36,10 +36,10 @@ const Collection = () => {
       setError(null);
 
       const url = `https://0vm9jauvgc.execute-api.us-east-1.amazonaws.com/stag/api/products/collection/${collectionId}?page=${pageNum}&limit=${PRODUCTS_PER_PAGE}`;
-      console.log("Fetching from:", url);
+      
 
       const response = await axios.get(url);
-      console.log("API Response:", response.data);
+      
 
       if (!response.data || !response.data.data) {
         throw new Error("Invalid API response structure");
@@ -97,18 +97,18 @@ const Collection = () => {
       if (countrySpecificData) {
         setCountryData(countrySpecificData);
       } else {
-        console.log('No data found for country:', selectedCountry);
+        
       }
     } else {
-      console.log('No home data available yet');
+      
     }
   }, [selectedCountry, products.data, setCountryData]);
 
   const handleCountrySelect = (country) => {
     updateCountry(country);
   };
-  console.log(selectedCountry, "hi baby")
-  console.log(products.data[0]?.collection?.information, "products.data[0]?.collection?.information");
+  
+  
 
   return (
     <div className="w-full relative bg-white text-white overflow-hidden flex flex-col items-center justify-start leading-[normal] tracking-[normal]">

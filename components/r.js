@@ -93,7 +93,7 @@ const R = ({ className = "", product, relatedProducts, selectedCountry }) => {
     router.push(`/products-details?productId=${relatedProduct._id}`);
   };
 
-  // console.log("Related products:", relatedProducts);
+  // 
   const getCurrencySymbol = (selectedCountry) => {
     if (!selectedCountry) return '$';
     const countryUpper = selectedCountry.toUpperCase();

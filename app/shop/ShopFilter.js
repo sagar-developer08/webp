@@ -111,10 +111,10 @@ const ShopFilter = ({ onFilterChange, initialFilters, onReset, country = "india"
             data.priceRange.countries?.[countryKey] || 
             data.priceRange.global;
           
-          console.log("Selected country price range:", {
-            country: countryKey,
-            priceRange: countrySpecificRange
-          });
+          // console.log("Selected country price range:", {
+          //   country: countryKey,
+          //   priceRange: countrySpecificRange
+          // });
           
           if (countrySpecificRange) {
             setPriceRange(countrySpecificRange);

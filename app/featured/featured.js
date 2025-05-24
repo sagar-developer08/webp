@@ -66,7 +66,7 @@ const Limited_offer = () => {
         updateCountry(country);
     };
 
-    // console.log(featuredProducts, "Featured Products");
+    // 
 
     return (
         <div className="w-full relative bg-white text-black overflow-hidden flex flex-col items-center justify-start leading-[normal] tracking-[normal]">

@@ -19,7 +19,7 @@ const Form = ({ className = "" }) => {
   const handleSubmit = (e) => {
     e.preventDefault();
     // Handle form submission here
-    console.log("Form submitted:", formData);
+    
     // You can add your submission logic here
   };
 

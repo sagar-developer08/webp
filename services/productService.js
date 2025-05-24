@@ -9,7 +9,7 @@ import axios from './axios';
 export const searchProducts = async (query) => {
   try {
     const response = await axios.get(`/products/search?q=${encodeURIComponent(query)}`);
-    console.log('Search API response:', response);
+    
     
     // Check if response.data exists and has the expected format
     if (response.data) {
@@ -30,7 +30,7 @@ export const searchProducts = async (query) => {
       
       // If response.data is an object but not in expected format, convert to array
       if (typeof response.data === 'object' && !Array.isArray(response.data)) {
-        console.log('Converting object response to array');
+        
         return Object.values(response.data);
       }
     }

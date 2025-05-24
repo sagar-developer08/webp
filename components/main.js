@@ -48,7 +48,7 @@ const Main = ({ className = "", country }) => {
       params.append('currency', country?.toLowerCase() || 'uae');
 
       // Add price filters if they exist
-      console.log("Price filters before applying:", {
+      
         priceMin: currentFilters.priceMin,
         priceMax: currentFilters.priceMax,
         type: typeof currentFilters.priceMin,
@@ -77,12 +77,12 @@ const Main = ({ className = "", country }) => {
       params.append('limit', 12);
 
       const url = `https://0vm9jauvgc.execute-api.us-east-1.amazonaws.com/stag/api/products/filters/search?${params.toString()}`;
-      console.log("API URL with params:", url);
+      
       
       const response = await axios.get(url);
 
       const data = response.data;
-      console.log("API Response:", data);
+      
 
       if (data && data.products) {
         if (isLoadMore) {

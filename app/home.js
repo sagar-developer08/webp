@@ -37,7 +37,7 @@ const Home = () => {
       setLoading(true);
       setError(null);
       const response = await axios.get(`https://0vm9jauvgc.execute-api.us-east-1.amazonaws.com/stag/api/products/new-arrivals`);
-      // console.log(response.data, "Products data from API");
+      // 
       setProducts(response.data);
     } catch (error) {
       console.error("Error fetching products:", error);
@@ -46,14 +46,14 @@ const Home = () => {
       setLoading(false);
     }
   };
-  // console.log(products.data[0].imageLinks.image1, "new arrivals data from API");
+  // 
 
   const fetchHome = async () => {
     try {
       setLoading(true);
       setError(null);
       const response = await axios.get(`https://0vm9jauvgc.execute-api.us-east-1.amazonaws.com/stag/api/home/`);
-      // console.log(response.data, "Products data from API");
+      // 
       setHome(response.data);
     } catch (error) {
       console.error("Error fetching products:", error);
@@ -66,15 +66,15 @@ const Home = () => {
   useEffect(() => {
     if (home && home[0]) {
       const countrySpecificData = home[0]?.[selectedCountry];
-      // console.log('Country specific data:', countrySpecificData);
+      // 
       if (countrySpecificData) {
         setCountryData(countrySpecificData);
-        // console.log('Updated country data:', countrySpecificData);
+        // 
       } else {
-        console.log('No data found for country:', selectedCountry);
+        
       }
     } else {
-      console.log('No home data available yet');
+      
     }
   }, [selectedCountry, home.data]);
 
@@ -99,7 +99,7 @@ const Home = () => {
     router.push(path);
   };
 
-  // console.log(selectedCountry, "Country data from API");
+  // 
 
   const getCurrencySymbol = (selectedCountry) => {
     if (!selectedCountry) return '$';

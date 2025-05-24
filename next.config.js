@@ -5,6 +5,21 @@ const nextConfig = {
   transpilePackages: ['framer-motion', 'react-intersection-observer'],
 
   compress: true,
+  
+  // Static file caching for fonts
+  async headers() {
+    return [
+      {
+        source: '/fonts/:path*',
+        headers: [
+          {
+            key: 'Cache-Control',
+            value: 'public, max-age=31536000, immutable',
+          },
+        ],
+      },
+    ];
+  },
   images: {
     formats: ['image/webp', 'image/avif'],
     deviceSizes: [640, 750, 828, 1080, 1200, 1920, 2048, 3840],

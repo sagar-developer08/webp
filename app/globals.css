@@ -48,7 +48,33 @@ html {
 /* Layout shift prevention */
 .card-container {
   contain: layout style paint;
-  min-height: 480px; /* Ensure consistent height */
+  min-height: 280px; /* Ensure consistent height */
+}
+
+/* Mobile-specific optimizations */
+@media (max-width: 750px) {
+  .card-container {
+    /* min-height: 210px; */
+    /* max-width: 180px; */
+  }
+}
+
+@media (max-width: 450px) {
+  .card-container {
+    /* min-height: 180px; */
+    max-width: 160px;
+  }
+  
+  /* Optimize mobile grid layout */
+  .mobile-product-grid {
+    contain: layout;
+    will-change: auto;
+  }
+  
+  /* Prevent layout shifts during loading */
+  .mobile-product-grid > div {
+    contain: layout;
+  }
 }
 
 /* Prevent layout shifts on all sections */
@@ -58,7 +84,7 @@ section {
 
 /* Skeleton loader specific fixes */
 .skeleton-grid {
-  min-height: 480px;
+  min-height: 280px;
   contain: layout;
 }
 
@@ -127,6 +153,25 @@ video {
   will-change: transform;
 }
 
+/* Mobile performance optimizations */
+@media (max-width: 750px) {
+  /* Optimize scrolling performance */
+  * {
+    -webkit-overflow-scrolling: touch;
+  }
+  
+  /* Reduce repaints */
+  .card-container img {
+    will-change: auto;
+    transform: translateZ(0);
+  }
+  
+  /* Optimize mobile animations */
+  .animate-pulse {
+    animation-duration: 1.5s;
+  }
+}
+
 /* Reduce motion for users who prefer it */
 @media (prefers-reduced-motion: reduce) {
   .animate-pulse {
@@ -136,5 +181,11 @@ video {
   video {
     animation: none !important;
     transition: none !important;
+  }
+  
+  /* Disable transforms for reduced motion */
+  .card-container img {
+    will-change: auto;
+    transform: none;
   }
 } 

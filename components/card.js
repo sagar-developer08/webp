@@ -77,7 +77,7 @@ const Card = ({
       onMouseEnter={() => setShowActions(true)}
       onMouseLeave={() => setShowActions(false)}
       style={{ 
-        minHeight: '480px',
+        minHeight: '18rem',
         aspectRatio: '320/480',
         contain: 'layout style paint'
       }}

@@ -208,8 +208,8 @@ const Home = () => {
               <Swiper
                 modules={[Navigation]}
                 navigation={{
-                  nextEl: '.swiper-button-next',
-                  prevEl: '.swiper-button-prev',
+                  nextEl: '.swiper-button-next-custom',
+                  prevEl: '.swiper-button-prev-custom',
                 }}
                 spaceBetween={24}
                 slidesPerView={4}

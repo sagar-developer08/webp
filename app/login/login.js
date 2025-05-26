@@ -53,7 +53,15 @@ const Login = () => {
         const product = JSON.parse(pendingCartItem);
         const { productId, quantity = 1, name } = product;
         await checkAuthAndFetchCart();
-        await axiosInstance.post(`/cart`, { productId, quantity });
+        
+        // Get the current country/currency for the cart API
+        const selectedCountry = localStorage.getItem('selectedCountry') || 'uae';
+        
+        await axiosInstance.post(`/cart`, { 
+          productId, 
+          quantity,
+          currency: selectedCountry 
+        });
         toast.success(`Added ${name} to cart`);
         await checkAuthAndFetchCart();
         localStorage.removeItem("pendingCartItem");

@@ -2,7 +2,7 @@ import PropTypes from "prop-types";
 import Review from "./review";
 import Image from "next/image";
 import TestimonialItems from "./testimonial-items";
-import React, { useEffect, useState } from "react";
+import React, { useEffect, useState, useMemo } from "react";
 import axios from "axios";
 import { useCountry } from "../context/CountryContext";
 import { Swiper, SwiperSlide } from "swiper/react";
@@ -21,7 +21,9 @@ const Testimonials = ({ Heading }) => {
             setLoading(true);
             setError(null);
             const response = await axios.get(`https://0vm9jauvgc.execute-api.us-east-1.amazonaws.com/stag/api/testimonials/`);
-            setTestimonial(response.data[0]);
+            console.log("Testimonials API response:", response.data);
+            console.log("Setting testimonial to:", response.data[0]);
+            setTestimonial(response.data[0] || {});
         } catch (error) {
             console.error("Error fetching testimonials:", error);
             setError("Failed to load testimonials. Please try again later.");
@@ -34,10 +36,46 @@ const Testimonials = ({ Heading }) => {
         fetchTestimonial();
     }, []);
 
-    const countryTestimonials = testimonial[selectedCountry]?.testimonials || [];
+    const countryTestimonials = useMemo(() => {
+        console.log("Processing testimonials - selectedCountry:", selectedCountry);
+        console.log("Processing testimonials - testimonial object:", testimonial);
+        
+        if (!selectedCountry || !testimonial || typeof testimonial !== 'object') {
+            console.log("Early return: missing selectedCountry or testimonial");
+            return [];
+        }
+        
+        const countryData = testimonial[selectedCountry];
+        console.log(`Country data for ${selectedCountry}:`, countryData);
+        
+        if (!countryData || !countryData.testimonials || !Array.isArray(countryData.testimonials)) {
+            console.log("No valid testimonials found for country:", selectedCountry);
+            console.log("Available countries in testimonial object:", Object.keys(testimonial));
+            return [];
+        }
+        
+        console.log("Returning testimonials:", countryData.testimonials);
+        return countryData.testimonials;
+    }, [testimonial, selectedCountry]);
 
     if (loading) return <div>Loading testimonials...</div>;
     if (error) return <div>{error}</div>;
+    
+    // If no testimonials are available for the selected country, show a message
+    if (countryTestimonials.length === 0) {
+        return (
+            <section className="self-stretch overflow-hidden flex flex-col items-center justify-start pt-[60px] px-[40px] gap-[60px] z-[8] text-center font-h5-24 mq450:pt-[40px] mq450:px-[24px] mq450:gap-[24px]">
+                <div className="w-[1360px] max-w-full flex flex-row items-start justify-center">
+                    <h1 className="m-0 relative text-[#000] text-[48px] leading-[120%] mq450:text-left font-bold font-[inherit] mq750:text-[48px] mq750:leading-[58px] mq450:text-[40px] mq450:leading-[120%]">
+                        {Heading?.testimonials_title || "Testimonials"}
+                    </h1>
+                </div>
+                <div className="text-gray-600">
+                    No testimonials available for the selected region.
+                </div>
+            </section>
+        );
+    }
 
     return (
         <section className="self-stretch overflow-hidden flex flex-col items-center justify-start pt-[60px] px-[40px] gap-[60px] z-[8] text-center font-h5-24 mq450:pt-[40px] mq450:px-[24px] mq450:gap-[24px]">

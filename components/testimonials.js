@@ -22,8 +22,17 @@ const Testimonials = ({ Heading }) => {
             setError(null);
             const response = await axios.get(`https://0vm9jauvgc.execute-api.us-east-1.amazonaws.com/stag/api/testimonials/`);
             console.log("Testimonials API response:", response.data);
-            console.log("Setting testimonial to:", response.data[0]);
-            setTestimonial(response.data[0] || {});
+            
+            if (response.data && response.data.data && response.data.data[0]) {
+                console.log("Setting testimonial to:", response.data.data[0]);
+                setTestimonial(response.data.data[0] || {});
+            } else if (response.data && response.data[0]) {
+                console.log("Setting testimonial to:", response.data[0]);
+                setTestimonial(response.data[0] || {});
+            } else {
+                console.log("Unexpected API response structure:", response.data);
+                setTestimonial({});
+            }
         } catch (error) {
             console.error("Error fetching testimonials:", error);
             setError("Failed to load testimonials. Please try again later.");
@@ -37,24 +46,31 @@ const Testimonials = ({ Heading }) => {
     }, []);
 
     const countryTestimonials = useMemo(() => {
-        console.log("Processing testimonials - selectedCountry:", selectedCountry);
-        console.log("Processing testimonials - testimonial object:", testimonial);
+        console.log("🔍 Processing testimonials - selectedCountry:", selectedCountry);
+        console.log("🔍 Processing testimonials - testimonial object:", testimonial);
+        console.log("🔍 Testimonial object type:", typeof testimonial);
+        console.log("🔍 Testimonial object keys:", testimonial ? Object.keys(testimonial) : 'null');
         
         if (!selectedCountry || !testimonial || typeof testimonial !== 'object') {
-            console.log("Early return: missing selectedCountry or testimonial");
+            console.log("❌ Early return: missing selectedCountry or testimonial");
+            console.log("   - selectedCountry:", selectedCountry);
+            console.log("   - testimonial:", testimonial);
+            console.log("   - testimonial type:", typeof testimonial);
             return [];
         }
         
         const countryData = testimonial[selectedCountry];
-        console.log(`Country data for ${selectedCountry}:`, countryData);
+        console.log(`🎯 Country data for ${selectedCountry}:`, countryData);
         
         if (!countryData || !countryData.testimonials || !Array.isArray(countryData.testimonials)) {
-            console.log("No valid testimonials found for country:", selectedCountry);
-            console.log("Available countries in testimonial object:", Object.keys(testimonial));
+            console.log("❌ No valid testimonials found for country:", selectedCountry);
+            console.log("   - countryData:", countryData);
+            console.log("   - countryData.testimonials:", countryData?.testimonials);
+            console.log("   - Available countries in testimonial object:", Object.keys(testimonial));
             return [];
         }
         
-        console.log("Returning testimonials:", countryData.testimonials);
+        console.log("✅ Returning testimonials:", countryData.testimonials);
         return countryData.testimonials;
     }, [testimonial, selectedCountry]);
 

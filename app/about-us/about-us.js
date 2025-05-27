@@ -95,7 +95,7 @@ const AboutUs = () => {
           <div className="h-[419px] w-[660px] rounded-3xl flex flex-row items-end justify-start py-[60px] px-10 box-border bg-[url('/limited1@3x.webp')] bg-cover bg-no-repeat bg-[top] mq1050:gap-[30px] mq1050:w-full mq750:py-[40px] mq750:px-6 mq450:h-[350px] mq450:py-[30px] mq450:px-4 relative">
             {/* Add overlay for better text readability */}
             <div className="absolute inset-0 bg-black/40 rounded-3xl"></div>
-            
+
             <div className="self-stretch w-[580px] max-w-full flex flex-col items-center justify-start gap-4 z-10">
               <div className="w-[580px] relative leading-[150%] font-medium text-center hidden">
                 Limited Offer
@@ -111,7 +111,7 @@ const AboutUs = () => {
           <div className="h-[419px] w-[660px] rounded-3xl flex flex-row items-end justify-start py-[60px] px-10 box-border bg-[url('/limited2@3x.webp')] bg-cover bg-no-repeat bg-[top] mq1050:gap-[30px] mq1050:w-full mq750:py-[40px] mq750:px-6 mq450:h-[350px] mq450:py-[30px] mq450:px-4 relative">
             {/* Add overlay for better text readability */}
             <div className="absolute inset-0 bg-black/40 rounded-3xl"></div>
-            
+
             <div className="self-stretch w-[580px] max-w-full flex flex-col items-center justify-start gap-4 z-10">
               <div className="w-[580px] relative leading-[150%] font-medium text-center hidden">
                 Limited Offer
@@ -159,6 +159,7 @@ const AboutUs = () => {
         account="/account1.svg"
         sVG="/svg1.svg"
         onCountrySelect={handleCountrySelect}
+        navbarBackgroundColor={"transparent"}
       />
     </div>
   );

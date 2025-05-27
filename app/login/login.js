@@ -88,6 +88,7 @@ const Login = () => {
         search="/search1.svg"
         account="/account1.svg"
         sVG="/svg1.svg"
+        navbarBackgroundColor={"black"}
       />
 
       <div className="flex flex-col md:flex-row justify-center w-full min-h-[calc(100vh-80px)] mq450:w-full mq450:ml-[-30px] mq450:px-4 mt-10 md:mt-20">

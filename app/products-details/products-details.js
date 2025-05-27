@@ -108,6 +108,7 @@ function ProductDetailsContent() {
         account="/account.svg"
         sVG="/svg.svg"
         onCountrySelect={handleCountrySelect}
+        navbarBackgroundColor={"black"}
       />
 
       {/* Breadcrumb section */}

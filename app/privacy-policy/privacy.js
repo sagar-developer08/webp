@@ -16,16 +16,17 @@ const PrivacyPolicy = () => {
                 search="/search1.svg"
                 account="/account1.svg"
                 sVG="/svg1.svg"
+                navbarBackgroundColor={"transparent"}
             />
-            
+
             {/* Main content */}
             <main className="flex-grow">
                 {/* Page Banner */}
-                <PageBanner 
-                    title="Privacy Policy" 
-                    breadcrumb="Home > Privacy Policy" 
+                <PageBanner
+                    title="Privacy Policy"
+                    breadcrumb="Home > Privacy Policy"
                 />
-                
+
                 {/* Privacy Policy Content */}
                 <div className="max-w-4xl mx-auto px-4 py-8 md:py-12 space-y-6">
                     <section>
@@ -165,7 +166,7 @@ const PrivacyPolicy = () => {
                     </section>
                 </div>
             </main>
-            
+
             {/* Footer at the bottom */}
             <Footer
                 footerAlignSelf="stretch"

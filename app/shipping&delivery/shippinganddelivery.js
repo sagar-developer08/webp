@@ -16,6 +16,7 @@ const DeliveryPolicy = () => {
                 search="/search1.svg"
                 account="/account1.svg"
                 sVG="/svg1.svg"
+                navbarBackgroundColor={"transparent"}
             />
 
             {/* Main content */}

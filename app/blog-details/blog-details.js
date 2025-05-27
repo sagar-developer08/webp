@@ -67,6 +67,7 @@ const BlogDetails = () => {
           search="/search3.svg"
           account="/account3.svg"
           sVG="/svg2.svg"
+          navbarBackgroundColor={"black"}
         />
       </header>
 

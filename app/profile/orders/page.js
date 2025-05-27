@@ -81,6 +81,7 @@ const OrdersPage = () => {
         search="/search.svg"
         account="/account.svg"
         sVG="/svg2.svg"
+        navbarBackgroundColor={"transparent"}
       />
       <PageBanner title="Order" breadcrumb="Home > Order" />
       <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 pt-10 pb-20">

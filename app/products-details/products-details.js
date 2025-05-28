@@ -108,12 +108,12 @@ function ProductDetailsContent() {
         account="/account.svg"
         sVG="/svg.svg"
         onCountrySelect={handleCountrySelect}
-        navbarBackgroundColor={"black"}
+        navbarBackgroundColor={"rgba(0, 0, 0, 0.5)"}
       />
 
       {/* Breadcrumb section */}
       <div className="w-full max-w-[1360px] flex flex-row items-center justify-start py-4 box-border">
-        <div className="relative leading-[150%] font-medium text-[10px] sm:text-xs">{`Home > Shop > AUTONOVA Automatic Watch`}</div>
+        {/* <div className="relative leading-[150%] font-medium text-[10px] sm:text-xs">{`Home > Shop > AUTONOVA Automatic Watch`}</div> */}
       </div>
 
       {/* Product details section */}

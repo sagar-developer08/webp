@@ -113,6 +113,7 @@ const Register = () => {
         search="/search1.svg"
         account="/account1.svg"
         sVG="/svg1.svg"
+        navbarBackgroundColor={"black"}
       />
 
       <div className="flex flex-col lg:flex-row w-full min-h-[calc(100vh-80px)] mt-20 mb-20 items-center justify-center ">

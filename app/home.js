@@ -154,7 +154,7 @@ const Home = () => {
                    mq750:text-4xl mq750:leading-[1.15]
                    mq1050:text-5xl mq1050:leading-[1.15]
                    mq450:text-[48px] mq450:leading-[1.15] mq450:px-[24px] mq450:text-left mq450:fontweight-600"
-              style={{ minHeight: '68px' }}>
+            style={{ minHeight: '68px' }}>
             {countryData?.title || "Buy Stylish Torando Watches for Men"}
           </h1>
         </div>
@@ -359,6 +359,7 @@ const Home = () => {
         account="/account1.svg"
         sVG="/svg1.svg"
         onCountrySelect={handleCountrySelect}
+        navbarBackgroundColor={"transparent"}
       />
     </div>
   );

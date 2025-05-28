@@ -17,14 +17,14 @@ const Blog = () => {
   useEffect(() => {
     // Set the initial window width after component mounts
     setWindowWidth(window.innerWidth);
-    
+
     // Add event listener for window resize
     const handleResize = () => {
       setWindowWidth(window.innerWidth);
     };
-    
+
     window.addEventListener('resize', handleResize);
-    
+
     // Clean up event listener
     return () => {
       window.removeEventListener('resize', handleResize);
@@ -167,6 +167,7 @@ const Blog = () => {
         search="/search1.svg"
         account="/account1.svg"
         sVG="/svg1.svg"
+        navbarBackgroundColor={"transparent"}
       />
     </div>
   );

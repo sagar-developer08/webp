@@ -30,7 +30,7 @@ const Cart = () => {
     getCurrency,
     currency
   } = useCart();
-  
+
   const { selectedCountry } = useCountry();
   const { user, loading: userLoading } = useUser();
   const [isSubmitting, setIsSubmitting] = useState(false);
@@ -57,13 +57,13 @@ const Cart = () => {
   useEffect(() => {
     updateFilteredCart();
   }, [cart, currency, updateFilteredCart]);
-  
+
   // Listen for currency changes via custom event
   useEffect(() => {
     const handleCountryChange = () => {
       updateFilteredCart();
     };
-    
+
     window.addEventListener('countryChange', handleCountryChange);
     return () => {
       window.removeEventListener('countryChange', handleCountryChange);
@@ -173,7 +173,7 @@ const Cart = () => {
     setIsSubmitting(true);
     try {
       const currentCurrency = getCurrency();
-      
+
       const orderItems = filteredCart.map((item) => ({
         product: item.productId,
         name: item.name,
@@ -187,13 +187,13 @@ const Cart = () => {
         price: item.price,
         quantity: item.quantity,
       }));
-      
+
       if (orderItems.length === 0) {
         toast.error(`No items available for ${currentCurrency} currency`);
         setIsSubmitting(false);
         return;
       }
-      
+
       const orderPayload = {
         orderItems,
         paymentMethod: paymentMethod,
@@ -285,6 +285,7 @@ const Cart = () => {
         search="/search1.svg"
         account="/account1.svg"
         sVG="/svg1.svg"
+        navbarBackgroundColor={"transparent"}
       />
     </div>
   );

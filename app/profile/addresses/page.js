@@ -49,6 +49,7 @@ const AddressesPage = () => {
         search="/search.svg"
         account="/account.svg"
         sVG="/svg2.svg"
+        navbarBackgroundColor={"transparent"}
       />
       <PageBanner title="Address" breadcrumb="Home > Address" />
 

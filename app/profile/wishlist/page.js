@@ -181,6 +181,7 @@ const WishlistPage = () => {
         account="/account.svg"
         sVG="/svg2.svg"
         onCountrySelect={handleCountrySelect}
+        navbarBackgroundColor={"transparent"}
       />
 
       <PageBanner title="My Wishlist" breadcrumb="Home > Wishlist" />
@@ -214,7 +215,7 @@ const WishlistPage = () => {
                       const productPrice = getCountryPrice(product?.price);
                       const currencySymbol = getCurrencySymbol(selectedCountry);
                       const displayPrice = productPrice ? `${currencySymbol} ${productPrice}` : '';
-                      
+
                       return (
                         <div
                           key={product._id}

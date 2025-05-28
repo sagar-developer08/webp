@@ -30,6 +30,7 @@ const ProfilePage = () => {
         search="/search.svg"
         account="/account.svg"
         sVG="/svg2.svg"
+        navbarBackgroundColor={"transparent"}
       />
       <PageBanner title="Profile" breadcrumb="Home > Profile" />
 

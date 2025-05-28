@@ -157,6 +157,7 @@ const Collection = () => {
         account="/account1.svg"
         sVG="/svg1.svg"
         onCountrySelect={handleCountrySelect}
+        navbarBackgroundColor={"transparent"}
       />
     </div>
   );

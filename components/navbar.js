@@ -29,6 +29,7 @@ const Navbar = ({
   onMenuItemsContainerClick,
   onMenuItemsContainerClick1,
   onMenuItemsContainerClick3,
+  bgcolour,
 }) => {
   const router = useRouter();
   const [scrolled, setScrolled] = useState(false);
@@ -136,7 +137,7 @@ const Navbar = ({
       top: navbarTop || "0",
       right: navbarRight || "0",
       left: navbarLeft || "0",
-      backgroundColor: scrolled ? "rgba(0, 0, 0, 0.9)" : navbarBackgroundColor || "black/80",
+      backgroundColor: scrolled ? "black" : navbarBackgroundColor || "black",
       zIndex: 9990,
       position: navbarPosition || "fixed",
       transition: "background-color 0.3s ease, transform 0.3s ease",

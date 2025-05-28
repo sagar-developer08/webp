@@ -28,18 +28,18 @@ const Limited_offer = () => {
                 const response = await axios.get(
                     `https://0vm9jauvgc.execute-api.us-east-1.amazonaws.com/stag/api/products/featured?page=${pageNum}&limit=12`
                 );
-                
+
                 if (isLoadMore) {
                     setFeaturedProducts(prev => [...prev, ...response.data.data]);
                 } else {
                     setFeaturedProducts(response.data.data);
                 }
-                
+
                 const totalProducts = response.data.total || 0;
                 const calculatedTotalPages = Math.ceil(totalProducts / 12);
                 setTotalPages(calculatedTotalPages);
                 setHasMore(pageNum < calculatedTotalPages);
-                
+
             } catch (err) {
                 setError(err.message);
             } finally {
@@ -110,6 +110,7 @@ const Limited_offer = () => {
                 account="/account1.svg"
                 sVG="/svg1.svg"
                 onCountrySelect={handleCountrySelect}
+                navbarBackgroundColor={"transparent"}
             />
         </div>
     );

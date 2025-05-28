@@ -53,14 +53,14 @@ const Login = () => {
         const product = JSON.parse(pendingCartItem);
         const { productId, quantity = 1, name } = product;
         await checkAuthAndFetchCart();
-        
+
         // Get the current country/currency for the cart API
         const selectedCountry = localStorage.getItem('selectedCountry') || 'uae';
-        
-        await axiosInstance.post(`/cart`, { 
-          productId, 
+
+        await axiosInstance.post(`/cart`, {
+          productId,
           quantity,
-          currency: selectedCountry 
+          currency: selectedCountry
         });
         toast.success(`Added ${name} to cart`);
         await checkAuthAndFetchCart();
@@ -88,7 +88,7 @@ const Login = () => {
         search="/search1.svg"
         account="/account1.svg"
         sVG="/svg1.svg"
-        navbarBackgroundColor={"black"}
+        navbarBackgroundColor={"rgba(0, 0, 0, 0.5)"}
       />
 
       <div className="flex flex-col md:flex-row justify-center w-full min-h-[calc(100vh-80px)] mq450:w-full mq450:ml-[-30px] mq450:px-4 mt-10 md:mt-20">

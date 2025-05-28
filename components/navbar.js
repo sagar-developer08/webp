@@ -137,7 +137,9 @@ const Navbar = ({
       top: navbarTop || "0",
       right: navbarRight || "0",
       left: navbarLeft || "0",
-      backgroundColor: scrolled ? "black" : navbarBackgroundColor || "black",
+      backgroundColor: scrolled
+        ? 'rgba(0, 0, 0, 0.5)'
+        : navbarBackgroundColor || 'black',
       zIndex: 9990,
       position: navbarPosition || "fixed",
       transition: "background-color 0.3s ease, transform 0.3s ease",
@@ -571,7 +573,7 @@ const Navbar = ({
 
         {windowWidth >= 768 && (
           <>
-            <motion.div
+            {/* <motion.div
               className="flex flex-row items-center justify-center py-1.5 px-3 gap-1"
               variants={iconVariants}
               initial="initial"
@@ -603,7 +605,7 @@ const Navbar = ({
                   <path d="M6 9l6 6 6-6" />
                 </svg>
               </div>
-            </motion.div>
+            </motion.div> */}
             <motion.div
               className="flex flex-row items-center justify-center py-1.5 px-3 gap-1"
               variants={iconVariants}

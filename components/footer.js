@@ -5,6 +5,7 @@ import PropTypes from "prop-types";
 import { getTopCollections, getTopProducts } from "../services/productService";
 import Link from "next/link";
 import { useRouter } from "next/navigation";
+import { useCountry } from "../context/CountryContext";
 
 const Footer = ({
   className = "",
@@ -15,11 +16,13 @@ const Footer = ({
   itemImg,
   itemImg1,
   itemImg2,
+  onCountrySelect, // allow prop override
 }) => {
   const [topCollections, setTopCollections] = useState([]);
   const [topProducts, setTopProducts] = useState([]);
   const [loading, setLoading] = useState(true);
   const router = useRouter();
+  const { selectedCountry, updateCountry } = useCountry();
 
   // Collapsible state for mobile
   const [openSection, setOpenSection] = useState(null);
@@ -71,6 +74,25 @@ const Footer = ({
     window.addEventListener("resize", checkMobile);
     return () => window.removeEventListener("resize", checkMobile);
   }, []);
+
+  // List of countries for dropdown
+  const countryOptions = [
+    { value: "uae", label: "AED" },
+    { value: "india", label: "INR" },
+    { value: "ksa", label: "SAR" },
+    { value: "kuwait", label: "KWD" },
+    { value: "qatar", label: "QAR" },
+
+  ];
+
+  const handleCountryChange = (e) => {
+    const value = e.target.value;
+    if (onCountrySelect) {
+      onCountrySelect(value);
+    } else {
+      updateCountry(value);
+    }
+  };
 
   return (
     <section
@@ -450,6 +472,7 @@ const Footer = ({
           </div>
         </div>
         <div className="w-[400px] flex flex-col items-start justify-start gap-6 mq750:w-full">
+          {/* Stay In Loop section */}
           <div className="self-stretch flex flex-col items-start justify-start gap-4">
             <div className="self-stretch relative leading-[150%] font-medium">
               Stay In Loop
@@ -459,7 +482,9 @@ const Footer = ({
               collections, and latest products!
             </div>
           </div>
-          <div className="self-stretch flex flex-col items-start justify-start">
+
+          {/* Form section */}
+          <div className="self-stretch flex flex-col items-start justify-start gap-4">
             <form className="m-0 self-stretch flex flex-col items-start justify-start gap-4">
               <div className="self-stretch rounded-lg border-[#fff] border-solid border-[1px] flex flex-row items-center justify-start p-3">
                 <div className="flex-1 relative text-sm leading-[150%] font-medium font-p4-14 text-[#fff] text-left">
@@ -478,64 +503,59 @@ const Footer = ({
               </div>
             </form>
           </div>
-          <div className="flex flex-row items-start justify-start gap-3">
-            <Image
-              onClick={() =>
-                handleSocialIcons(
-                  "https://www.facebook.com/people/Tornado-World/61556313113779/"
-                )
-              }
-              className="h-6 w-6 relative overflow-hidden shrink-0"
-              loading="lazy"
-              width={24}
-              height={24}
-              alt=""
-              src="/icon--facebook.svg"
-            />
-            <Image
-              onClick={() =>
-                handleSocialIcons(
-                  "https://www.instagram.com/tornado.watches/"
-                )
-              }
-              className="h-6 w-6 relative overflow-hidden shrink-0"
-              loading="lazy"
-              width={24}
-              height={24}
-              alt=""
-              src="/icon--instagram.svg"
-            />
-            <Image
-              onClick={() =>
-                handleSocialIcons(
-                  "https://x.com/tornadowatches"
-                )
-              }
-              className="w-6 relative h-6 overflow-hidden shrink-0"
-              width={24}
-              height={24}
-              alt=""
-              src="/icon--x.svg"
-            />
-            {/* <Image
-              className="w-6 relative h-6 overflow-hidden shrink-0"
-              width={24}
-              height={24}
-              alt=""
-              src="/icon--linkedin.svg"
-            /> */}
-            <Image
-              onClick={() =>
-                handleSocialIcons(
-                  "https://www.youtube.com/@tornadowatches"
-                )
-              }
-              className="w-6 relative h-6 overflow-hidden shrink-0"
-              width={24}
-              height={24}
-              alt=""
-              src={iconYoutube}
-            />
+
+          {/* Social icons and country dropdown */}
+          <div className="w-full flex flex-row items-center justify-between">
+            <div className="flex flex-row items-center gap-4">
+              <Image
+                onClick={() => handleSocialIcons("https://www.facebook.com/people/Tornado-World/61556313113779/")}
+                className="h-6 w-6 relative overflow-hidden shrink-0 cursor-pointer"
+                loading="lazy"
+                width={24}
+                height={24}
+                alt="Facebook"
+                src="/icon--facebook.svg"
+              />
+              <Image
+                onClick={() => handleSocialIcons("https://www.instagram.com/tornado.watches/")}
+                className="h-6 w-6 relative overflow-hidden shrink-0 cursor-pointer"
+                loading="lazy"
+                width={24}
+                height={24}
+                alt="Instagram"
+                src="/icon--instagram.svg"
+              />
+              <Image
+                onClick={() => handleSocialIcons("https://x.com/tornadowatches")}
+                className="w-6 relative h-6 overflow-hidden shrink-0 cursor-pointer"
+                width={24}
+                height={24}
+                alt="Twitter/X"
+                src="/icon--x.svg"
+              />
+              <Image
+                onClick={() => handleSocialIcons("https://www.youtube.com/@tornadowatches")}
+                className="w-6 relative h-6 overflow-hidden shrink-0 cursor-pointer"
+                width={24}
+                height={24}
+                alt="YouTube"
+                src={iconYoutube}
+              />
+            </div>
+
+            {/* Country Dropdown */}
+            <select
+              value={selectedCountry || "uae"}
+              onChange={handleCountryChange}
+              className="px-2 py-2  rounded-[50px] bg-[#000] text-white border border-[#fff] focus:outline-none focus:ring-2 focus:ring-[#fff] text-sm"
+              style={{ minWidth: 110 }}
+            >
+              {countryOptions.map((opt) => (
+                <option key={opt.value} value={opt.value}>
+                  {opt.label}
+                </option>
+              ))}
+            </select>
           </div>
         </div>
       </div>

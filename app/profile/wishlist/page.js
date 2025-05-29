@@ -3,6 +3,7 @@ import { useState, useEffect } from "react";
 import { useRouter } from 'next/navigation';
 import { useUser } from '../../../context/UserContext';
 import { useCart } from "../../../context/CartContext";
+import { useWishlist } from "../../../context/WishlistContext";
 import Image from 'next/image';
 import Link from 'next/link';
 import Navbar from '../../../components/navbar';
@@ -10,128 +11,24 @@ import Footer from '../../../components/footer';
 import AnimateOnScroll from "../../../components/AnimateOnScroll";
 import PageBanner from "../../../components/page-banner";
 import { toast } from "react-hot-toast";
-import axiosInstance from "../../../services/axios";
 import { useCountry } from "../../../context/CountryContext";
-
 
 const WishlistPage = () => {
   const router = useRouter();
   const { addToCart } = useCart();
-  const { user, loading: userLoading } = useUser();
-  const [wishlistItems, setWishlistItems] = useState([]);
-  const [loading, setLoading] = useState(true);
-  const [error, setError] = useState(null);
-  const { selectedCountry, updateCountry, countryData, setCountryData } = useCountry();
+  const { user } = useUser();
+  const { wishlist, loading, removeFromWishlist, clearWishlist, isInWishlist } = useWishlist();
+  const { selectedCountry } = useCountry();
 
   // Pagination state
   const [currentPage, setCurrentPage] = useState(1);
   const [itemsPerPage] = useState(5);
 
-  // Fetch wishlist items
-  const fetchWishlist = async () => {
-    try {
-      setLoading(true);
-      const response = await axiosInstance.get('/wishlist');
-
-      console.log('Wishlist API response:', response.data);
-
-      if (response.data?.success) {
-        // Handle the API response structure
-        if (response.data.data && response.data.data.products) {
-          setWishlistItems(response.data.data.products || []);
-        } else {
-          setWishlistItems(response.data.data || []);
-        }
-      } else {
-        setError(response.data?.message || 'Failed to fetch wishlist');
-      }
-    } catch (error) {
-      console.error('Error fetching wishlist:', error);
-      setError(error.response?.data?.message || 'Failed to fetch wishlist');
-    } finally {
-      setLoading(false);
-    }
-  };
-
-  useEffect(() => {
-    if (user) {
-      fetchWishlist();
-    }
-  }, [user]);
-
-  // Redirect to login if not authenticated
-  useEffect(() => {
-    if (!user && !userLoading) {
-      localStorage.setItem("redirectAfterLogin", "/profile/wishlist");
-      router.push('/login');
-    }
-  }, [user, userLoading, router]);
-
-  // Remove item from wishlist
-  const handleRemoveFromWishlist = async (productId) => {
-    try {
-      const response = await axiosInstance.delete(`/wishlist/${productId}`);
-
-      if (response.data?.success) {
-        toast.success('Removed from wishlist');
-        // Update the wishlist items
-        setWishlistItems(wishlistItems.filter(item => item._id !== productId));
-      } else {
-        toast.error(response.data?.message || 'Failed to remove from wishlist');
-      }
-    } catch (error) {
-      console.error('Error removing from wishlist:', error);
-      toast.error(error.response?.data?.message || 'Failed to remove from wishlist');
-    }
-  };
-
-  // Add to cart
-  const handleAddToCart = async (product) => {
-    try {
-      await addToCart({
-        productId: product._id,
-        name: product.name?.en,
-        price: product.price,
-        image: product.imageLinks?.image1 ? product.imageLinks.image1.trim().replace(/`/g, '') : "/default-watch.jpg",
-        quantity: 1
-      });
-
-      toast.success(`${product.name?.en} added to cart`);
-    } catch (error) {
-      console.error('Error adding to cart:', error);
-      toast.error('Failed to add to cart');
-    }
-  };
-
-  // Continue shopping
-  const handleContinueShopping = () => {
-    router.push("/shop");
-  };
-
-  // Clear wishlist
-  const handleClearWishlist = async () => {
-    if (window.confirm("Are you sure you want to clear your wishlist?")) {
-      try {
-        const response = await axiosInstance.delete('/wishlist');
-
-        if (response.data?.success) {
-          toast.success('Wishlist cleared');
-          setWishlistItems([]);
-        } else {
-          toast.error(response.data?.message || 'Failed to clear wishlist');
-        }
-      } catch (error) {
-        console.error('Error clearing wishlist:', error);
-        toast.error(error.response?.data?.message || 'Failed to clear wishlist');
-      }
-    }
-  };
-
   // Pagination logic
   const indexOfLastItem = currentPage * itemsPerPage;
   const indexOfFirstItem = indexOfLastItem - itemsPerPage;
-  const currentItems = wishlistItems.slice(indexOfFirstItem, indexOfLastItem);
-  const totalPages = Math.ceil(wishlistItems.length / itemsPerPage);
+  const currentItems = wishlist.slice(indexOfFirstItem, indexOfLastItem);
+  const totalPages = Math.ceil(wishlist.length / itemsPerPage);
 
   const handleCountrySelect = (country) => {
     updateCountry(country);
@@ -158,19 +55,38 @@ const WishlistPage = () => {
     return priceObj[countryKey] || Object.values(priceObj)[0] || '';
   };
 
+  // Add to cart
+  const handleAddToCart = async (product) => {
+    try {
+      await addToCart({
+        productId: product._id,
+        name: product.name?.en || product.name,
+        price: product.price,
+        image: product.imageLinks?.image1 ? product.imageLinks.image1.trim().replace(/`/g, '') : "/default-watch.jpg",
+        quantity: 1
+      });
+
+      toast.success(`${product.name?.en || product.name} added to cart`);
+    } catch (error) {
+      console.error('Error adding to cart:', error);
+      toast.error('Failed to add to cart');
+    }
+  };
+
+  // Continue shopping
+  const handleContinueShopping = () => {
+    router.push("/shop");
+  };
+
   // Change page
   const paginate = (pageNumber) => setCurrentPage(pageNumber);
 
-  if (loading || userLoading) {
+  if (loading) {
     return (
       <div className="min-h-screen bg-black flex items-center justify-center">
         <div className="animate-spin rounded-full h-16 w-16 border-t-2 border-b-2 border-white"></div>
       </div>
     );
-  }
-
-  if (!user) {
-    return null; // Will redirect in useEffect
   }
 
   return (
@@ -183,19 +99,17 @@ const WishlistPage = () => {
         onCountrySelect={handleCountrySelect}
         navbarBackgroundColor={"transparent"}
       />
-
       <PageBanner title="My Wishlist" breadcrumb="Home > Wishlist" />
-
       <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-16">
         <AnimateOnScroll animation="fadeIn" className="self-stretch">
           <div className="w-full max-w-[1360px] mx-auto">
-            {wishlistItems.length > 0 ? (
+            {wishlist.length > 0 ? (
               <div className="flex flex-col lg:flex-row gap-8">
                 <div className="flex-grow">
                   <div className="flex justify-between items-center mb-6">
                     <h2 className="text-2xl font-medium">Wishlist Items</h2>
                     <button
-                      onClick={handleClearWishlist}
+                      onClick={clearWishlist}
                       className="px-4 py-2 bg-black rounded-[100px] border border-white text-white border border-solid-1px border-white hover:border-black hover:bg-white hover:text-black transition-colors"
                       disabled={loading}
                     >
@@ -225,7 +139,7 @@ const WishlistPage = () => {
                           {/* Mobile Remove button */}
                           <div className="absolute top-2 right-2 md:hidden">
                             <button
-                              onClick={() => handleRemoveFromWishlist(product._id)}
+                              onClick={() => removeFromWishlist(product._id)}
                               className="px-3 py-1 bg-transparent border border-red-600 text-red-600 rounded-[100px] hover:bg-red-600 hover:text-black transition-colors"
                               disabled={loading}
                             >
@@ -242,7 +156,7 @@ const WishlistPage = () => {
                                     ? product.imageLinks.image1.trim().replace(/`/g, "")
                                     : "/default-watch.jpg"
                                 }
-                                alt={product.name?.en || "Watch"}
+                                alt={product.name?.en || product.name || "Watch"}
                                 className="h-full w-full object-contain"
                                 onError={(e) => {
                                   e.target.src = "/default-watch.jpg";
@@ -250,9 +164,9 @@ const WishlistPage = () => {
                               />
                             </div>
                             <div>
-                              <h3 className="font-medium">{product.name?.en || "Watch"}</h3>
+                              <h3 className="font-medium">{product.name?.en || product.name || "Watch"}</h3>
                               <p className="text-sm text-gray-400">
-                                {product.watchDetails?.watchType?.en || "Watch"}
+                                {product.watchDetails?.watchType?.en || product.classic || "Watch"}
                               </p>
                             </div>
                           </div>
@@ -272,7 +186,7 @@ const WishlistPage = () => {
                               Add to Cart
                             </button>
                             <button
-                              onClick={() => handleRemoveFromWishlist(product._id)}
+                              onClick={() => removeFromWishlist(product._id)}
                               className="px-3 py-1 bg-transparent border border-red-600 text-red-600 rounded-[100px] hover:text-black hover:bg-red-600 transition-colors"
                               disabled={loading}
                             >
@@ -351,7 +265,7 @@ const WishlistPage = () => {
                 </h2>
                 <button
                   onClick={handleContinueShopping}
-                  className="rounded-[100px] bg-white text-black py-3 px-10 font-medium hover:bg-gray-200 transition-colors"
+                  className="rounded-[100px] bg-white border border-solid-1px border-black text-black py-3 px-10 font-medium hover:bg-black hover:text-white transition-colors"
                 >
                   Continue Shopping
                 </button>
@@ -360,7 +274,6 @@ const WishlistPage = () => {
           </div>
         </AnimateOnScroll>
       </div>
-
       <Footer
         maskGroup="/logo.webp"
         iconYoutube="/icon--youtube.svg"

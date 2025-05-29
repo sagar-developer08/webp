@@ -4,8 +4,9 @@ import Image from "next/image";
 import PropTypes from "prop-types";
 import { useRouter } from "next/navigation";
 import { useCart } from "../context/CartContext";
-import axios from "../services/axios";
 import { toast } from "react-hot-toast";
+import { useWishlist } from "../context/WishlistContext";
+import { useUser } from "../context/UserContext";
 
 const Card = ({
   className = "",
@@ -18,58 +19,51 @@ const Card = ({
   originalPrice,
   dialColor,
   productId,
+  _id,
 }) => {
   const router = useRouter();
   const { addToCart } = useCart();
+  const { user } = useUser();
+  const { addToWishlist, removeFromWishlist, isInWishlist } = useWishlist();
   const [showActions, setShowActions] = useState(false);
-  const [isAddingToWishlist, setIsAddingToWishlist] = useState(false);
   const [imageLoaded, setImageLoaded] = useState(false);
   const [imageError, setImageError] = useState(false);
 
   const handleAddToCart = (e) => {
-    e.stopPropagation(); // Prevent card click event
+    e.stopPropagation();
     addToCart({
-      productId,
+      productId: _id || productId,
       name,
       price,
       images: [images],
       quantity: 1,
     });
+    toast.success(`${name} added to cart`);
   };
 
-  const handleWishlist = async (e) => {
-    e.stopPropagation(); // Prevent card click event
+  const handleWishlist = (e) => {
+    e.stopPropagation();
     
-    try {
-      setIsAddingToWishlist(true);
-      const response = await axios.post(`/wishlist/${productId}`);
-      
-      if (response.data?.success) {
-        toast.success("Added to wishlist!");
-      } else {
-        toast.error(response.data?.message || "Failed to add to wishlist");
-      }
-    } catch (error) {
-      console.error("Wishlist error:", error);
-      if (error.response?.status === 401) {
-        toast.error("Please login to add items to wishlist");
-        // Save current page URL for redirect after login
-        if (typeof window !== 'undefined') {
-          localStorage.setItem("redirectAfterLogin", window.location.pathname + window.location.search);
-        }
-        router.push('/login');
-      } else {
-        toast.error(error.response?.data?.message || "Failed to add to wishlist");
-      }
-    } finally {
-      setIsAddingToWishlist(false);
+    const product = {
+      _id: _id || productId,
+      name,
+      price,
+      imageLinks: { image1: images },
+      watchDetails: { watchType: { en: classic } },
+      classic,
+      dialColor
+    };
+
+    if (isInWishlist(_id || productId)) {
+      removeFromWishlist(_id || productId);
+    } else {
+      addToWishlist(product);
     }
   };
 
   const handleProductClick = () => {
-    router.push(`/products-details?productId=${productId}`);
+    router.push(`/products-details?productId=${_id || productId}`);
   };
-// 
 
   return (
     <div
@@ -85,12 +79,10 @@ const Card = ({
     >
       <div className="self-stretch relative h-[280px] mq750:h-[200px] mq450:h-[140px] overflow-hidden shrink-0">
         <div className="w-full h-full relative">
-          {/* Skeleton loader while image is loading */}
           {!imageLoaded && !imageError && (
             <div className="absolute inset-0 bg-gray-200 animate-pulse"></div>
           )}
           
-          {/* Main product image */}
           <Image
             className={`absolute h-full w-full top-0 right-0 bottom-0 left-0 max-w-full overflow-hidden max-h-full object-contain bg-white transition-opacity duration-300 ${
               imageLoaded ? 'opacity-100' : 'opacity-0'
@@ -110,7 +102,6 @@ const Card = ({
           />
         </div>
         
-        {/* Rating badge - only show when image is loaded */}
         {imageLoaded && (
           <div className="absolute top-[16px] right-[16px] rounded-full bg-gray-100 flex flex-row items-center justify-center py-1 px-3.5 text-white mq450:py-0.5 mq450:px-2 mq450:gap-[1rem]">
             <Image
@@ -126,7 +117,6 @@ const Card = ({
         )}
       </div>
       
-      {/* Add this div for the 1rem white space */}
       <div className="w-full h-4 bg-white"></div>
       
       <div className="self-stretch flex h-[130px] mq750:h-[110px] mq450:h-[100px] flex-col items-start justify-start p-4 mq450:p-2 gap-1 text-left">
@@ -155,14 +145,15 @@ const Card = ({
           </button>
           <button
             onClick={handleWishlist}
-            className="bg-gray-200 text-black p-3 mq450:p-1.5 rounded-full hover:bg-gray-200 transition-colors h-10 w-10 mq450:h-6 mq450:w-6 z-10 flex items-center justify-center cursor-pointer"
-            aria-label="Add to Wishlist"
-            disabled={isAddingToWishlist}
+            className={`p-3 mq450:p-1.5 rounded-full hover:bg-gray-200 transition-colors h-10 w-10 mq450:h-6 mq450:w-6 z-10 flex items-center justify-center cursor-pointer ${
+              isInWishlist(_id || productId) ? 'text-red-500' : 'text-black bg-gray-200'
+            }`}
+            aria-label={isInWishlist(_id || productId) ? "Remove from Wishlist" : "Add to Wishlist"}
           >
             <svg
               xmlns="http://www.w3.org/2000/svg"
               className="h-5 w-5 mq450:h-4 mq450:w-4"
-              fill="none"
+              fill={isInWishlist(_id || productId) ? "currentColor" : "none"}
               viewBox="0 0 24 24"
               stroke="currentColor"
             >
@@ -190,7 +181,8 @@ Card.propTypes = {
   price: PropTypes.number.isRequired,
   originalPrice: PropTypes.number,
   dialColor: PropTypes.string,
-  productId: PropTypes.string.isRequired,
+  productId: PropTypes.string,
+  _id: PropTypes.string,
 };
 
 export default Card;

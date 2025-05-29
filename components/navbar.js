@@ -181,16 +181,17 @@ const Navbar = ({
   }, [router]);
 
   const handlewishlistClick = useCallback(() => {
-    const token = localStorage.getItem('token'); // Get token inside the callback
-    if (token) {
+    if (user) {
       router.push("/profile/wishlist");
       return;
     } else {
       // Save current page URL for redirect after login
-      localStorage.setItem("redirectAfterLogin", window.location.pathname + window.location.search);
-      router.push("/login");
+      // if (typeof window !== 'undefined') {
+      //   localStorage.setItem("redirectAfterLogin", window.location.pathname + window.location.search);
+      // }
+      router.push("/profile/wishlist");
     }
-  }, [router]); // Remove token from dependency array since we're getting it fresh each time
+  }, [router, user]);
 
   const handleProfileClick = useCallback(() => {
     setShowAccountDropdown(false);

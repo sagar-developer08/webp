@@ -10,6 +10,7 @@ import { useCart } from "../../context/CartContext";
 import { useUser } from "../../context/UserContext";
 import Navbar from "../../components/navbar";
 import Footer from "../../components/footer";
+import Cookies from "js-cookie";
 
 const Login = () => {
   const router = useRouter();
@@ -46,6 +47,7 @@ const Login = () => {
       await checkAuthAndFetchCart();
       toast.success("Login successful!");
 
+      // Handle pending cart item
       const pendingCartItem = localStorage.getItem("pendingCartItem");
       const redirectUrl = localStorage.getItem("redirectAfterLogin");
 
@@ -54,7 +56,6 @@ const Login = () => {
         const { productId, quantity = 1, name } = product;
         await checkAuthAndFetchCart();
 
-        // Get the current country/currency for the cart API
         const selectedCountry = localStorage.getItem('selectedCountry') || 'uae';
 
         await axiosInstance.post(`/cart`, {
@@ -65,6 +66,31 @@ const Login = () => {
         toast.success(`Added ${name} to cart`);
         await checkAuthAndFetchCart();
         localStorage.removeItem("pendingCartItem");
+      }
+
+      // Handle guest wishlist migration
+      let guestWishlist = [];
+      try {
+        guestWishlist = JSON.parse(localStorage.getItem("guestWishlist") || "[]");
+      } catch { guestWishlist = []; }
+      
+      if (guestWishlist.length > 0) {
+        const migrationResults = await Promise.allSettled(
+          guestWishlist.map(item =>
+            axiosInstance.post(`/wishlist/${item._id || item.productId}`).catch(() => null)
+          )
+        );
+
+        const successfulMigrations = migrationResults.filter(
+          result => result.status === "fulfilled"
+        ).length;
+
+        if (successfulMigrations > 0) {
+          toast.success(`Migrated ${successfulMigrations} item(s) from guest wishlist`);
+        }
+
+        localStorage.removeItem("guestWishlist");
+        Cookies.remove("guestWishlist");
       }
 
       if (redirectUrl) {

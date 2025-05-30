@@ -36,6 +36,7 @@ const Cart = () => {
   const [isSubmitting, setIsSubmitting] = useState(false);
   const [paymentMethod, setPaymentMethod] = useState("Strabl");
   const [couponCode, setCouponCode] = useState("");
+  const [isCouponInputVisible, setIsCouponInputVisible] = useState(false);
   const [discount, setDiscount] = useState(0);
   const [couponDetails, setCouponDetails] = useState(null);
   const [filteredCart, setFilteredCart] = useState([]);
@@ -69,13 +70,6 @@ const Cart = () => {
       window.removeEventListener('countryChange', handleCountryChange);
     };
   }, [updateFilteredCart]);
-
-  useEffect(() => {
-    if (!user && !userLoading) {
-      localStorage.setItem("redirectAfterLogin", "/cart");
-      router.push("/login");
-    }
-  }, [user, userLoading, router]);
 
   useEffect(() => {
     if (!orderProcessing) {
@@ -172,6 +166,15 @@ const Cart = () => {
     e.preventDefault();
     setIsSubmitting(true);
     try {
+      // Require login only when placing an order
+      if (!user) {
+        toast.error("Please login to place an order");
+        localStorage.setItem("redirectAfterLogin", "/cart");
+        router.push("/login");
+        setIsSubmitting(false);
+        return;
+      }
+
       const currentCurrency = getCurrency();
 
       const orderItems = filteredCart.map((item) => ({
@@ -269,6 +272,8 @@ const Cart = () => {
           paymentMethod={paymentMethod}
           setPaymentMethod={setPaymentMethod}
           handleContinueShopping={handleContinueShopping}
+          isCouponInputVisible={isCouponInputVisible}
+          setIsCouponInputVisible={setIsCouponInputVisible}
         />
       </section>
       <Footer

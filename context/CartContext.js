@@ -5,6 +5,7 @@ import axios from 'axios';
 import { toast } from 'react-hot-toast';
 import { useRouter } from 'next/navigation';
 import { useCountry } from './CountryContext';
+import Cookies from 'js-cookie';
 
 const CartContext = createContext();
 const API_URL = 'https://0vm9jauvgc.execute-api.us-east-1.amazonaws.com/stag';
@@ -160,8 +161,53 @@ function CartProvider({ children }) {
     return 'uae'; // Default to UAE if window is not available
   };
 
+  // Helper for guest cart
+  const getGuestCart = () => {
+    try {
+      return JSON.parse(localStorage.getItem("guestCart") || "[]");
+    } catch {
+      return [];
+    }
+  };
+  const setGuestCart = (items) => {
+    localStorage.setItem("guestCart", JSON.stringify(items));
+    Cookies.set("guestCart", JSON.stringify(items), { expires: 7 });
+    setCart(items);
+    setItemCount(items.reduce((sum, item) => sum + item.quantity, 0));
+    setCartTotal(items.reduce((sum, item) => sum + (item.price * item.quantity), 0));
+  };
+
+  // Helper to normalize country/currency codes to standard currency codes
+  const normalizeCurrency = (currencyOrCountry) => {
+    if (!currencyOrCountry) return 'AED';
+    const upper = currencyOrCountry.toUpperCase();
+    if (upper === 'KSA') return 'SAR';
+    if (upper === 'KUWAIT') return 'KWD';
+    if (upper === 'QATAR') return 'QAR';
+    if (upper === 'UAE') return 'AED';
+    if (upper === 'INDIA') return 'INR';
+    if (upper === 'USA') return 'USD';
+    if (upper === 'UK') return 'GBP';
+    if (['INR', 'AED', 'SAR', 'KWD', 'QAR', 'USD', 'GBP'].includes(upper)) return upper;
+    return 'AED';
+  };
+
   // Fetch and process cart data from server
   const fetchAndProcessCart = useCallback(async () => {
+    if (!isLoggedIn) {
+      // Guest: load from localStorage/cookies
+      const guestCart = getGuestCart();
+      // Normalize currency for each item
+      const normalizedCart = guestCart.map(item => ({
+        ...item,
+        currency: normalizeCurrency(item.currency),
+      }));
+      setCart(normalizedCart);
+      setItemCount(normalizedCart.reduce((sum, item) => sum + item.quantity, 0));
+      setCartTotal(normalizedCart.reduce((sum, item) => sum + (item.price * item.quantity), 0));
+      setLoading(false);
+      return;
+    }
     if (isRefreshing.current) return; // Prevent concurrent refreshes
     
     isRefreshing.current = true;
@@ -197,7 +243,7 @@ function CartProvider({ children }) {
       setLoading(false);
       isRefreshing.current = false;
     }
-  }, []);
+  }, [isLoggedIn]);
 
   // Check auth and fetch cart - exposed for manual refresh
   const checkAuthAndFetchCart = useCallback(async () => {
@@ -228,7 +274,7 @@ function CartProvider({ children }) {
     }
   }, [fetchAndProcessCart]);
 
-  // Modified useEffect to use the new function
+  // Modified useEffect to always load cart (guest or logged-in)
   useEffect(() => {
     // Only fetch cart if we're not on the order success page
     if (typeof window !== 'undefined' && !window.location.pathname.includes('/order-success')) {
@@ -239,18 +285,34 @@ function CartProvider({ children }) {
   // Add to cart
   const addToCart = async (product) => {
     if (!isLoggedIn) {
-      toast.error('Please login to add items to cart');
-      // Save current page URL for redirect after login
-      if (typeof window !== 'undefined') {
-        // Save product details for adding to cart after login
-        console.log('Saving product for later:', product);
-        localStorage.setItem("pendingCartItem", JSON.stringify(product));
-        // Make sure we're saving the full URL including any query parameters
-        const currentUrl = window.location.pathname + window.location.search;
-        console.log('Saving redirect URL:', currentUrl);
-        localStorage.setItem("redirectAfterLogin", currentUrl);
+      // Guest: add to localStorage/cookies
+      const guestCart = getGuestCart();
+      const existing = guestCart.find(item => item.productId === (product.productId || product._id));
+      if (existing) {
+        // Update quantity
+        const updated = guestCart.map(item =>
+          item.productId === (product.productId || product._id)
+            ? { ...item, quantity: (item.quantity || 1) + (product.quantity || 1) }
+            : item
+        );
+        setGuestCart(updated.map(item => ({
+          ...item,
+          currency: normalizeCurrency(item.currency),
+        })));
+        toast.success("Added to cart successfully!");
+      } else {
+        const cartItem = {
+          productId: product.productId || product._id,
+          name: product.name,
+          price: typeof product.price === "object" ? product.price : product.price,
+          images: product.images || [product.image] || [],
+          image: product.image || (product.images && product.images[0]) || "",
+          quantity: product.quantity || 1,
+          currency: normalizeCurrency(getCurrency()),
+        };
+        setGuestCart([...guestCart, cartItem]);
+        toast.success("Added to cart successfully!");
       }
-      router.push('/login');
       return;
     }
 
@@ -284,8 +346,11 @@ function CartProvider({ children }) {
   // Remove from cart
   const removeFromCart = async (itemId) => {
     if (!isLoggedIn) {
-      toast.error('Please login to manage your cart');
-      router.push('/login');
+      // Guest: remove from localStorage/cookies
+      const guestCart = getGuestCart();
+      const updated = guestCart.filter(item => item._id !== itemId && item.productId !== itemId);
+      setGuestCart(updated);
+      toast.success('Item removed from cart');
       return;
     }
 
@@ -310,8 +375,18 @@ function CartProvider({ children }) {
   // Update quantity
   const updateQuantity = async (itemId, newQuantity) => {
     if (!isLoggedIn) {
-      toast.error('Please login to manage your cart');
-      router.push('/login');
+      if (newQuantity < 1) {
+        toast.error('Quantity must be at least 1');
+        return;
+      }
+      const guestCart = getGuestCart();
+      const updated = guestCart.map(item =>
+        (item._id === itemId || item.productId === itemId)
+          ? { ...item, quantity: newQuantity }
+          : item
+      );
+      setGuestCart(updated);
+      toast.success('Quantity updated');
       return;
     }
 
@@ -351,8 +426,8 @@ function CartProvider({ children }) {
   // Clear cart
   const clearCart = async () => {
     if (!isLoggedIn) {
-      toast.error('Please login to manage your cart');
-      router.push('/login');
+      setGuestCart([]);
+      toast.success('Cart cleared successfully');
       return;
     }
 
@@ -446,27 +521,10 @@ function CartProvider({ children }) {
     }
   };
 
-  // Get cart items filtered by current currency - use cached calculations
+  // Get cart items filtered by current currency - works for both guest and logged-in
   const getCartItemsByCurrency = useCallback(() => {
-    const currentCurrency = getCurrency().toUpperCase();
-    
-    // Convert currency to country format used in API response
-    const currencyToCountry = {
-      'INR': 'INDIA',
-      'AED': 'UAE',
-      'SR': 'KSA',
-      'SAR': 'KSA',
-      'KD': 'KUWAIT',
-      'KWD': 'KUWAIT',
-      'QAR': 'QATAR',
-      'USD': 'USA',
-      'GBP': 'UK'
-    };
-    
-    const countryFilter = currencyToCountry[currentCurrency] || 'UAE';
-    
-    const filteredItems = cart.filter(item => item.currency === countryFilter);
-    return filteredItems;
+    const currentCurrency = normalizeCurrency(getCurrency());
+    return cart.filter(item => normalizeCurrency(item.currency) === currentCurrency);
   }, [cart, getCurrency]);
 
   // Get total price for current currency - use cached calculation 

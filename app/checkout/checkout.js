@@ -415,7 +415,7 @@ const Cart = () => {
                     phoneNumber: guestForm.phoneNumber,
                 },
             };
-            const res = await fetch("http://localhost:8080/api/guest/register", {
+            const res = await fetch("https://0vm9jauvgc.execute-api.us-east-1.amazonaws.com/stag/api/guest/register", {
                 method: "POST",
                 headers: { "Content-Type": "application/json" },
                 body: JSON.stringify(body),
@@ -482,7 +482,7 @@ const Cart = () => {
                 discountAmount: Number(discount) || 0,
             };
 
-            const res = await fetch("http://localhost:8080/api/guest/checkout", {
+            const res = await fetch("https://0vm9jauvgc.execute-api.us-east-1.amazonaws.com/stag/api/guest/checkout", {
                 method: "POST",
                 headers: {
                     "Content-Type": "application/json",

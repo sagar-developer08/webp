@@ -44,12 +44,14 @@ function ProductDetailsContent() {
   }, [searchParams]);
 
   const handleAddToCart = () => {
-    if (product) {
+    if (product && product.data && product.data.product) {
+      const productData = product.data.product;
       addToCart({
-        id: product.id,
-        name: product.name?.en || product.name || "",
-        price: product.price,
-        image: product.image,
+        productId: productData._id || productData.id,
+        name: productData.name?.en || productData.name || "",
+        price: productData.price,
+        images: productData.imageLinks ? Object.values(productData.imageLinks) : [productData.image],
+        image: productData.imageLinks?.image1 || productData.image,
         quantity: quantity
       });
       alert("Product added to cart!");
@@ -57,12 +59,14 @@ function ProductDetailsContent() {
   };
 
   const handleBuyNow = () => {
-    if (product) {
+    if (product && product.data && product.data.product) {
+      const productData = product.data.product;
       addToCart({
-        id: product.id,
-        name: product.name?.en || product.name || "",
-        price: product.price,
-        image: product.image,
+        productId: productData._id || productData.id,
+        name: productData.name?.en || productData.name || "",
+        price: productData.price,
+        images: productData.imageLinks ? Object.values(productData.imageLinks) : [productData.image],
+        image: productData.imageLinks?.image1 || productData.image,
         quantity: quantity
       });
       router.push("/cart");

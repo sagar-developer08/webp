@@ -10,13 +10,21 @@ const axiosInstance = axios.create({
   withCredentials: true,
 });
 
-// Add a request interceptor to add the token from localStorage
+// Add a request interceptor to add the token and session ID from localStorage
 axiosInstance.interceptors.request.use(
   (config) => {
     const token = localStorage.getItem('token');
+    const sessionId = localStorage.getItem('x-session-id');
+    
     if (token) {
       config.headers.Authorization = `Bearer ${token}`;
     }
+    
+    // Add session ID for guest users (when no token is present)
+    if (!token && sessionId) {
+      config.headers['x-session-id'] = sessionId;
+    }
+    
     return config;
   },
   (error) => {

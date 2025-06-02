@@ -1,5 +1,5 @@
 "use client";
-import { useState } from "react";
+import { useState, useEffect } from "react";
 import Image from "next/image";
 import PropTypes from "prop-types";
 import { useRouter } from "next/navigation";
@@ -28,6 +28,19 @@ const Card = ({
   const [showActions, setShowActions] = useState(false);
   const [imageLoaded, setImageLoaded] = useState(false);
   const [imageError, setImageError] = useState(false);
+  const [isMobile, setIsMobile] = useState(false);
+
+  // Check if device is mobile
+  useEffect(() => {
+    const checkMobile = () => {
+      setIsMobile(window.innerWidth <= 750);
+    };
+    
+    checkMobile();
+    window.addEventListener('resize', checkMobile);
+    
+    return () => window.removeEventListener('resize', checkMobile);
+  }, []);
 
   const handleAddToCart = (e) => {
     e.stopPropagation();
@@ -65,12 +78,17 @@ const Card = ({
     router.push(`/products-details?productId=${_id || productId}`);
   };
 
+  // For mobile, always show actions. For desktop, show on hover
+  const shouldShowActions = isMobile || showActions;
+
   return (
     <div
       onClick={handleProductClick}
-      className={`card-container w-full rounded-lg bg-gray-100 shadow-md overflow-hidden flex flex-col items-start justify-start text-center text-xs font-h5-24 relative cursor-pointer shadow-sm hover:shadow-md transition-shadow duration-300 ${className}`}
-      onMouseEnter={() => setShowActions(true)}
-      onMouseLeave={() => setShowActions(false)}
+      className={`card-container w-full rounded-lg bg-gray-100 shadow-md overflow-hidden flex flex-col items-start justify-start text-center text-xs font-h5-24 relative cursor-pointer shadow-sm hover:shadow-md transition-shadow duration-300 focus:outline-none ${className}`}
+      onMouseEnter={() => !isMobile && setShowActions(true)}
+      onMouseLeave={() => !isMobile && setShowActions(false)}
+      onTouchStart={() => isMobile && setShowActions(true)}
+      tabIndex={0}
       style={{ 
         minHeight: '18rem',
         aspectRatio: '320/480',
@@ -123,8 +141,8 @@ const Card = ({
         <div className="self-stretch relative leading-[150%] font-medium text-gray-500 text-sm">
           {classic}
         </div>
-        <div className="self-stretch relative text-base mq750:text-sm mq450:text-xs text-black leading-[150%] font-semibold cursor-pointer whitespace-nowrap overflow-hidden text-ellipsis hover:underline"
-          title={typeof name === "object" ? (name?.en && name.en.length > 200 ? name.en : undefined) : (name && name.length > 200 ? name : undefined)}
+        <div className="self-stretch relative text-base mq750:text-sm mq450:text-xs text-black leading-[150%] font-semibold cursor-pointer whitespace-nowrap overflow-hidden text-ellipsis hover:underline focus:text-black focus:no-underline"
+          title={name && name.length > 200 ? name : undefined}
         >
           {typeof name === "object"
             ? name?.en && name.en.length > 200
@@ -141,17 +159,19 @@ const Card = ({
           {price}
         </div>
       </div>
-      {showActions && (
+      
+      {/* Action buttons - always visible on mobile, hover on desktop */}
+      {shouldShowActions && (
         <div className="absolute inset-0 flex items-center justify-center gap-4 mq450:gap-1 mq450:flex-col">
           <button
             onClick={handleAddToCart}
-            className="bg-black text-white py-2 px-6 mq750:px-4 mq450:px-2 mq450:py-1 rounded-full font-medium transition-colors z-10 text-sm mq450:text-[10px] cursor-pointer"
+            className="bg-black text-white py-2 px-6 mq750:px-4 mq450:px-2 mq450:py-1 rounded-full font-medium transition-colors z-10 text-sm mq450:text-[10px] cursor-pointer focus:outline-none"
           >
             Add to Cart
           </button>
           <button
             onClick={handleWishlist}
-            className={`p-3 mq450:p-1.5 rounded-full hover:bg-gray-200 transition-colors h-10 w-10 mq450:h-6 mq450:w-6 z-10 flex items-center justify-center cursor-pointer ${
+            className={`p-3 mq450:p-1.5 rounded-full hover:bg-gray-200 transition-colors h-10 w-10 mq450:h-6 mq450:w-6 z-10 flex items-center justify-center cursor-pointer focus:outline-none ${
               isInWishlist(_id || productId) ? 'text-red-500' : 'text-black bg-gray-200'
             }`}
             aria-label={isInWishlist(_id || productId) ? "Remove from Wishlist" : "Add to Wishlist"}

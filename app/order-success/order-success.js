@@ -3,6 +3,7 @@ import { useEffect, useState } from "react";
 import { useRouter } from "next/navigation";
 import Image from "next/image";
 import { useCart } from "../../context/CartContext";
+import { useUser } from "../../context/UserContext";
 import Navbar from "../../components/navbar";
 import Footer from "../../components/footer";
 import AnimateOnScroll from "../../components/AnimateOnScroll";
@@ -10,16 +11,23 @@ import PageBanner from "../../components/page-banner";
 
 const OrderSuccess = () => {
   const router = useRouter();
-  const { clearCart } = useCart();
+  const { clearCart, clearGuestCartAfterCheckout } = useCart();
+  const { user } = useUser();
   const [cartCleared, setCartCleared] = useState(false);
   
   useEffect(() => {
     // Clear the cart only once when the order success page loads
     if (!cartCleared) {
-      clearCart();
+      if (user) {
+        // User is logged in, use regular clearCart
+        clearCart();
+      } else {
+        // Guest user, use specific guest cart clearing
+        clearGuestCartAfterCheckout();
+      }
       setCartCleared(true);
     }
-  }, [clearCart, cartCleared]);
+  }, [clearCart, clearGuestCartAfterCheckout, cartCleared, user]);
   
   const handleContinueShopping = () => {
     router.push("/shop");

@@ -22,6 +22,7 @@ const Cart = () => {
         updateQuantity,
         cartTotal,
         clearCart,
+        clearGuestCartAfterCheckout,
         createOrder,
         loading,
         orderProcessing,
@@ -228,7 +229,7 @@ const Cart = () => {
                 };
             }
 
-            const response = await axiosInstance.post("/orders", orderPayload);
+            const response = await axiosInstance.post("/orders", orderPayload,);
             const cartId = response.data?.strablCheckout?.data?.data?.cartId;
 
             if (cartId) {
@@ -508,7 +509,8 @@ const Cart = () => {
                     toast.success("Order placed successfully! Redirecting to payment...");
                     const strablCheckoutUrl = `https://sandbox.checkout.strabl.io/?token=${cartId}`;
                     window.open(strablCheckoutUrl, "_blank");
-                    await clearCart();
+                    // Clear guest cart completely after successful order
+                    clearGuestCartAfterCheckout();
                     setDiscount(0);
                     setCouponDetails(null);
                     setCouponCode("");

@@ -51,11 +51,40 @@ html {
   min-height: 280px; /* Ensure consistent height */
 }
 
+/* Remove default focus styles that cause blue coloring */
+.card-container:focus,
+.card-container:focus-visible {
+  outline: none !important;
+  box-shadow: none !important;
+}
+
+.card-container * {
+  color: inherit !important;
+}
+
+.card-container:focus *,
+.card-container:focus-visible * {
+  color: inherit !important;
+}
+
 /* Mobile-specific optimizations */
 @media (max-width: 750px) {
   .card-container {
     /* min-height: 210px; */
     /* max-width: 180px; */
+  }
+  
+  /* Remove blue tap highlight on mobile */
+  .card-container button {
+    -webkit-tap-highlight-color: transparent;
+    outline: none !important;
+  }
+  
+  /* Ensure buttons work on touch devices */
+  .card-container button:focus,
+  .card-container button:active {
+    outline: none !important;
+    box-shadow: none !important;
   }
 }
 

@@ -12,6 +12,7 @@ import PageBanner from "../../components/page-banner";
 import { toast } from "react-hot-toast";
 import axiosInstance from "../../services/axios";
 import Main1 from "../../components/main1";
+import { load } from "@cashfreepayments/cashfree-js";
 
 const Cart = () => {
   const router = useRouter();
@@ -246,12 +247,58 @@ const Cart = () => {
     }
   };
 
+  // Cashfree payment handler for logged-in users
+  const handleCashfreePay = async () => {
+    setIsSubmitting(true);
+    try {
+      const order_id = `order_${Date.now()}`;
+      const customer_id = `cust_${Date.now()}`;
+      const order_amount = Number(totals.total);
+
+      const requestBody = {
+        order_id,
+        order_amount,
+        // order_currency,
+        customer_details: {
+          customer_id,
+          customer_email: user?.email,
+          customer_phone: user?.phoneNumber || "8689912326"
+        }
+      };
+      const response = await fetch("http://localhost:8080/api/cashfree/create-order", {
+        method: "POST",
+        headers: {
+          'Content-Type': 'application/json'
+        },
+        body: JSON.stringify(requestBody)
+      });
+      const data = await response.json();
+      if (data.success && data.data?.payment_session_id) {
+        toast.success("Cashfree order created!");
+        const cashfree = await load({ mode: "sandbox" });
+        cashfree.checkout({
+          paymentSessionId: data.data.payment_session_id,
+          redirectTarget: "_blank"
+        });
+      } else {
+        toast.error(data.message || "Cashfree payment failed");
+      }
+    } catch (err) {
+      toast.error("Cashfree payment failed");
+      console.error("Payment error:", err);
+    } finally {
+      setIsSubmitting(false);
+    }
+  };
+
+  // Only show Cashfree for India
+  const isCashfreeAvailable = (selectedCountry && selectedCountry.toLowerCase() === "india");
+
   return (
     <div className="w-full relative bg-[#fff] overflow-hidden flex flex-col items-center justify-center min-h-screen leading-[normal] tracking-[normal]">
       <div className="flex-1 w-full flex flex-col items-center justify-center">
         <PageBanner title="Cart" breadcrumb="Home > Cart" />
       </div>
-
 
       <section className="self-stretch overflow-hidden flex flex-col items-center justify-center py-0 px-0 z-[10] text-center text-29xl text-[#fff] font-h5-24 mq1050:gap-[30px] mq450:px-4 max-w-[1360px] mx-auto w-full">
         <Main1
@@ -274,6 +321,8 @@ const Cart = () => {
           handleContinueShopping={handleContinueShopping}
           isCouponInputVisible={isCouponInputVisible}
           setIsCouponInputVisible={setIsCouponInputVisible}
+          handleCashfreePay={handleCashfreePay}
+          isCashfreeAvailable={isCashfreeAvailable}
         />
       </section>
       <Footer

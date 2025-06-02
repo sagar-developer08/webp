@@ -180,13 +180,13 @@ const Cart = () => {
 
       const orderItems = filteredCart.map((item) => ({
         product: item.productId,
-        name: item.name,
-        image: item.image
-          ? item.image.startsWith("http")
-            ? item.image
-            : item.image.startsWith("/")
-              ? item.image
-              : `/${item.image}`
+        name: item.name?.en || item.name || "",
+        image: item.images
+          ? item.images.startsWith("http")
+            ? item.images
+            : item.images.startsWith("/")
+              ? item.images
+              : `/${item.images}`
           : "/no-image.webp",
         price: item.price,
         quantity: item.quantity,

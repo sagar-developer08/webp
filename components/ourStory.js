@@ -36,10 +36,10 @@ const Description = ({
         className="flex-1 flex flex-col items-start justify-start gap-6 min-w-[520px] mq750:min-w-full mq1125:order-2"
         style={textStyle}
       >
-        <h1 className="m-0 self-stretch relative text-black text-[44px] leading-[120%] font-bold font-[inherit] mq750:text-[34px] mq750:leading-[40px] mq450:text-[40px] mq450:leading-[120%]">
+        <h1 className="m-0 self-stretch relative text-black text-[44px] mq450:text-center leading-[120%] font-bold font-[inherit] mq750:text-[34px] mq750:leading-[40px] mq450:text-[24px] mq450:leading-[120%]">
           {country?.our_story_title || "Description"}
         </h1>
-        <div className="self-stretch relative text-black text-base leading-[150%] font-medium mq450:text-[16px]">
+        <div className="self-stretch relative text-black mq450:text-center text-base leading-[150%] font-medium mq450:text-[16px]">
           {country?.our_story}
         </div>
       </AnimateOnScroll>

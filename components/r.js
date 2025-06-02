@@ -25,14 +25,16 @@ const R = ({ className = "", product, relatedProducts, selectedCountry }) => {
     }
   }, [product]);
 
+  // console.log("Product details:", product?.imageLinks?.image1);
+
   const handleAddToCart = () => {
     if (product) {
       // Cart item to be added
       const cartItem = {
         productId: product._id || product.id,
-        name: product.name,
+        name: product.name.en || product.name || "",
         price: product.price,
-        images: product.images || [product.image],
+        images: product?.imageLinks?.image1 || [product?.imageLinks?.image1],
         quantity: quantity,
       };
 
@@ -52,7 +54,7 @@ const R = ({ className = "", product, relatedProducts, selectedCountry }) => {
             "pendingCartItem",
             JSON.stringify({
               productId: product._id || product.id,
-              name: product.name,
+              name: product?.name?.en || product.name,
               price: product.price,
               images: product.images || [product.image],
               quantity: quantity,

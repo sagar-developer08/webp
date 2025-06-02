@@ -47,7 +47,7 @@ function ProductDetailsContent() {
     if (product) {
       addToCart({
         id: product.id,
-        name: product.name,
+        name: product.name?.en || product.name || "",
         price: product.price,
         image: product.image,
         quantity: quantity
@@ -60,7 +60,7 @@ function ProductDetailsContent() {
     if (product) {
       addToCart({
         id: product.id,
-        name: product.name,
+        name: product.name?.en || product.name || "",
         price: product.price,
         image: product.image,
         quantity: quantity

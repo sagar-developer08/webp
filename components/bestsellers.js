@@ -58,7 +58,7 @@ const Bestsellers = ({ className = "", country, selectedCountry }) => {
       className={`self-stretch overflow-hidden flex flex-col items-center justify-start py-[60px] px-[40px] gap-[60px] z-[2] text-left text-37xl text-black font-h5-24 mq1050:gap-[30px] mq1050:pt-[39px] mq1050:pb-[39px] mq1050:box-border mq450:px-[24px] mq450:gap-[24px] mq450:py-[40px] ${className}`}
     >
       <div className="w-[1360px] flex flex-row items-start justify-between gap-[60px] mq450:gap-[30px] max-w-full mq750:flex-col mq450:item-center mq450:justify-center">
-        <h2 className="m-0 relative text-[48px] leading-[120%] font-semibold font-[inherit] mq750:text-[34px] mq750:leading-[40px] mq1050:text-[45px] mq1050:leading-[54px] mq450:text-[40px] mq450:leading-[120%]">
+        <h2 className="m-0 relative text-[48px] leading-[120%] font-semibold font-[inherit] mq450:text-center mq750:text-[34px] mq750:leading-[40px] mq1050:text-[45px] mq1050:leading-[54px] mq450:text-[24px] mq450:leading-[120%]">
           {country?.best_Seller_title && (
             <>
               {country.best_Seller_title.split(' ').slice(0, 5).join(' ')}
@@ -67,7 +67,7 @@ const Bestsellers = ({ className = "", country, selectedCountry }) => {
             </>
           )}
         </h2>
-        <div className="flex-1 relative text-base leading-[150%] font-medium text-black mq750:w-full">
+        <div className="flex-1 relative text-base mq450:text-center leading-[150%] font-medium text-black mq750:w-full">
           {country?.best_Seller}
         </div>
       </div>

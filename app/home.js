@@ -153,7 +153,7 @@ const Home = () => {
           <h1 className="m-0 mt-0 mb-0 text-[56px] md:text-6xl lg:text-7xl leading-[120%] font-semibold font-[inherit] text-center 
                    mq750:text-4xl mq750:leading-[1.15]
                    mq1050:text-5xl mq1050:leading-[1.15]
-                   mq450:text-[48px] mq450:leading-[1.15] mq450:px-[24px] mq450:text-left mq450:fontweight-600"
+                   mq450:text-[30px] mq450:leading-[1.15] mq450:px-[24px] mq450:text-center mq450:fontweight-600"
             style={{ minHeight: '68px' }}>
             {countryData?.title || "Buy Stylish Torando Watches for Men"}
           </h1>
@@ -165,7 +165,7 @@ const Home = () => {
       </section>
       <section className="self-stretch overflow-hidden flex flex-col items-center justify-start py-[60px] mq750:py-5 mq450:py-5 px-[40px] gap-12 z-[6] text-left text-29xl text-[#000] font-h5-24 mq1050:gap-8 mq1050:py-5 mq1050:box-border mq450:px-[24px] mq450:gap-[24px] mq450:py-[40px]">
         <div className="w-[1360px] max-w-full flex flex-row items-center justify-between gap-12 mq450:gap-6">
-          <h2 className="m-0 relative text-[48px] leading-[120%] font-bold font-[inherit] mq750:text-[34px] mq750:leading-[40px] mq1050:text-[45px] mq1050:leading-[54px] mq450:text-[40px] mq450:leading-[120%]">
+          <h2 className="m-0 relative text-[48px] leading-[120%] font-bold font-[inherit] mq450:text-center mq750:text-[34px] mq750:leading-[40px] mq1050:text-[45px] mq1050:leading-[54px] mq450:text-[24px] mq450:leading-[120%]">
             {countryData?.new_Seller_title}
           </h2>
           <div className="flex flex-row items-start justify-center gap-4 mq450:gap-2 mq450:hidden">
@@ -276,7 +276,7 @@ const Home = () => {
                 <div className="self-stretch relative leading-[150%] font-medium">
                   Limited Offer
                 </div>
-                <b className="self-stretch relative text-[48px] leading-[120%] mq450:text-[40px] text-[#fff] mq750:text-[34px] mq750:leading-[40px] mq1050:text-[45px] mq1050:leading-[120%] mq450:leading-[120%]">
+                <b className="self-stretch relative text-[48px] leading-[120%] mq450:text-[24px] text-[#fff] mq750:text-[34px] mq750:leading-[40px] mq1050:text-[45px] mq1050:leading-[120%] mq450:leading-[120%]">
                   Aurora Eon Celestial
                 </b>
                 <div className="self-stretch relative leading-[150%] font-medium mq450:text-[16px] mq450:leading-[150%] mq450:pb-[30px]">
@@ -295,7 +295,7 @@ const Home = () => {
                 <div className="self-stretch relative leading-[150%] font-medium">
                   Recommended
                 </div>
-                <h1 className="m-0 self-stretch relative text-[48px] mq450:text-[40px] leading-[120%] font-bold font-[inherit] text-[#fff] mq750:text-[34px] mq750:leading-[40px] mq1050:text-[45px] mq1050:leading-[120%] mq450:leading-[120%]">
+                <h1 className="m-0 self-stretch relative text-[48px] mq450:text-[24px] leading-[120%] font-bold font-[inherit] text-[#fff] mq750:text-[34px] mq750:leading-[40px] mq1050:text-[45px] mq1050:leading-[120%] mq450:leading-[120%]">
                   Personalized Watches
                 </h1>
                 <div className="self-stretch relative leading-[150%] font-medium">
@@ -327,7 +327,7 @@ const Home = () => {
           <div className="absolute inset-0 bg-black bg-opacity-50 rounded-3xl"></div>
 
           <div className="flex-1 flex flex-col items-center justify-start gap-6 relative z-[1]">
-            <h1 className="m-0 w-[1000px] relative text-[48px] leading-[1.15] font-bold font-[inherit] flex items-center justify-center mq750:text-2xl mq750:leading-[1.15] mq1050:text-3xl mq1050:leading-[1.15] mq450:text-[40px] mq450:leading-[120%] mq450:w-full max-w-full">
+            <h1 className="m-0 w-[1000px] relative text-[48px] mq450:text-center leading-[1.15] font-bold font-[inherit] flex items-center justify-center mq750:text-2xl mq750:leading-[1.15] mq1050:text-3xl mq1050:leading-[1.15] mq450:text-[24px] mq450:leading-[120%] mq450:w-full max-w-full">
               Send a Gift to a Friend
             </h1>
             <div className="w-[1000px] relative text-base leading-[150%] font-medium text-[rgba(255,255,255,0.8)] flex items-center justify-center mq450:w-[332px] mq450:text-[16px] mq450:leading-[150%]">

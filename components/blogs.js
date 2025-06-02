@@ -77,7 +77,7 @@ const Blogs = ({
     >
       <div className="w-[1360px] max-w-full flex flex-row items-center justify-between">
         <h2
-          className="m-0 relative text-[48px] leading-[120%] font-bold font-[inherit] mq750:text-[34px] mq750:leading-[40px] mq1050:text-[45px] mq1050:leading-[54px] mq450:text-[40px] mq450:leading-[120%]"
+          className="m-0 relative text-[48px] leading-[120%] mq450:text-center font-bold font-[inherit] mq750:text-[34px] mq750:leading-[40px] mq1050:text-[45px] mq1050:leading-[54px] mq450:text-[24px] mq450:leading-[120%]"
         >
           {heading?.blog_title || "Related Blogs"}
         </h2>

@@ -19,7 +19,7 @@ const AboutUs = () => {
     try {
       setLoading(true);
       setError(null);
-      const response = await axios.get(`https://0vm9jauvgc.execute-api.us-east-1.amazonaws.com/stag/api/about/`);
+      const response = await axios.get(`http://localhost:8080/api/about/`);
       console.log(response.data, "Products data from API");
       setHome(response.data);
     } catch (error) {

@@ -3,7 +3,7 @@
 import axios from 'axios';
 
 // Determine the base URL based on environment
-const API_URL = process.env.NEXT_PUBLIC_API_URL || 'https://0vm9jauvgc.execute-api.us-east-1.amazonaws.com/stag/api';
+const API_URL = process.env.NEXT_PUBLIC_API_URL || 'http://localhost:8080/api';
 
 const axiosInstance = axios.create({
   baseURL: API_URL,

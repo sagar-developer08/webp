@@ -196,15 +196,40 @@ function CartProvider({ children }) {
   const fetchAndProcessCart = useCallback(async () => {
     if (!isLoggedIn) {
       // Guest: load from localStorage/cookies
-      const guestCart = getGuestCart();
-      // Normalize currency for each item
-      const normalizedCart = guestCart.map(item => ({
-        ...item,
-        currency: normalizeCurrency(item.currency),
-      }));
-      setCart(normalizedCart);
-      setItemCount(normalizedCart.reduce((sum, item) => sum + item.quantity, 0));
-      setCartTotal(normalizedCart.reduce((sum, item) => sum + (item.price * item.quantity), 0));
+      try {
+        const guestCart = getGuestCart();
+        console.log('Loading guest cart from localStorage:', guestCart);
+        
+        // Normalize currency for each item
+        const normalizedCart = guestCart.map(item => ({
+          ...item,
+          currency: normalizeCurrency(item.currency),
+        }));
+        
+        setCart(normalizedCart);
+        setItemCount(normalizedCart.reduce((sum, item) => sum + (item.quantity || 1), 0));
+        
+        // Calculate total with proper price handling
+        const total = normalizedCart.reduce((sum, item) => {
+          let priceValue = item.price;
+          let priceNum = 0;
+          if (typeof priceValue === "string") {
+            const match = priceValue.match(/([\d,.]+)/);
+            priceNum = match ? parseFloat(match[1].replace(/,/g, "")) : 0;
+          } else if (typeof priceValue === "number") {
+            priceNum = priceValue;
+          }
+          return sum + (priceNum * (item.quantity || 1));
+        }, 0);
+        
+        setCartTotal(total);
+        console.log('Guest cart loaded successfully:', { items: normalizedCart.length, total });
+      } catch (error) {
+        console.error('Error loading guest cart:', error);
+        setCart([]);
+        setItemCount(0);
+        setCartTotal(0);
+      }
       setLoading(false);
       return;
     }
@@ -258,16 +283,14 @@ function CartProvider({ children }) {
         await fetchAndProcessCart();
       } else {
         setIsLoggedIn(false);
-        setCart([]);
-        setItemCount(0);
-        setCartTotal(0);
+        // For guest users, load cart from localStorage instead of clearing
+        await fetchAndProcessCart();
       }
     } catch (error) {
       console.error('Authentication error:', error);
       setIsLoggedIn(false);
-      setCart([]);
-      setItemCount(0);
-      setCartTotal(0);
+      // For guest users, load cart from localStorage instead of clearing
+      await fetchAndProcessCart();
     } finally {
       setLoading(false);
       isRefreshing.current = false;
@@ -281,6 +304,18 @@ function CartProvider({ children }) {
       checkAuthAndFetchCart();
     }
   }, [checkAuthAndFetchCart]);
+
+  // Additional effect to specifically handle guest cart loading
+  useEffect(() => {
+    // If we're not logged in and cart is empty, try loading guest cart from localStorage
+    if (!isLoggedIn && cart.length === 0 && !loading) {
+      const guestCart = getGuestCart();
+      if (guestCart.length > 0) {
+        console.log('Force loading guest cart:', guestCart);
+        fetchAndProcessCart();
+      }
+    }
+  }, [isLoggedIn, cart.length, loading, fetchAndProcessCart]);
 
   // Add to cart
   const addToCart = async (product) => {
@@ -426,7 +461,14 @@ function CartProvider({ children }) {
   // Clear cart
   const clearCart = async () => {
     if (!isLoggedIn) {
-      setGuestCart([]);
+      // Clear guest cart completely - both localStorage and state
+      if (typeof window !== 'undefined') {
+        localStorage.removeItem("guestCart");
+        Cookies.remove("guestCart");
+      }
+      setCart([]);
+      setItemCount(0);
+      setCartTotal(0);
       toast.success('Cart cleared successfully');
       return;
     }
@@ -540,6 +582,20 @@ function CartProvider({ children }) {
     }
   }, []);
 
+  // Clear guest cart after successful checkout
+  const clearGuestCartAfterCheckout = useCallback(() => {
+    if (typeof window !== 'undefined') {
+      localStorage.removeItem("guestCart");
+      Cookies.remove("guestCart");
+      // Also clear any related session data
+      localStorage.removeItem("x-session-id");
+    }
+    setCart([]);
+    setItemCount(0);
+    setCartTotal(0);
+    console.log('Guest cart cleared after successful checkout');
+  }, []);
+
   return (
     <CartContext.Provider value={{ 
       cart, 
@@ -552,6 +608,7 @@ function CartProvider({ children }) {
       removeFromCart, 
       updateQuantity, 
       clearCart,
+      clearGuestCartAfterCheckout,
       createOrder,
       checkAuthAndFetchCart,
       getCurrency,

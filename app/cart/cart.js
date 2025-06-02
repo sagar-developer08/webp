@@ -55,6 +55,16 @@ const Cart = () => {
     }
   }, [cart, getCartItemsByCurrency, getCurrentCurrencyTotal]);
 
+  // Force cart refresh when component mounts to ensure guest cart is loaded
+  useEffect(() => {
+    // Add a small delay to ensure CartContext has finished initializing
+    const timer = setTimeout(() => {
+      updateFilteredCart();
+    }, 100);
+    
+    return () => clearTimeout(timer);
+  }, [updateFilteredCart]);
+
   // Update filtered cart when cart or currency changes
   useEffect(() => {
     updateFilteredCart();
@@ -144,7 +154,7 @@ const Cart = () => {
           code: couponCode,
           cartTotal: filteredTotal,
           userId: user?._id,
-        },
+        }
       );
       if (response.data.success) {
         setDiscount(response.data.data.discountAmount);
@@ -180,13 +190,13 @@ const Cart = () => {
 
       const orderItems = filteredCart.map((item) => ({
         product: item.productId,
-        name: item.name,
-        image: item.image
-          ? item.image.startsWith("http")
-            ? item.image
-            : item.image.startsWith("/")
-              ? item.image
-              : `/${item.image}`
+        name: item.name?.en || item.name || "",
+        image: item.images
+          ? item.images.startsWith("http")
+            ? item.images
+            : item.images.startsWith("/")
+              ? item.images
+              : `/${item.images}`
           : "/no-image.webp",
         price: item.price,
         quantity: item.quantity,
@@ -265,7 +275,7 @@ const Cart = () => {
           customer_phone: user?.phoneNumber || "8689912326"
         }
       };
-      const response = await fetch("http://localhost:8080/api/cashfree/create-order", {
+      const response = await fetch("https://0vm9jauvgc.execute-api.us-east-1.amazonaws.com/stag/api/cashfree/create-order", {
         method: "POST",
         headers: {
           'Content-Type': 'application/json'

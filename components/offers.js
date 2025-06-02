@@ -239,7 +239,7 @@ const Offers = ({ className = "", country, selectedCountry }) => {
       <div className="w-[1360px] rounded-3xl flex flex-row items-center justify-center py-20 px-10 box-border gap-[60px] bg-[url('/limited@3x.webp')] bg-cover bg-no-repeat bg-[top] mq450:w-full mq450:gap-[20px] mq450:p-4 mq1050:pt-[52px] mq1050:pb-[52px] mq1050:box-border relative">
         {/* Left Content Section */}
         <div className="flex-1 flex flex-col items-start justify-start gap-6 mq450:items-center mq450:text-center mq450:gap-4">
-          <h1 className="m-0 w-[543px] relative text-[48px] leading-[120%] font-medium font-[inherit] flex items-center mq750:text-[29px] mq750:leading-[35px] mq1050:text-[38px] mq1050:leading-[46px] mq450:text-[40px] mq450:leading-[120%] mq450:w-auto">
+          <h1 className="m-0 w-[543px] relative text-[48px] leading-[120%] font-medium font-[inherit] flex items-center mq750:text-[29px] mq750:leading-[35px] mq1050:text-[38px] mq1050:leading-[46px] mq450:text-[24px] mq450:leading-[120%] mq450:w-auto">
             Exclusive Offers Just a Tick Away
           </h1>
           <div className="w-[543px] relative text-base leading-[150%] font-medium text-white/80 flex items-center mq450:w-auto">

@@ -62,6 +62,7 @@ const WishlistPage = () => {
         productId: product._id,
         name: product.name?.en || product.name,
         price: product.price,
+        images: product.imageLinks ? Object.values(product.imageLinks) : [product.imageLinks?.image1],
         image: product.imageLinks?.image1 ? product.imageLinks.image1.trim().replace(/`/g, '') : "/default-watch.jpg",
         quantity: 1
       });

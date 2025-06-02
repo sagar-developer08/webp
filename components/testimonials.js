@@ -82,7 +82,7 @@ const Testimonials = ({ Heading }) => {
         return (
             <section className="self-stretch overflow-hidden flex flex-col items-center justify-start pt-[60px] px-[40px] gap-[60px] z-[8] text-center font-h5-24 mq450:pt-[40px] mq450:px-[24px] mq450:gap-[24px]">
                 <div className="w-[1360px] max-w-full flex flex-row items-start justify-center">
-                    <h1 className="m-0 relative text-[#000] text-[48px] leading-[120%] mq450:text-left font-bold font-[inherit] mq750:text-[48px] mq750:leading-[58px] mq450:text-[40px] mq450:leading-[120%]">
+                    <h1 className="m-0 relative text-[#000] text-[48px] mq450:text-center leading-[120%] mq450:text-left font-bold font-[inherit] mq750:text-[48px] mq750:leading-[58px] mq450:text-[24px] mq450:leading-[120%]">
                         {Heading?.testimonials_title || "Testimonials"}
                     </h1>
                 </div>
@@ -96,7 +96,7 @@ const Testimonials = ({ Heading }) => {
     return (
         <section className="self-stretch overflow-hidden flex flex-col items-center justify-start pt-[60px] px-[40px] gap-[60px] z-[8] text-center font-h5-24 mq450:pt-[40px] mq450:px-[24px] mq450:gap-[24px]">
             <div className="w-[1360px] max-w-full flex flex-row items-start justify-center">
-                <h1 className="m-0 relative text-[#000] text-[48px] leading-[120%] mq450:text-left font-bold font-[inherit] mq750:text-[48px] mq750:leading-[58px] mq450:text-[40px] mq450:leading-[120%]">
+                <h1 className="m-0 relative text-[#000] mq450:text-center text-[48px] leading-[120%] mq450:text-left font-bold font-[inherit] mq750:text-[48px] mq750:leading-[58px] mq450:text-[24px] mq450:leading-[120%]">
                     {Heading?.testimonials_title || "Testimonials"}
                 </h1>
             </div>

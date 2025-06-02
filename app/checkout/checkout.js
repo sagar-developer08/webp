@@ -22,6 +22,7 @@ const Cart = () => {
         updateQuantity,
         cartTotal,
         clearCart,
+        clearGuestCartAfterCheckout,
         createOrder,
         loading,
         orderProcessing,
@@ -135,12 +136,15 @@ const Cart = () => {
             return;
         }
 
+        // Use guest cart subtotal if guestCart is active, else filteredTotal
+        const cartTotalForCoupon = guestCart.length > 0 ? guestTotals.subtotal : filteredTotal;
+
         try {
             const response = await axiosInstance.post(
                 "https://0vm9jauvgc.execute-api.us-east-1.amazonaws.com/stag/api/coupons/validate",
                 {
                     code: couponCode,
-                    cartTotal: filteredTotal,
+                    cartTotal: cartTotalForCoupon,
                     userId: user?._id,
                 },
             );
@@ -182,7 +186,7 @@ const Cart = () => {
 
             const orderItems = filteredCart.map((item) => ({
                 product: item.productId,
-                name: item.name,
+                name: item.name?.en || item.name || "",
                 image: item.image
                     ? item.image.startsWith("http")
                         ? item.image
@@ -225,7 +229,7 @@ const Cart = () => {
                 };
             }
 
-            const response = await axiosInstance.post("/orders", orderPayload);
+            const response = await axiosInstance.post("/orders", orderPayload,);
             const cartId = response.data?.strablCheckout?.data?.data?.cartId;
 
             if (cartId) {
@@ -465,7 +469,7 @@ const Cart = () => {
                 }
                 return {
                     product: item.productId,
-                    name: item.name,
+                    name: item.name?.en || item.name || "",
                     image: item.image
                         ? item.image.startsWith("http")
                             ? item.image
@@ -505,7 +509,8 @@ const Cart = () => {
                     toast.success("Order placed successfully! Redirecting to payment...");
                     const strablCheckoutUrl = `https://sandbox.checkout.strabl.io/?token=${cartId}`;
                     window.open(strablCheckoutUrl, "_blank");
-                    await clearCart();
+                    // Clear guest cart completely after successful order
+                    clearGuestCartAfterCheckout();
                     setDiscount(0);
                     setCouponDetails(null);
                     setCouponCode("");
@@ -545,7 +550,7 @@ const Cart = () => {
                 }
             };
             const response = await axios.post(
-                "http://localhost:8080/api/cashfree/create-order",
+                "https://0vm9jauvgc.execute-api.us-east-1.amazonaws.com/stag/api/cashfree/create-order",
                 requestBody,
                 {
                     headers: {
@@ -577,7 +582,7 @@ const Cart = () => {
     const isCashfreeAvailable = (selectedCountry && selectedCountry.toLowerCase() === "india");
 
     return (
-        <div className="w-full bg-white min-h-screen">
+        <div className="w-full relative bg-[#fff] overflow-hidden flex flex-col items-center justify-center min-h-screen leading-[normal] tracking-[normal]">
             <Navbar
                 logoSrc="/1623314804-bd8bf9c117ab50f7f842-1@2x.webp"
                 search="/search1.svg"
@@ -588,21 +593,31 @@ const Cart = () => {
             <div className="flex-1 w-full flex flex-col items-center justify-center">
                 <PageBanner title="Checkout" breadcrumb="Home > Checkout" />
             </div>
-            <div className="w-full flex flex-col items-center justify-center py-[60px]">
-                <div className="max-w-[1360px] w-full flex flex-col items-center justify-center px-2 py-8">
-                    <div className="flex flex-col lg:flex-row gap-12 items-start justify-center w-full">
-                        {/* Left Column - Delivery Address */}
-                        <div className="w-full max-w-[820px] bg-white rounded-lg relative">
+            <div className="w-full flex flex-col items-center justify-center py-[60px] mq450:py-[0px]">
+                <div className="max-w-[1360px] w-full flex flex-col items-center justify-center px-2 py-8 mq450:py-[0px]">
+                    <div
+                        className="
+                            flex flex-row lg:flex-row gap-12 items-start justify-center w-full
+                            mq450:flex-col-reverse mq450:items-center mq450:gap-6
+                        "
+                    >
+                        {/* --- Delivery Address (Form) --- */}
+                        <div
+                            className="
+                                w-full max-w-[820px] bg-white rounded-lg relative
+                                mq450:w-full mq450:max-w-[410px] mq450:px-[24px] mq450:py-[40px] mq450:rounded-[12px] mq450:mx-auto
+                            "
+                        >
                             {/* Login as Guest Box */}
-                            <div className="absolute top-0 left-0 w-full flex items-center">
+                            <div className="absolute top-0 left-0 w-full flex items-center mq450:py-[40px] mq450:px-[24px]">
                                 <div className="w-full flex items-center justify-start">
                                     <div className="border border-gray-300 bg-black text-white rounded-[100px] px-[40px] py-[16px] mt-[-32px] mb-6 ml-0">
                                         <span className="font-semibold">Logged in as Guest</span>
                                     </div>
                                 </div>
                             </div>
-                            <h2 className="text-2xl font-bold mb-6 border-b py-[20px] text-left mt-8">Delivery Address</h2>
-                            <div className="grid grid-cols-1 md:grid-cols-2 gap-10">
+                            <h2 className="text-2xl font-bold mb-6 border-b py-[20px] mq450:py-[24px] mq450:px-0 text-left mt-8">Delivery Address</h2>
+                            <div className="grid grid-cols-1 md:grid-cols-2 gap-10 mq450:gap-[24px] mq450:w-[300px]">
                                 <div>
                                     <label className="block text-black font-500 mb-1 text-[16px]">First Name</label>
                                     <input
@@ -693,7 +708,7 @@ const Cart = () => {
                                 </div>
                             </div>
                             {/* Submit Button - moved below the address fields */}
-                            <div className="w-full gap-6 flex items-center justify-start mt-8">
+                            <div className="w-full gap-6 flex items-center justify-start mt-8 mq450:mt-0 mq450:py-[40px] mq450:px-0 mq450:gap-[24px]">
                                 <button
                                     type="button"
                                     className="border border-black bg-white text-black rounded-[100px] px-[40px] py-[16px]"
@@ -717,8 +732,15 @@ const Cart = () => {
                             </div>
                         </div>
 
-                        {/* Right Column - Order Summary */}
-                        <div className="w-[500px] rounded-2xl border-[rgba(0,0,0,0.16)] border-solid border-[1px] box-border flex flex-col items-end justify-start py-[20px] px-6 gap-4 max-w-full text-base mq750:pt-5 mq750:pb-5 mq750:box-border mq750:min-w-full mq750:mx-4  mq450:w-[300px] mq450:ml-[-17px] mq450:rounded-[0px] mq450:border-0">
+                        {/* --- Order Summary --- */}
+                        <div
+                            className="
+                                w-[500px] rounded-2xl border-[rgba(0,0,0,0.16)] border-solid border-[1px] box-border flex flex-col items-end justify-start py-[20px] px-6 gap-4 max-w-full text-base
+                                mq750:pt-5 mq750:pb-5 mq750:box-border mq750:min-w-full mq750:mx-4
+                                mq450:w-full mq450:max-w-[410px] mq450:ml-0 mq450:rounded-[12px] mq450:border-none
+                                mq450:px-[24px] mq450:mx-auto
+                            "
+                        >
                             {/* Cart Items List */}
                             <div className="space-y-2 mb-0 w-full">
                                 {cartItems.map(item => (
@@ -869,7 +891,6 @@ const Cart = () => {
                                 </>
                             )}
                         </div>
-                        {/* ...existing code... */}
                     </div>
                 </div>
             </div>

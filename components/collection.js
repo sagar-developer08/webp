@@ -85,7 +85,7 @@ const Collection = ({ className = "", property1 = "Default", limit = 10, country
   return (
     <section className="self-stretch overflow-hidden flex flex-col items-center justify-start py-[60px] px-[40px] gap-[60px] z-[6] text-left text-29xl text-[#000] font-h5-24 mq1050:gap-5 mq1050:pt-[39px] mq1050:pb-[39px] mq1050:box-border mq450:px-4 mq450:py-[30px]">
       <div className="w-[1360px] max-w-full flex flex-row items-center justify-between gap-[60px] mq450:gap-[30px]">
-        <h2 className="m-0 relative text-[48px] leading-[120%] font-bold font-[inherit] mq750:text-[34px] mq750:leading-[40px] mq1050:text-[45px] mq1050:leading-[54px] mq450:text-[40px] mq450:leading-[120%]">
+        <h2 className="m-0 relative text-[48px] leading-[120%] font-bold font-[inherit] mq750:text-[34px] mq750:leading-[40px] mq1050:text-[45px] mq1050:leading-[54px] mq450:text-[24px] mq450:leading-[120%]">
           {country?.collection_title}
         </h2>
         <div className="flex flex-row items-start justify-center gap-4 mq450:gap-2 mq450:hidden">
@@ -162,10 +162,10 @@ const Collection = ({ className = "", property1 = "Default", limit = 10, country
                 {/* Content container aligned to bottom */}
                 <div className="bg-gradient-to-t from-black/80 to-transparent w-full">
                   <div className="flex flex-col items-start justify-end px-5 mq450:px-4 space-y-2 h-full pb-5 mq450:px-[24px]"> {/* Reduced space-y and added pb-5 */}
-                    <h3 className="text-white text-3xl font-600 leading-tight mq450:text-[32px] mb-1"> {/* Added mb-1 to reduce gap after heading */}
+                    <h3 className="text-white text-[32px] font-600 leading-tight mq450:text-center mq450:text-[24px] mb-1"> {/* Added mb-1 to reduce gap after heading */}
                       {category.name?.en || category.name}
                     </h3>
-                    <p className="text-white text-lg font-medium leading-snug mq450:text-base pb-[60px]"> {/* Added pb-5 for bottom padding */}
+                    <p className="text-white text-[16px] font-medium leading-snug mq450:text-base pb-[60px]"> {/* Added pb-5 for bottom padding */}
                       {((category.description?.en || category.description || "Porem ipsum dolor sit amet, consectetur adipiscing elit.")
                         .slice(0, 70) +
                         ((category.description?.en || category.description || "").length > 70 ? '...' : '')

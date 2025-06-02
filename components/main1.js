@@ -281,45 +281,48 @@ const Main1 = ({
 
           <div className="w-[500px] rounded-2xl border-[rgba(0,0,0,0.16)] border-solid border-[1px] box-border flex flex-col items-end justify-start py-[20px] px-6 gap-4 max-w-full text-base mq750:pt-5 mq750:pb-5 mq750:box-border mq750:min-w-full mq750:mx-4  mq450:w-[300px] mq450:ml-[-17px] mq450:rounded-[0px] mq450:border-0"
           >
-            <div
-              className="self-stretch rounded-[100px] overflow-x-auto flex flex-row items-center justify-start py-3.5 gap-3 cursor-pointer mq450:flex-col"
-              onClick={toggleCouponInput}
-            >
-              <div className="w-full flex items-center gap-4">
-                <form onSubmit={handleCouponSubmit} className="w-full flex gap-2">
-                  <input
-                    type="text"
-                    value={couponCode}
-                    onChange={(e) => setCouponCode(e.target.value)}
-                    placeholder="Enter coupon code"
-                    className="flex-1 border-[rgba(0,0,0,0.16)] border-solid border-[1px] px-[15px] py-3.5 rounded-[100px]"
-                    required
-                    disabled={discount > 0}
-                  />
-                  {discount > 0 ? (
-                    <button
-                      type="button"
-                      onClick={(e) => {
-                        e.preventDefault();
-                        setCouponCode('');
-                        setDiscount(0);
-                        setCouponDetails(null);
-                      }}
-                      className="px-[15px] py-3.5 rounded-[100px] bg-red-500 text-white font-medium hover:bg-red-600 transition-colors"
-                    >
-                      Remove
-                    </button>
-                  ) : (
-                    <button
-                      type="submit"
-                      className="px-[15px] py-3.5 rounded-[100px] bg-black text-white font-medium hover:bg-[#333] transition-colors"
-                    >
-                      Apply
-                    </button>
-                  )}
-                </form>
+            {/* Only show coupon input if logged in */}
+            {useCart().isLoggedIn && (
+              <div
+                className="self-stretch rounded-[100px] overflow-x-auto flex flex-row items-center justify-start py-3.5 gap-3 cursor-pointer mq450:flex-col"
+                onClick={toggleCouponInput}
+              >
+                <div className="w-full flex items-center gap-4">
+                  <form onSubmit={handleCouponSubmit} className="w-full flex gap-2">
+                    <input
+                      type="text"
+                      value={couponCode}
+                      onChange={(e) => setCouponCode(e.target.value)}
+                      placeholder="Enter coupon code"
+                      className="flex-1 border-[rgba(0,0,0,0.16)] border-solid border-[1px] px-[15px] py-3.5 rounded-[100px]"
+                      required
+                      disabled={discount > 0}
+                    />
+                    {discount > 0 ? (
+                      <button
+                        type="button"
+                        onClick={(e) => {
+                          e.preventDefault();
+                          setCouponCode('');
+                          setDiscount(0);
+                          setCouponDetails(null);
+                        }}
+                        className="px-[15px] py-3.5 rounded-[100px] bg-red-500 text-white font-medium hover:bg-red-600 transition-colors"
+                      >
+                        Remove
+                      </button>
+                    ) : (
+                      <button
+                        type="submit"
+                        className="px-[15px] py-3.5 rounded-[100px] bg-black text-white font-medium hover:bg-[#333] transition-colors"
+                      >
+                        Apply
+                      </button>
+                    )}
+                  </form>
+                </div>
               </div>
-            </div>
+            )}
 
             <div className="self-stretch flex flex-col items-start justify-start gap-6 text-xl">
               <div className="self-stretch relative text-[20px] leading-[150%] font-semibold">

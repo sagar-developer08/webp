@@ -188,4 +188,23 @@ video {
     will-change: auto;
     transform: none;
   }
-} 
+}
+
+html, body {
+  overflow-x: hidden !important;
+  max-width: 100vw;
+}
+
+.no-x-scroll {
+  overflow-x: hidden !important;
+}
+
+@media (max-width: 450px) {
+  .mq450\:max-w-\[410px\] {
+    max-width: 410px !important;
+  }
+  .mq450\:mx-auto {
+    margin-left: auto !important;
+    margin-right: auto !important;
+  }
+}

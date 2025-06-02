@@ -16,7 +16,7 @@ const Faqs = ({ className = "", country }) => {
     >
       <div className="flex-1 flex flex-col items-start justify-start gap-6 mq750:w-full">
         <div className="self-stretch flex flex-col items-start justify-start text-21xl">
-          <h2 className="m-0 relative text-[48px] leading-[120%] font-bold font-[inherit] mq750:text-5xl mq750:leading-[29px] mq1050:text-13xl mq1050:leading-[38px] mq450:text-[40px] mq450:leading-[100%]">
+          <h2 className="m-0 relative text-[48px] leading-[120%] mq450:text-center font-bold font-[inherit] mq750:text-5xl mq750:leading-[29px] mq1050:text-13xl mq1050:leading-[38px] mq450:text-[24px] mq450:leading-[100%]">
             {country?.faq_title || "Frequently Asked Questions"}
           </h2>
         </div>

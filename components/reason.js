@@ -26,9 +26,9 @@ const Reason = ({ className = "", country }) => {
           showCards ? "mt-[80px] mq450:mt-[40px]" : ""
         }`}
       >
-        <h2 className="m-0 relative text-[48px] leading-[120%] font-bold font-[inherit] mq750:text-[34px] mq750:leading-[40px] mq1050:text-[45px] mq1050:leading-[54px] mq450:text-[40px] mq450:leading-[120%]">
+        <h2 className="m-0 relative text-[48px] leading-[120%] font-bold font-[inherit] mq750:text-[34px] mq750:leading-[40px] mq1050:text-[45px] mq1050:leading-[54px] mq450:text-[24px] mq450:leading-[120%]">
           Reason to{" "}
-          <span className="hidden mq450:block">{"\n"}</span>
+          {/* <span className="hidden mq450:block">{"\n"}</span> */}
           Believe
         </h2>
         {!showCards && (

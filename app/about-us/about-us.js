@@ -100,10 +100,10 @@ const AboutUs = () => {
               <div className="w-[580px] relative leading-[150%] font-medium text-center hidden">
                 Limited Offer
               </div>
-              <h2 className="m-0 self-stretch relative text-[36px] leading-[140%] font-bold font-[inherit] text-[#fff] mq750:text-[24px] mq750:leading-[34px] mq450:text-[20px] mq450:leading-[28px]">
+              <h2 className="m-0 self-stretch relative text-[36px] mq450:text-center leading-[140%] font-bold font-[inherit] text-[#fff] mq750:text-[24px] mq750:leading-[34px] mq450:text-[20px] mq450:leading-[28px]">
                 Our Mission
               </h2>
-              <div className="self-stretch relative leading-[150%] font-medium text-white mq450:text-sm">
+              <div className="self-stretch relative leading-[150%] mq450:text-center font-medium text-white mq450:text-sm">
                 {countryData?.our_mission}
               </div>
             </div>
@@ -116,10 +116,10 @@ const AboutUs = () => {
               <div className="w-[580px] relative leading-[150%] font-medium text-center hidden">
                 Limited Offer
               </div>
-              <h2 className="m-0 self-stretch text-white relative text-[36px] leading-[140%] font-bold font-[inherit] text-[#fff] mq750:text-[24px] mq750:leading-[34px] mq450:text-[20px] mq450:leading-[28px]">
+              <h2 className="m-0 self-stretch text-white mq450:text-center relative text-[36px] leading-[140%] font-bold font-[inherit] text-[#fff] mq750:text-[24px] mq750:leading-[34px] mq450:text-[20px] mq450:leading-[28px]">
                 Our Vision
               </h2>
-              <div className="self-stretch text-white relative leading-[150%] font-medium mq450:text-sm">
+              <div className="self-stretch text-white mq450:text-center relative leading-[150%] font-medium mq450:text-sm">
                 {countryData?.our_vision}
               </div>
             </div>
@@ -136,10 +136,10 @@ const AboutUs = () => {
           src="/img-12@2x.webp"
         />
         <div className="flex-1 w-full flex flex-col items-start justify-start gap-6">
-          <h2 className="m-0 self-stretch relative text-black text-[36px] leading-[120%] font-bold font-[inherit] mq750:text-[34px] mq750:leading-[40px] mq450:text-[28px] mq450:leading-[34px]">
+          <h2 className="m-0 self-stretch relative text-black text-[36px] mq450:text-center leading-[120%] font-bold font-[inherit] mq750:text-[34px] mq750:leading-[40px] mq450:text-[24px] mq450:leading-[34px]">
             Sustainability
           </h2>
-          <div className="self-stretch relative text-black text-base leading-[150%] font-medium mq450:text-sm">
+          <div className="self-stretch relative text-black mq450:text-center text-base leading-[150%] font-medium mq450:text-sm">
             {countryData?.Sustainability}
           </div>
         </div>

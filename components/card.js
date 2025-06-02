@@ -33,12 +33,12 @@ const Card = ({
     e.stopPropagation();
     addToCart({
       productId: _id || productId,
-      name,
+      name: name?.en || name || "",
       price,
       images: [images],
       quantity: 1,
     });
-    toast.success(`${name} added to cart`);
+    toast.success(`${name?.en || name || ""} added to cart`);
   };
 
   const handleWishlist = (e) => {
@@ -46,7 +46,7 @@ const Card = ({
     
     const product = {
       _id: _id || productId,
-      name,
+      name: name?.en || name || "",
       price,
       imageLinks: { image1: images },
       watchDetails: { watchType: { en: classic } },
@@ -103,9 +103,9 @@ const Card = ({
         </div>
         
         {imageLoaded && (
-          <div className="absolute top-[16px] right-[16px] rounded-full bg-gray-100 flex flex-row items-center justify-center py-1 px-3.5 text-white mq450:py-0.5 mq450:px-2 mq450:gap-[1rem]">
+          <div className="absolute top-[16px] right-[16px] rounded-full bg-gray-100 flex flex-row items-center justify-center py-1 px-3.5 text-white mq450:py-0.5 mq450:px-1 mq450:top-[10px] mq450:right-[10px] mq450:gap-[2px]">
             <Image
-              className="h-3 w-3 relative overflow-hidden shrink-0 mq450:h-2 mq450:w-2"
+              className="h-4 w-4 relative overflow-hidden shrink-0 mq450:h-2 mq450:w-2"
               loading="lazy"
               width={12}
               height={12}
@@ -124,9 +124,15 @@ const Card = ({
           {classic}
         </div>
         <div className="self-stretch relative text-base mq750:text-sm mq450:text-xs text-black leading-[150%] font-semibold cursor-pointer whitespace-nowrap overflow-hidden text-ellipsis hover:underline"
-          title={name && name.length > 200 ? name : undefined}
+          title={typeof name === "object" ? (name?.en && name.en.length > 200 ? name.en : undefined) : (name && name.length > 200 ? name : undefined)}
         >
-          {name && name.length > 200 ? `${name.substring(0, 200)}...` : name}
+          {typeof name === "object"
+            ? name?.en && name.en.length > 200
+              ? `${name.en.substring(0, 200)}...`
+              : name.en
+            : name && name.length > 200
+              ? `${name.substring(0, 200)}...`
+              : name}
         </div>
         <div className="self-stretch relative text-sm mq750:text-sm mq450:text-xs text-gray-700 leading-[150%]">
           {dialColor}

@@ -701,16 +701,19 @@ const Cart = () => {
                                 >
                                     <span className="font-semibold">Back</span>
                                 </button>
-                                <button
-                                    type="button"
-                                    className={`border border-gray-300 bg-black text-white rounded-[100px] px-[40px] py-[16px] ${guestRegistering ? "opacity-70 cursor-not-allowed" : ""}`}
-                                    disabled={!isGuestFormValid || guestRegistering}
-                                    onClick={handleGuestRegister}
-                                >
-                                    <span className="font-semibold">
-                                        {guestRegistering ? "Submitting..." : "Submit"}
-                                    </span>
-                                </button>
+                                {/* Only show Submit button if guest is not registered */}
+                                {!guestRegistered && (
+                                    <button
+                                        type="button"
+                                        className={`border border-gray-300 bg-black text-white rounded-[100px] px-[40px] py-[16px] ${guestRegistering ? "opacity-70 cursor-not-allowed" : ""}`}
+                                        disabled={!isGuestFormValid || guestRegistering}
+                                        onClick={handleGuestRegister}
+                                    >
+                                        <span className="font-semibold">
+                                            {guestRegistering ? "Submitting..." : "Submit"}
+                                        </span>
+                                    </button>
+                                )}
                             </div>
                         </div>
 
@@ -845,20 +848,22 @@ const Cart = () => {
                             {/* Payment button only if guest is registered or user is logged in */}
                             {(user || guestRegistered) && (
                                 <>
-                                    <button
-                                        className="w-full mt-6 rounded-[100px] bg-black text-white py-4 font-semibold text-lg hover:bg-[#333] transition-colors"
-                                        onClick={user ? handlePlaceOrder : handleGuestCheckout}
-                                        disabled={isSubmitting && submittingButton !== "strabl"}
-                                    >
-                                        {(isSubmitting && submittingButton === "strabl") ? "Processing..." : "Proceed to Payment"}
-                                    </button>
-                                    {isCashfreeAvailable && (
+                                    {/* Show only Cashfree if country is India/IND, else show Strabl and Cashfree (if available) */}
+                                    {isCashfreeAvailable ? (
                                         <button
-                                            className="w-full mt-4 rounded-[100px] bg-blue-600 text-white py-4 font-semibold text-lg hover:bg-blue-700 transition-colors"
+                                            className={`self-stretch rounded-[100px] bg-[#fff] text-[#000] border-[1px] border-solid border-[#000] h-[52px] flex flex-row items-center justify-center py-[13px] px-6 box-border ${isSubmitting ? 'opacity-70 cursor-not-allowed' : 'hover:bg-[#000] hover:text-[#fff]  cursor-pointer'} transition-colors`}
                                             onClick={handleCashfreePay}
                                             disabled={isSubmitting && submittingButton !== "cashfree"}
                                         >
                                             {(isSubmitting && submittingButton === "cashfree") ? "Processing..." : "Pay with Cashfree"}
+                                        </button>
+                                    ) : (
+                                        <button
+                                            className="w-full mt-6 rounded-[100px] bg-black text-white py-4 font-semibold text-lg hover:bg-[#000] hover:text-[#fff] transition-colors"
+                                            onClick={user ? handlePlaceOrder : handleGuestCheckout}
+                                            disabled={isSubmitting && submittingButton !== "strabl"}
+                                        >
+                                            {(isSubmitting && submittingButton === "strabl") ? "Processing..." : "Proceed to Payment"}
                                         </button>
                                     )}
                                 </>

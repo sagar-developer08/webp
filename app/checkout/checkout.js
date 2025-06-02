@@ -12,6 +12,8 @@ import PageBanner from "../../components/page-banner";
 import { toast } from "react-hot-toast";
 import axiosInstance from "../../services/axios";
 import Main1 from "../../components/main1";
+import axios from "axios";
+import { load } from "@cashfreepayments/cashfree-js";
 
 const Cart = () => {
     const {
@@ -159,8 +161,12 @@ const Cart = () => {
         }
     };
 
+    // Track which payment button is submitting
+    const [submittingButton, setSubmittingButton] = useState(null); // "strabl" | "cashfree" | null
+
     const handlePlaceOrder = async (e) => {
         e.preventDefault();
+        setSubmittingButton("strabl");
         setIsSubmitting(true);
         try {
             // Require login only when placing an order
@@ -240,6 +246,7 @@ const Cart = () => {
             toast.error(error.response?.data?.message || "Failed to place order");
         } finally {
             setIsSubmitting(false);
+            setSubmittingButton(null);
         }
     };
 
@@ -517,6 +524,58 @@ const Cart = () => {
         }
     };
 
+    // Cashfree payment handler
+    const handleCashfreePay = async () => {
+        setSubmittingButton("cashfree");
+        setIsSubmitting(true);
+        try {
+            const order_id = `order_${Date.now()}`;
+            const customer_id = `cust_${Date.now()}`;
+            const order_amount = Number(guestTotals.total);
+            const order_currency = getDisplayCurrency(currency);
+
+            const requestBody = {
+                order_id,
+                order_amount,
+                // order_currency,
+                customer_details: {
+                    customer_id,
+                    customer_email: guestForm.email,
+                    customer_phone: guestForm.phoneNumber
+                }
+            };
+            const response = await axios.post(
+                "http://localhost:8080/api/cashfree/create-order",
+                requestBody,
+                {
+                    headers: {
+                        'Content-Type': 'application/json'
+                    }
+                }
+            );
+            if (response.data.success && response.data.data?.payment_session_id) {
+                toast.success("Cashfree order created!");
+                // Use Cashfree JS SDK to open the checkout page with the session id in a new tab
+                const cashfree = await load({ mode: "sandbox" });
+                cashfree.checkout({
+                    paymentSessionId: response.data.data.payment_session_id,
+                    redirectTarget: "_blank" // open in new tab
+                });
+            } else {
+                toast.error(response.data.message || "Cashfree payment failed");
+            }
+        } catch (err) {
+            toast.error(err.response?.data?.message || "Cashfree payment failed");
+            console.error("Payment error:", err);
+        } finally {
+            setIsSubmitting(false);
+            setSubmittingButton(null);
+        }
+    };
+
+    // Only show Cashfree for India
+    const isCashfreeAvailable = (selectedCountry && selectedCountry.toLowerCase() === "india");
+
     return (
         <div className="w-full bg-white min-h-screen">
             <Navbar
@@ -642,16 +701,19 @@ const Cart = () => {
                                 >
                                     <span className="font-semibold">Back</span>
                                 </button>
-                                <button
-                                    type="button"
-                                    className={`border border-gray-300 bg-black text-white rounded-[100px] px-[40px] py-[16px] ${guestRegistering ? "opacity-70 cursor-not-allowed" : ""}`}
-                                    disabled={!isGuestFormValid || guestRegistering}
-                                    onClick={handleGuestRegister}
-                                >
-                                    <span className="font-semibold">
-                                        {guestRegistering ? "Submitting..." : "Submit"}
-                                    </span>
-                                </button>
+                                {/* Only show Submit button if guest is not registered */}
+                                {!guestRegistered && (
+                                    <button
+                                        type="button"
+                                        className={`border border-gray-300 bg-black text-white rounded-[100px] px-[40px] py-[16px] ${guestRegistering ? "opacity-70 cursor-not-allowed" : ""}`}
+                                        disabled={!isGuestFormValid || guestRegistering}
+                                        onClick={handleGuestRegister}
+                                    >
+                                        <span className="font-semibold">
+                                            {guestRegistering ? "Submitting..." : "Submit"}
+                                        </span>
+                                    </button>
+                                )}
                             </div>
                         </div>
 
@@ -785,15 +847,29 @@ const Cart = () => {
 
                             {/* Payment button only if guest is registered or user is logged in */}
                             {(user || guestRegistered) && (
-                                <button
-                                    className="w-full mt-6 rounded-[100px] bg-black text-white py-4 font-semibold text-lg hover:bg-[#333] transition-colors"
-                                    onClick={user ? handlePlaceOrder : handleGuestCheckout}
-                                    disabled={isSubmitting}
-                                >
-                                    {isSubmitting ? "Processing..." : "Proceed to Payment"}
-                                </button>
+                                <>
+                                    {/* Show only Cashfree if country is India/IND, else show Strabl and Cashfree (if available) */}
+                                    {isCashfreeAvailable ? (
+                                        <button
+                                            className={`self-stretch rounded-[100px] bg-[#fff] text-[#000] border-[1px] border-solid border-[#000] h-[52px] flex flex-row items-center justify-center py-[13px] px-6 box-border ${isSubmitting ? 'opacity-70 cursor-not-allowed' : 'hover:bg-[#000] hover:text-[#fff]  cursor-pointer'} transition-colors`}
+                                            onClick={handleCashfreePay}
+                                            disabled={isSubmitting && submittingButton !== "cashfree"}
+                                        >
+                                            {(isSubmitting && submittingButton === "cashfree") ? "Processing..." : "Pay with Cashfree"}
+                                        </button>
+                                    ) : (
+                                        <button
+                                            className="w-full mt-6 rounded-[100px] bg-black text-white py-4 font-semibold text-lg hover:bg-[#000] hover:text-[#fff] transition-colors"
+                                            onClick={user ? handlePlaceOrder : handleGuestCheckout}
+                                            disabled={isSubmitting && submittingButton !== "strabl"}
+                                        >
+                                            {(isSubmitting && submittingButton === "strabl") ? "Processing..." : "Proceed to Payment"}
+                                        </button>
+                                    )}
+                                </>
                             )}
                         </div>
+                        {/* ...existing code... */}
                     </div>
                 </div>
             </div>

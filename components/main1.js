@@ -24,7 +24,9 @@ const Main1 = ({
   setCouponDetails,
   paymentMethod,
   setPaymentMethod,
-  handleContinueShopping
+  handleContinueShopping,
+  handleCashfreePay,
+  isCashfreeAvailable
 }) => {
   const [isCouponInputVisible, setIsCouponInputVisible] = useState(false);
   const { getCartItemsByCurrency, getCurrentCurrencyTotal, getCurrency, currency } = useCart();
@@ -363,13 +365,26 @@ const Main1 = ({
 
             {/* Show Place Order button only if logged in */}
             {useCart().isLoggedIn && (
-              <button
-                className={`self-stretch rounded-[100px] bg-[#000] h-[52px] flex flex-row items-center justify-center py-[13px] px-6 box-border text-[#fff] ${isSubmitting ? 'opacity-70 cursor-not-allowed' : 'hover:bg-[#333] cursor-pointer'} transition-colors`}
-                onClick={handlePlaceOrder}
-                disabled={isSubmitting || filteredCart.length === 0}
-              >
-                {isSubmitting ? "Processing..." : "Place Order"}
-              </button>
+              <>
+                {/* Show only Cashfree if country is India/IND, else show Strabl and Cashfree (if available) */}
+                {isCashfreeAvailable ? (
+                  <button
+                    className={`self-stretch rounded-[100px] bg-[#fff] text-[#000] border-[1px] border-solid border-[#000] h-[52px] flex flex-row items-center justify-center py-[13px] px-6 box-border ${isSubmitting ? 'opacity-70 cursor-not-allowed' : 'hover:bg-[#000] hover:text-[#fff]  cursor-pointer'} transition-colors`}
+                    onClick={handleCashfreePay}
+                    disabled={isSubmitting || filteredCart.length === 0}
+                  >
+                    {isSubmitting ? "Processing..." : "Pay with Cashfree"}
+                  </button>
+                ) : (
+                  <button
+                    className={`self-stretch rounded-[100px] bg-[#fff] text-[#000] border-[1px] border-solid border-[#000] h-[52px] flex flex-row items-center justify-center py-[13px] px-6 box-border ${isSubmitting ? 'opacity-70 cursor-not-allowed' : 'hover:bg-[#000] hover:text-[#fff]  cursor-pointer'} transition-colors`}
+                    onClick={handlePlaceOrder}
+                    disabled={isSubmitting || filteredCart.length === 0}
+                  >
+                    {isSubmitting ? "Processing..." : "Place Order"}
+                  </button>
+                )}
+              </>
             )}
             {!useCart().isLoggedIn && (
               <button
@@ -402,7 +417,9 @@ Main1.propTypes = {
   isSubmitting: PropTypes.bool.isRequired,
   paymentMethod: PropTypes.string.isRequired,
   setPaymentMethod: PropTypes.func.isRequired,
-  handleContinueShopping: PropTypes.func.isRequired
+  handleContinueShopping: PropTypes.func.isRequired,
+  handleCashfreePay: PropTypes.func,
+  isCashfreeAvailable: PropTypes.bool
 };
 
 export default Main1;

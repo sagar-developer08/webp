@@ -355,8 +355,8 @@ const ShopFilter = ({ onFilterChange, initialFilters, onReset, country = "india"
       {/* Scrollable Filter Sections */}
       <div className="px-3 text-black space-y-2 overflow-y-auto thin-scrollbar pb-3 flex-grow">
         {renderFilterSection("Collection", "collection", filterOptions.collections)}
-        {renderFilterSection("Movement", "movement", filterOptions.movements)}
-        {renderFilterSection("Display Type", "displayType", filterOptions.displayTypes)}
+        {/* {renderFilterSection("Movement", "movement", filterOptions.movements)} */}
+        {renderFilterSection("Movement", "displayType", filterOptions.displayTypes)}
         {renderFilterSection("Case Color", "caseColor", filterOptions.caseColors)}
         {/* {renderFilterSection("Case Material", "caseMaterial", filterOptions.caseMaterials)} */}
         {/* {renderFilterSection("Dial Color", "dialColor", filterOptions.dialColors)} */}

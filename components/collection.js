@@ -149,7 +149,7 @@ const Collection = ({ className = "", property1 = "Default", limit = 10, country
           {categories.map((category) => (
             <SwiperSlide key={category._id}>
               <div
-                className="max-w-[400px] h-[600px] flex flex-col rounded-3xl overflow-hidden flex-shrink-0 bg-no-repeat bg-black relative mq450:max-w-[350px] mq450:rounded-2xl mq450:h-[500px]"
+                className="max-w-[400px] h-[500px] flex flex-col rounded-3xl overflow-hidden flex-shrink-0 bg-no-repeat bg-black relative mq450:max-w-[350px] mq450:rounded-2xl mq450:h-[500px]"
                 onClick={() => handleProductClick(category.id || category._id || category.name)}
                 style={{
                   backgroundImage: `url("/9.webp")`,

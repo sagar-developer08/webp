@@ -102,7 +102,7 @@ const Footer = ({
       <div className="w-[1360px] max-w-full flex flex-row items-start justify-center gap-10 mq750:flex-col">
         <div className="flex-1 flex flex-row items-start justify-start gap-10 mq750:flex-col mq750:w-full">
           {/* Logo */}
-          <div className="overflow-hidden flex flex-col items-start justify-start mq750:mb-6">
+          {/* <div className="overflow-hidden flex flex-col items-start justify-start mq750:mb-6">
             <Image
               className="w-[136px] h-10 relative object-cover"
               loading="lazy"
@@ -111,7 +111,7 @@ const Footer = ({
               alt=""
               src={maskGroup}
             />
-          </div>
+          </div> */}
           {/* Feature Product */}
           <div className="flex-1 overflow-hidden flex flex-col items-start justify-start gap-4 mq750:w-full">
             {isMobile ? (

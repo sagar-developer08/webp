@@ -109,7 +109,7 @@ const BlogDetails = () => {
           ))}
           
           <h2 className="m-0 self-stretch relative text-4xl sm:text-6xl md:text-8xl lg:text-10xl leading-[140%] font-semibold font-inherit">
-            Conclusion:
+            {blog.content.conclusion_title || "Conclusion"}
           </h2>
           <div className="self-stretch relative leading-[150%] font-medium text-sm sm:text-base">
             {blog.content.conclusion}

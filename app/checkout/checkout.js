@@ -617,7 +617,7 @@ const Cart = () => {
                                 </div>
                             </div>
                             <h2 className="text-2xl font-bold mb-6 border-b py-[20px] mq450:py-[24px] mq450:px-0 text-left mt-8">Delivery Address</h2>
-                            <div className="grid grid-cols-1 md:grid-cols-2 gap-10 mq450:gap-[24px] mq450:w-[300px]">
+                            <div className="grid grid-cols-1 md:grid-cols-2 gap-10 mq450:gap-[24px] mq450:w-[300px] mq450:justify-center mq450:items-center">
                                 <div>
                                     <label className="block text-black font-500 mb-1 text-[16px]">First Name</label>
                                     <input

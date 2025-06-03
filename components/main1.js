@@ -261,7 +261,7 @@ const Main1 = ({
                               />
                             </button>
                           </div>
-                          <div className="flex flex-col items-start justify-end pt-0 px-0 pb-[9px] text-left text-[rgba(0,0,0,0.4)] font-h5-24 mq450:flex-1 mq450:items-end mq450:pb-0">
+                          <div className="flex flex-col items-start justify-end pt-0 px-4 pb-[9px] text-left text-[rgba(0,0,0,0.4)] font-h5-24 mq450:flex-1 mq450:items-end mq450:pb-0">
                             <button
                               // Remove by correct id: use _id if present, else productId
                               onClick={() => removeFromCart(item._id || item.productId)}

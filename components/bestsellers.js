@@ -53,6 +53,8 @@ const Bestsellers = ({ className = "", country, selectedCountry }) => {
     fetchProducts();
   }, []);
 
+  console.log(products, "Products state in Bestsellers component");
+
   return (
     <section
       className={`self-stretch overflow-hidden flex flex-col items-center justify-start py-[60px] px-[40px] gap-[60px] z-[2] text-left text-37xl text-black font-h5-24 mq1050:gap-[30px] mq1050:pt-[39px] mq1050:pb-[39px] mq1050:box-border mq450:px-[24px] mq450:gap-[24px] mq450:py-[40px] ${className}`}
@@ -90,7 +92,7 @@ const Bestsellers = ({ className = "", country, selectedCountry }) => {
               breakpoints={{
                 0: {
                   slidesPerView: 2,
-                  spaceBetween: 10
+                  spaceBetween: 15
                 },
                 640: {
                   slidesPerView: 2,
@@ -123,7 +125,7 @@ const Bestsellers = ({ className = "", country, selectedCountry }) => {
                       productId={product._id}
                       images={product?.imageLinks?.image1 || "/default-watch.jpg"}
                       hoverImage={product?.imageLinks?.image2 || "/default-watch.jpg"}
-                      classic={product.watchDetails?.watchType?.en || "Classic"}
+                      classic={product.collection?.name || "Classic"}
                       name={product.name?.en}
                       icroundStar="/icroundstar-1.svg"
                       dialColor={product.watchDetails?.dialColor?.en || "Black"}

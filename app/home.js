@@ -147,8 +147,8 @@ const Home = () => {
           />
         </div>
       </div> */}
-      <Banner property1={2} />
-      <div className="hero-title-section w-full px-[40px] bg-black text-white flex flex-row items-center justify-center py-[60px] mq750:py-5 max-w-full mq750:flex-col mq450:py-[40px] mq450:px-[24px] mq450:gap-[24px]">
+      <Banner property1={2} country={countryData} />
+      {/* <div className="hero-title-section w-full px-[40px] bg-black text-white flex flex-row items-center justify-center py-[60px] mq750:py-5 max-w-full mq750:flex-col mq450:py-[40px] mq450:px-[24px] mq450:gap-[24px]">
         <div className="w-full flex flex-col items-center">
           <h1 className="m-0 mt-0 mb-0 text-[56px] md:text-6xl lg:text-7xl leading-[120%] font-semibold font-[inherit] text-center 
                    mq750:text-4xl mq750:leading-[1.15]
@@ -158,9 +158,9 @@ const Home = () => {
             {countryData?.title || "Buy Stylish Torando Watches for Men"}
           </h1>
         </div>
-      </div>
+      </div> */}
       <Bestsellers country={countryData} selectedCountry={selectedCountry} />
-      <section className="self-stretch overflow-hidden flex flex-col items-center justify-start py-[60px] mq750:py-5 mq450:py-5 px-[40px] z-[3] mq1050:gap-0 mq450:px-4">
+      <section className="self-stretch overflow-hidden flex flex-col items-center justify-start py-[60px] mq750:py-5 mq450:py-5 px-[40px] z-[3] mq1050:gap-0 mq450:px-[24px]">
         <Reason country={countryData} />
       </section>
       <section className="self-stretch overflow-hidden flex flex-col items-center justify-start py-[60px] mq750:py-5 mq450:py-5 px-[40px] gap-12 z-[6] text-left text-29xl text-[#000] font-h5-24 mq1050:gap-8 mq1050:py-5 mq1050:box-border mq450:px-[24px] mq450:gap-[24px] mq450:py-[40px]">
@@ -216,7 +216,7 @@ const Home = () => {
                 breakpoints={{
                   0: {
                     slidesPerView: 2,
-                    spaceBetween: 10
+                    spaceBetween: 15
                   },
                   640: {
                     slidesPerView: 2,
@@ -249,7 +249,7 @@ const Home = () => {
                         productId={product._id}
                         images={product?.imageLinks?.image1 || "/default-watch.jpg"}
                         hoverImage={product?.imageLinks?.image2 || "/default-watch.jpg"}
-                        classic={product.watchDetails?.watchType?.en || "Classic"}
+                        classic={product.collection?.name || "Classic"}
                         name={product.name?.en}
                         icroundStar="/icroundstar-1.svg"
                         dialColor={product.watchDetails?.dialColor?.en || "Black"}
@@ -343,9 +343,9 @@ const Home = () => {
           </div>
         </div>
       </section>
-      <section className="self-stretch overflow-hidden flex flex-col items-center justify-start pt-[40px] pb-[60px] mq750:py-5 px-[40px] z-[10] text-center text-29xl text-[#fff] font-h5-24 mq1050:gap-8 mq450:px-4 mq450:py-5 mq450:gap-[24px]">
+      {/* <section className="self-stretch overflow-hidden flex flex-col items-center justify-start pt-[40px] pb-[60px] mq750:py-5 px-[40px] z-[10] text-center text-29xl text-[#fff] font-h5-24 mq1050:gap-8 mq450:px-4 mq450:py-5 mq450:gap-[24px]">
         <Faqs country={countryData} />
-      </section>
+      </section> */}
       <Footer
         maskGroup="/mask-group@2x.webp"
         iconYoutube="/icon--youtube1.svg"

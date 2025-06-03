@@ -139,7 +139,7 @@ const Offers = ({ className = "", country, selectedCountry }) => {
                   productId={product._id}
                   images={product?.imageLinks?.image1 || "/default-watch.jpg"}
                   hoverImage={product?.imageLinks?.image2 || "/default-watch.jpg"}
-                  classic={product.watchDetails?.watchType?.en || "Classic"}
+                  classic={product.collection?.name || "Classic"}
                   name={product.name?.en}
                   icroundStar="/icroundstar-1.svg"
                   dialColor={product.watchDetails?.dialColor?.en || "Black"}
@@ -236,7 +236,7 @@ const Offers = ({ className = "", country, selectedCountry }) => {
     <section
       className={`self-stretch overflow-hidden flex flex-col items-center justify-center pb-[30px] pt-[60px] px-[40px] gap-[40px] z-[7] text-left text-29xl text-white font-h5-24 mq1050:gap-[30px] ${className} mq450:px-[24px] mq450:py-[40px] mq450:gap-[24px]`}
     >
-      <div className="w-[1360px] rounded-3xl flex flex-row items-center justify-center py-20 px-10 box-border gap-[60px] bg-[url('/limited@3x.webp')] bg-cover bg-no-repeat bg-[top] mq450:w-full mq450:gap-[20px] mq450:p-4 mq1050:pt-[52px] mq1050:pb-[52px] mq1050:box-border relative">
+      <div className="w-[1360px] rounded-3xl flex flex-row items-end justify-end py-20 px-10 box-border gap-[60px] bg-[url('/limited@3x.webp')] bg-cover bg-no-repeat bg-[top] mq450:w-full mq450:gap-[20px] mq450:p-4 mq1050:pt-[52px] mq1050:pb-[52px] mq1050:box-border relative">
         {/* Left Content Section */}
         <div className="flex-1 flex flex-col items-start justify-start gap-6 mq450:items-center mq450:text-center mq450:gap-4">
           <h1 className="m-0 w-[543px] relative text-[48px] leading-[120%] font-medium font-[inherit] flex items-center mq750:text-[29px] mq750:leading-[35px] mq1050:text-[38px] mq1050:leading-[46px] mq450:text-[24px] mq450:leading-[120%] mq450:w-auto">

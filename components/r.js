@@ -29,11 +29,18 @@ const R = ({ className = "", product, relatedProducts, selectedCountry }) => {
 
   const handleAddToCart = () => {
     if (product) {
+      // Get country-specific price
+      let countryPrice = product.price;
+      if (product.price && typeof product.price === "object" && selectedCountry) {
+        const countryKey = selectedCountry.toLowerCase();
+        countryPrice = product.price[countryKey] || Object.values(product.price)[0] || "";
+      }
+
       // Cart item to be added
       const cartItem = {
         productId: product._id || product.id,
         name: product.name?.en || product.name || "",
-        price: product.price,
+        price: countryPrice,
         images: product.imageLinks ? Object.values(product.imageLinks) : [product.imageLinks?.image1],
         image: product.imageLinks?.image1,
         quantity: quantity,

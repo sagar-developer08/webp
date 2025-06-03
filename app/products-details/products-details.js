@@ -35,7 +35,7 @@ function ProductDetailsContent() {
 
     if (productIdFromParams) {
       setProductId(productIdFromParams);
-      axios.get(`http://localhost:8080/api/products/${productIdFromParams}`)
+      axios.get(`https://0vm9jauvgc.execute-api.us-east-1.amazonaws.com/stag/api/products/${productIdFromParams}`)
         .then(response => {
           setProduct(response.data);
         })

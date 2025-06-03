@@ -21,7 +21,7 @@ const Offers = ({ className = "", country, selectedCountry }) => {
         setLoading(true);
         setError(null);
         const response = await fetch(
-          "http://localhost:8080/api/products/featured"
+          "https://0vm9jauvgc.execute-api.us-east-1.amazonaws.com/stag/api/products/featured"
         );
         if (!response.ok)
           throw new Error("Failed to fetch featured products");

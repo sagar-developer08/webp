@@ -102,7 +102,7 @@ const Card = ({
           )}
           
           <Image
-            className={`absolute h-full w-full top-0 right-0 bottom-0 left-0 max-w-full overflow-hidden max-h-full object-contain  transition-opacity duration-300 ${
+            className={`absolute h-full w-full top-0 right-0 bottom-0 left-0 max-w-full py-[5px] overflow-hidden max-h-full object-contain  transition-opacity duration-300 ${
               imageLoaded ? 'opacity-100' : 'opacity-0'
             }`}
             loading="eager"
@@ -121,7 +121,7 @@ const Card = ({
         </div>
         
         {imageLoaded && (
-          <div className="absolute top-[16px] right-[16px] rounded-full bg-gray-100 flex flex-row items-center justify-center py-1 px-3.5 text-white mq450:py-0.5 mq450:px-1 mq450:top-[10px] mq450:right-[10px] mq450:gap-[2px]">
+          <div className="absolute top-[16px] right-[16px] rounded-full bg-white flex flex-row items-center justify-center py-1 px-3.5 text-white mq450:py-0.5 mq450:px-1 mq450:top-[10px] mq450:right-[10px] mq450:gap-[2px]">
             <Image
               className="h-4 w-4 relative overflow-hidden shrink-0 mq450:h-2 mq450:w-2"
               loading="lazy"
@@ -135,7 +135,7 @@ const Card = ({
         )}
       </div>
       
-      <div className="w-full h-4 "></div>
+      {/* <div className="w-full h-4 "></div> */}
       
       <div className="self-stretch flex h-[130px] mq750:h-[110px] mq450:h-[100px] flex-col items-start justify-start p-4 mq450:p-2 gap-1 text-left">
         <div className="self-stretch relative leading-[150%] font-medium text-gray-500 text-sm">

@@ -76,7 +76,7 @@ const Main = ({ className = "", country }) => {
       params.append('page', pageNum);
       params.append('limit', 12);
 
-      const url = `https://0vm9jauvgc.execute-api.us-east-1.amazonaws.com/stag/api/products/filters/search?${params.toString()}`;
+      const url = `http://localhost:8080/api/products/filters/search?${params.toString()}`;
       console.log("API URL with params:", url);
       
       const response = await axios.get(url);

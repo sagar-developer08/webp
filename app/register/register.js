@@ -61,7 +61,7 @@ const Register = () => {
       };
 
       await axios.post(
-        "https://0vm9jauvgc.execute-api.us-east-1.amazonaws.com/stag/api/users/register",
+        "http://localhost:8080/api/users/register",
         registerData
       );
 

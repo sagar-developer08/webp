@@ -26,7 +26,7 @@ const Limited_offer = () => {
             try {
                 isLoadMore ? setLoadingMore(true) : setLoading(true);
                 const response = await axios.get(
-                    `https://0vm9jauvgc.execute-api.us-east-1.amazonaws.com/stag/api/products/featured?page=${pageNum}&limit=12`
+                    `http://localhost:8080/api/products/featured?page=${pageNum}&limit=12`
                 );
 
                 if (isLoadMore) {

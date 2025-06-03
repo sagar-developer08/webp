@@ -38,7 +38,7 @@ const Bestsellers = ({ className = "", country, selectedCountry }) => {
     try {
       setLoading(true);
       setError(null);
-      const response = await axios.get(`http://localhost:8080/api/products/best-sellers`);
+      const response = await axios.get(`https://0vm9jauvgc.execute-api.us-east-1.amazonaws.com/stag/api/products/best-sellers`);
       console.log(response.data, "Products data from API");
       setProducts(response.data);
     } catch (error) {

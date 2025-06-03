@@ -26,7 +26,7 @@ const Form1 = ({ className = "" }) => {
     setIsSubmitting(true);
 
     try {
-      const response = await fetch("http://localhost:8080/api/contact/", {
+      const response = await fetch("https://0vm9jauvgc.execute-api.us-east-1.amazonaws.com/stag/api/contact/", {
         method: "POST",
         headers: {
           "Content-Type": "application/json",

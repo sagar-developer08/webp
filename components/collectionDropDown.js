@@ -9,7 +9,7 @@ const CollectionsDropdown = () => {
     const fetchCollections = async () => {
       try {
         const response = await fetch(
-          "https://0vm9jauvgc.execute-api.us-east-1.amazonaws.com/stag/api/categories/all"
+          "http://localhost:8080/api/categories/all"
         );
         if (!response.ok) {
           throw new Error("Failed to fetch collections");

@@ -37,15 +37,15 @@ const BlogDetails = () => {
 
   if (loading) {
     return (
-      <div className="w-full relative [background:linear-gradient(#000,_#000),_#fff] text-white overflow-hidden flex flex-col items-center justify-center h-screen">
-        <div>Loading blog...</div>
+      <div className="w-full min-h-screen bg-black text-white flex items-center justify-center">
+        <div className="animate-pulse">Loading blog...</div>
       </div>
     );
   }
 
   if (error) {
     return (
-      <div className="w-full relative [background:linear-gradient(#000,_#000),_#fff] text-white overflow-hidden flex flex-col items-center justify-center h-screen">
+      <div className="w-full min-h-screen bg-black text-white flex items-center justify-center">
         <div>Error loading blog: {error}</div>
       </div>
     );
@@ -53,15 +53,36 @@ const BlogDetails = () => {
 
   if (!blog) {
     return (
-      <div className="w-full relative bg-[#fff] text-black overflow-hidden flex flex-col items-center justify-center h-screen">
+      <div className="w-full min-h-screen bg-white text-black flex items-center justify-center">
         <div>Blog not found</div>
       </div>
     );
   }
 
+  // Helper function to render content with proper formatting
+  const renderContent = (content) => {
+    return content.split('\n\n').map((paragraph, index) => (
+      <p key={index} className="mb-4 last:mb-0">
+        {paragraph}
+      </p>
+    ));
+  };
+
+  // Helper function to render list items
+  const renderListItems = (content) => {
+    const lines = content.split('\n');
+    return (
+      <ul className="list-disc pl-5 space-y-2 my-4">
+        {lines.filter(line => line.startsWith('- ')).map((item, index) => (
+          <li key={index}>{item.substring(2)}</li>
+        ))}
+      </ul>
+    );
+  };
+
   return (
-    <div className="w-full relative bg-[#fff] text-black overflow-hidden flex flex-col items-start justify-start leading-[normal] tracking-[normal] text-center text-xs font-h5-24">
-      <header className="mb-8">
+    <div className="w-full bg-white text-black">
+      <header className="sticky top-0 z-50">
         <Navbar
           logoSrc="/1623314804-bd8bf9c117ab50f7f842-1@2x.webp"
           search="/search3.svg"
@@ -71,52 +92,102 @@ const BlogDetails = () => {
         />
       </header>
 
-      <section className="self-stretch flex flex-col items-center justify-start py-10 sm:py-20 px-4 sm:px-10 box-border gap-8 sm:gap-10 max-w-full text-left text-5xl text-black">
-        <div className="w-full max-w-[1360px] flex flex-col items-start justify-start gap-4 sm:gap-6 px-4 sm:px-0">
-          <h1 className="m-0 self-stretch relative text-4xl sm:text-6xl md:text-8xl lg:text-10xl leading-[140%] font-semibold font-inherit mt-5 sm:mt-0">
+      <main className="max-w-[1360px] mx-auto px-[40px] mq450:px-[24px] gap-[40px] mq450:gap-[24px]  py-[60px] mq450:py-[40px]">
+        {/* Blog Header */}
+        <section className="mb-10">
+          <h1 className="text-[56px] mq450:text-[32px] font-bold leading-tight mb-4">
             {blog.title}
           </h1>
-          <div className="self-stretch relative text-sm sm:text-base leading-[150%] font-medium text-black">
-            Published on {new Date(blog.publishedAt).toLocaleDateString()}
-          </div>
-        </div>
+          <p className="text-gray-600 text-sm sm:text-base">
+            Published on {new Date(blog.publishedAt).toLocaleDateString('en-US', {
+              year: 'numeric',
+              month: 'long',
+              day: 'numeric'
+            })}
+          </p>
+        </section>
 
-        <div className="w-full max-w-[1360px] h-[300px] sm:h-[400px] md:h-[500px] lg:h-[600px] relative rounded-2xl overflow-hidden mx-auto">
+        {/* Featured Image */}
+        <div className="relative w-full h-64 sm:h-80 md:h-96 lg:h-[500px] rounded-xl overflow-hidden mb-10">
           <Image
             src={blog.featuredImage || "/cat2@3x.webp"}
             alt={blog.title}
             fill
-            className="object-cover object-center"
-            sizes="(max-width: 640px) 100vw, (max-width: 1024px) 80vw, 1360px"
+            className="object-cover"
             priority
           />
         </div>
-        
-        <div className="w-full max-w-[1360px] flex flex-col items-start justify-start gap-6 sm:gap-10 px-4 sm:px-0 text-base text-black">
-          <div className="self-stretch relative leading-[150%] font-medium text-sm sm:text-base">
-            {blog.content.description}
-          </div>
 
-          {blog.content.sections.map((section, index) => (
-            <div key={index} className="self-stretch flex flex-col items-start justify-start gap-3 sm:gap-4">
-              <h3 className="m-0 relative text-lg sm:text-xl leading-[140%] font-semibold font-inherit text-black">
-                {section.title}
-              </h3>
-              <div className="self-stretch relative leading-[150%] font-medium text-sm sm:text-base">
-                {section.body}
-              </div>
-            </div>
-          ))}
-          
-          <h2 className="m-0 self-stretch relative text-4xl sm:text-6xl md:text-8xl lg:text-10xl leading-[140%] font-semibold font-inherit">
-            {blog.content.conclusion_title || "Conclusion"}
-          </h2>
-          <div className="self-stretch relative leading-[150%] font-medium text-sm sm:text-base">
-            {blog.content.conclusion}
+        {/* Table of Contents */}
+        {blog.tableOfContents && blog.tableOfContents.length > 0 && (
+          <div className=" py-6 rounded-lg mb-0">
+            <h2 className="text-xl font-semibold mb-4">Table of Contents</h2>
+            <ul className="space-y-3 mq450:ml-[-20px]">
+              {blog.tableOfContents.map((item, index) => (
+                <li key={index}>
+                  <a
+                    href={`#section-${index}`}
+                    className="text-black no-underline hover:underline"
+                  >
+                    {item}
+                  </a>
+                </li>
+              ))}
+            </ul>
           </div>
-        </div>
-      </section>
+        )}
+
+        {/* Key Takeaways */}
+        {/* Key Takeaways */}
+        {blog.keyTakeaways && blog.keyTakeaways.length > 0 && (
+          <div className="py-6 rounded-lg mb-10 mq450:py-0">
+            <h2 className="text-xl font-semibold mb-4">Key Takeaways</h2>
+            <ul className="space-y-2 mq450:ml-[-38px]">
+              {blog.keyTakeaways.map((takeaway, index) => (
+                <li key={index} className="flex items-start">
+                  <span className="text-black mr-2">•</span>
+                  <span>{takeaway}</span>
+                </li>
+              ))}
+            </ul>
+          </div>
+        )}
+
+
+        {/* Blog Content */}
+        <article className="prose prose-lg max-w-none">
+          {blog.content.map((section, index) => (
+            <section key={index} id={`section-${index}`} className="mb-12">
+              <h2 className="text-2xl sm:text-3xl font-bold mb-6 text-black">
+                {section.title}
+              </h2>
+
+              {section.content && (
+                <div className="text-black leading-relaxed">
+                  {renderContent(section.content)}
+                  {renderListItems(section.content)}
+                </div>
+              )}
+
+              {section.subsections && section.subsections.map((subsection, subIndex) => (
+                <div key={subIndex} className="mt-6">
+                  <h3 className="text-xl sm:text-2xl font-semibold mb-4 text-black">
+                    {subsection.title}
+                  </h3>
+                  <div className="text-black leading-relaxed">
+                    {renderContent(subsection.content)}
+                    {renderListItems(subsection.content)}
+                  </div>
+                </div>
+              ))}
+            </section>
+          ))}
+        </article>
+      </main>
+
+      {/* Related Components */}
       <Form />
+
       <Blogs
         relatedBlogs="Related Blogs"
         solararrowUpLinear="/solararrowuplinear1@2x.webp"
@@ -126,6 +197,7 @@ const BlogDetails = () => {
         category2="DIGITAL"
         category3="VINTAGE"
       />
+
       <Footer
         footerAlignSelf="stretch"
         footerWidth="unset"

@@ -90,6 +90,10 @@ const Navbar = ({
     router.push(`/collection?id=${collectionId}`);
   };
 
+  const handleMovementClick = (collectionId) => {
+    router.push(`/movement?id=${collectionId}`);
+  };
+
   const handleCountryChange = (e) => {
     const newCountry = e.target.value;
     console.log('🌐 Navbar: Country dropdown changed to:', newCountry);
@@ -653,8 +657,8 @@ const Navbar = ({
             {categories.map((category) => (
               <a
                 key={category.id || category._id || category.name}
-                onClick={() => handleProductClick(category.id || category._id || category.name)}
-                className="flex items-center gap-2 px-4 py-2 text-sm text-white hover:bg-gray-800 transition-colors"
+                onClick={() => handleMovementClick(category.id || category._id || category.name)}
+                className="flex items-center text-center gap-2 px-4 py-2 text-sm text-white hover:bg-gray-800 transition-colors"
               >
                 {/* {category.image && (
                   <Image
@@ -669,7 +673,7 @@ const Navbar = ({
               </a>
             ))}
           </div>
-          <motion.div
+          {/* <motion.div
             className="flex flex-row items-center justify-center py-1.5 px-3 cursor-pointer hover:text-gray-300 transition-colors"
             onClick={handleContactClick}
             variants={menuItemVariants}
@@ -677,7 +681,7 @@ const Navbar = ({
             whileTap={{ scale: 0.95 }}
           >
             <div className="relative leading-[150%] font-medium">Contact-Us</div>
-          </motion.div>
+          </motion.div> */}
         </motion.div>
 
         {windowWidth >= 768 && (
@@ -857,13 +861,57 @@ const Navbar = ({
                   </div>
                 </div>
 
-                <Link
+                {/* Category dropdown for mobile */}
+                <div className="border-b border-gray-800">
+                  <div
+                    className="flex justify-between items-center py-4 px-6 text-white hover:bg-gray-800 cursor-pointer"
+                    onClick={() => {
+                      const categoriesList = document.getElementById('mobile-categories-list');
+                      if (categoriesList) {
+                        categoriesList.classList.toggle('hidden');
+                      }
+                    }}
+                  >
+                    <span>Category</span>
+                    <svg
+                      xmlns="http://www.w3.org/2000/svg"
+                      className="h-5 w-5"
+                      fill="none"
+                      viewBox="0 0 24 24"
+                      stroke="currentColor"
+                    >
+                      <path
+                        strokeLinecap="round"
+                        strokeLinejoin="round"
+                        strokeWidth={2}
+                        d="M19 9l-7 7-7-7"
+                      />
+                    </svg>
+                  </div>
+                  <div id="mobile-categories-list" className="hidden">
+                    {categories.map((category) => (
+                      <div
+                        key={category.id || category._id || category.name}
+                        className="py-3 px-10 text-sm text-gray-300 hover:text-white hover:bg-gray-800 cursor-pointer"
+                        onClick={() => {
+                          handleMovementClick(category.id || category._id || category.name);
+                          setShowMobileMenu(false);
+                        }}
+                      >
+                        {category.name}
+                      </div>
+                    ))}
+                  </div>
+                </div>
+                {/* End category dropdown for mobile */}
+
+                {/* <Link
                   href="/contact"
                   className="block py-4 px-6 text-white no-underline hover:bg-gray-800 transition-colors border-b border-gray-800"
                   onClick={() => setShowMobileMenu(false)}
                 >
                   Contact-Us
-                </Link>
+                </Link> */}
 
                 <div className="mt-6">
                   {user ? (

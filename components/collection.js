@@ -83,7 +83,7 @@ const Collection = ({ className = "", property1 = "Default", limit = 10, country
   }
 
   return (
-    <section className="self-stretch overflow-hidden flex flex-col items-center justify-start py-[60px] px-[40px] gap-[60px] z-[6] text-left text-29xl text-[#000] font-h5-24 mq1050:gap-5 mq1050:pt-[39px] mq1050:pb-[39px] mq1050:box-border mq450:px-4 mq450:py-[30px]">
+    <section className="self-stretch overflow-hidden flex flex-col items-center justify-start py-[60px] px-[40px] gap-[60px] z-[6] text-left text-29xl text-[#000] font-h5-24 mq1050:gap-5 mq1050:pt-[39px] mq1050:pb-[39px] mq1050:box-border mq450:px-[24px] mq450:py-[30px]">
       <div className="w-[1360px] max-w-full flex flex-row items-center justify-between gap-[60px] mq450:gap-[30px]">
         <h2 className="m-0 relative text-[48px] leading-[120%] font-bold font-[inherit] mq750:text-[34px] mq750:leading-[40px] mq1050:text-[45px] mq1050:leading-[54px] mq450:text-[24px] mq450:leading-[120%]">
           {country?.collection_title}

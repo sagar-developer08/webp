@@ -1,31 +1,99 @@
-"use client";
-import { useState, useEffect, useCallback } from "react";
+import React, { useState, useEffect } from "react";
 import Image from "next/image";
+import Card from "../card";
+import SkeletonLoader from "../SkeletonLoader";
 import PropTypes from "prop-types";
-import axios from "../services/axios";
-import Card from "./card";
-import SkeletonLoader from "./SkeletonLoader";
-import ShopFilter from "../app/shop/ShopFilter";
+import ShopFilter from "../../app/movement/ShopFilter";
 import { createPortal } from "react-dom";
+import axios from "../../services/axios";
 
-const Main = ({ className = "", country }) => {
-  const [products, setProducts] = useState([]);
-  const [loading, setLoading] = useState(true);
-  const [page, setPage] = useState(1);
-  const [totalProducts, setTotalProducts] = useState(0);
-  const [totalPages, setTotalPages] = useState(0);
-  const [hasMore, setHasMore] = useState(false);
+const Main = ({
+  className = "",
+  products,
+  loading,
+  error,
+  page,
+  onPageChange,
+  totalPages,
+  hasMore,
+  loadingMore,
+  onLoadMore,
+  country,
+  movementId // <-- Accept movementId as a prop
+}) => {
   const [filters, setFilters] = useState({});
   const [sortBy, setSortBy] = useState("");
   const [showSortDropdown, setShowSortDropdown] = useState(false);
   const [showFilterDrawer, setShowFilterDrawer] = useState(false);
   const [isBrowser, setIsBrowser] = useState(false);
-  const [loadingMore, setLoadingMore] = useState(false);
+  const [fetchedProducts, setFetchedProducts] = useState([]);
+  const [fetchLoading, setFetchLoading] = useState(false);
+  // Track if filter is applied
+  const [filterApplied, setFilterApplied] = useState(false);
 
   useEffect(() => {
     setIsBrowser(true);
   }, []);
 
+  // Fetch products from API only when filter is applied
+  useEffect(() => {
+    if (!filterApplied) return;
+    const fetchProductsFromApi = async () => {
+      setFetchLoading(true);
+      try {
+        const params = new URLSearchParams();
+
+        params.append('currency', country?.toLowerCase() || 'uae');
+        if (filters.priceMin !== undefined && filters.priceMin !== null && filters.priceMin !== "") {
+          params.append('priceMin', filters.priceMin);
+        }
+        if (filters.priceMax !== undefined && filters.priceMax !== null && filters.priceMax !== "") {
+          params.append('priceMax', filters.priceMax);
+        }
+        // Always send movement id as 'movement' param for filter API
+        if (movementId) {
+          params.append('movement', movementId);
+        }
+        Object.entries(filters).forEach(([key, value]) => {
+          if (
+            value !== "" &&
+            value !== false &&
+            key !== 'priceMin' &&
+            key !== 'priceMax' &&
+            key !== 'movement' // avoid duplicate
+          ) {
+            params.append(key, value);
+          }
+        });
+        if (sortBy) {
+          params.append('sortBy', sortBy);
+        }
+        params.append('page', page || 1);
+        params.append('limit', 12);
+
+        const url = `https://0vm9jauvgc.execute-api.us-east-1.amazonaws.com/stag/api/products/filters/search?${params.toString()}`;
+        // console.log("API URL with params:", url);
+
+        const response = await axios.get(url);
+        const data = response.data;
+
+        if (data && data.products) {
+          setFetchedProducts(data.products);
+        } else {
+          setFetchedProducts([]);
+        }
+      } catch (err) {
+        setFetchedProducts([]);
+        console.error("Error fetching products from API:", err);
+      } finally {
+        setFetchLoading(false);
+      }
+    };
+
+    fetchProductsFromApi();
+  }, [filters, sortBy, page, country, filterApplied]);
+
+  // Helper function to get currency symbol based on country
   const getCurrencySymbol = (country) => {
     if (!country) return '$';
     const countryUpper = country.toUpperCase();
@@ -39,104 +107,124 @@ const Main = ({ className = "", country }) => {
     }
   };
 
-  const fetchProducts = async (pageNum = 1, currentFilters = {}, currentSortBy = "", isLoadMore = false) => {
-    try {
-      isLoadMore ? setLoadingMore(true) : setLoading(true);
-      const params = new URLSearchParams();
+  // Helper function to get price for current country
+  const getCountryPrice = (priceObj) => {
+    if (!priceObj || typeof priceObj !== 'object') return '';
+    if (!country) return Object.values(priceObj)[0] || '';
 
-      // Add currency parameter based on country
-      params.append('currency', country?.toLowerCase() || 'uae');
-
-      // Add price filters if they exist
-      console.log("Price filters before applying:", {
-        priceMin: currentFilters.priceMin,
-        priceMax: currentFilters.priceMax,
-        type: typeof currentFilters.priceMin,
-        isNumber: !isNaN(currentFilters.priceMin)
-      });
-
-      if (currentFilters.priceMin !== undefined && currentFilters.priceMin !== null && currentFilters.priceMin !== "") {
-        params.append('priceMin', currentFilters.priceMin);
-      }
-      if (currentFilters.priceMax !== undefined && currentFilters.priceMax !== null && currentFilters.priceMax !== "") {
-        params.append('priceMax', currentFilters.priceMax);
-      }
-
-      // Add other filters
-      Object.entries(currentFilters).forEach(([key, value]) => {
-        if (value !== "" && value !== false && key !== 'priceMin' && key !== 'priceMax') {
-          params.append(key, value);
-        }
-      });
-
-      if (currentSortBy) {
-        params.append('sortBy', currentSortBy);
-      }
-
-      params.append('page', pageNum);
-      params.append('limit', 12);
-
-      const url = `https://0vm9jauvgc.execute-api.us-east-1.amazonaws.com/stag/api/products/filters/search?${params.toString()}`;
-      console.log("API URL with params:", url);
-      
-      const response = await axios.get(url);
-
-      const data = response.data;
-      console.log("API Response:", data);
-
-      if (data && data.products) {
-        if (isLoadMore) {
-          setProducts(prevProducts => [...prevProducts, ...data.products]);
-        } else {
-          setProducts(data.products);
-        }
-        setTotalProducts(data.totalProducts || 0);
-        const totalPagesCount = Math.ceil((data.totalProducts || 0) / 12);
-        setTotalPages(totalPagesCount);
-        setHasMore(pageNum < totalPagesCount);
-      } else {
-        console.error("API response missing products array:", data);
-        setProducts(isLoadMore ? prevProducts => prevProducts : []);
-        setTotalProducts(0);
-        setTotalPages(0);
-        setHasMore(false);
-      }
-    } catch (error) {
-      console.error("Error fetching products:", error);
-      setProducts(isLoadMore ? prevProducts => prevProducts : []);
-      setTotalProducts(0);
-      setTotalPages(0);
-      setHasMore(false);
-    } finally {
-      isLoadMore ? setLoadingMore(false) : setLoading(false);
-    }
-  };
-
-  useEffect(() => {
-    setPage(1);
-    fetchProducts(1, filters, sortBy);
-  }, [filters, sortBy]);
-
-  const loadMore = () => {
-    const nextPage = page + 1;
-    setPage(nextPage);
-    fetchProducts(nextPage, filters, sortBy, true);
+    const countryKey = country.toLowerCase();
+    return priceObj[countryKey] || Object.values(priceObj)[0] || '';
   };
 
   const handleFilterChange = (newFilters) => {
     setFilters(newFilters);
+    setFilterApplied(true); // Mark that filter is now applied
   };
 
-  const handleSortChange = (newSortBy) => {
-    setSortBy(newSortBy);
+  const handleReset = () => {
+    setFilters({});
+    setSortBy("");
     setShowSortDropdown(false);
+    setFilterApplied(false); // Reset to use parent products
+    setFetchedProducts([]);  // Clear fetched products
   };
+
+  // Use products from parent for rendering, unless filter is applied, then use fetchedProducts
+  const getSortedProducts = (productsToSort) => {
+    if (!productsToSort || !Array.isArray(productsToSort)) return [];
+
+    switch (sortBy) {
+      case 'bestSeller':
+        return [...productsToSort].sort((a, b) => (b.bestSeller || 0) - (a.bestSeller || 0));
+      case 'newArrival':
+        return [...productsToSort].sort((a, b) => new Date(b.createdAt) - new Date(a.createdAt));
+      case 'nameAsc':
+        return [...productsToSort].sort((a, b) => a.name?.en?.localeCompare(b.name?.en || ''));
+      case 'nameDesc':
+        return [...productsToSort].sort((a, b) => b.name?.en?.localeCompare(a.name?.en || ''));
+      case 'priceLowToHigh':
+        return [...productsToSort].sort((a, b) => {
+          const priceA = parseFloat(getCountryPrice(a.price)) || 0;
+          const priceB = parseFloat(getCountryPrice(b.price)) || 0;
+          return priceA - priceB;
+        });
+      case 'priceHighToLow':
+        return [...productsToSort].sort((a, b) => {
+          const priceA = parseFloat(getCountryPrice(a.price)) || 0;
+          const priceB = parseFloat(getCountryPrice(b.price)) || 0;
+          return priceB - priceA;
+        });
+      case 'newest':
+        return [...productsToSort].sort((a, b) => new Date(b.createdAt) - new Date(a.createdAt));
+      case 'rating':
+        return [...productsToSort].sort((a, b) => (b.rating || 0) - (a.rating || 0));
+      case 'reviews':
+        return [...productsToSort].sort((a, b) => (b.reviewsCount || 0) - (a.reviewsCount || 0));
+      case 'price':
+        return [...productsToSort].sort((a, b) => {
+          const priceA = parseFloat(getCountryPrice(a.price)) || 0;
+          const priceB = parseFloat(getCountryPrice(b.price)) || 0;
+          return priceA - priceB;
+        });
+      default:
+        return productsToSort;
+    }
+  };
+
+  const getFilteredProducts = () => {
+    if (!products.data || !Array.isArray(products.data)) return [];
+
+    let result = [...products.data];
+
+    if (Object.values(filters).some(value => value !== "")) {
+      result = result.filter(product => {
+        if (!product.watchDetails) return false;
+
+        return Object.entries(filters).every(([key, value]) => {
+          if (!value) return true;
+          return product.watchDetails[key] === value;
+        });
+      });
+    }
+
+    return getSortedProducts(result);
+  };
+
+  // If filter is applied, show fetchedProducts, else show parent products
+  const productsToRender = filterApplied
+    ? (fetchLoading ? [] : fetchedProducts)
+    : getFilteredProducts();
 
   const toggleFilterDrawer = () => {
     setShowFilterDrawer(!showFilterDrawer);
     if (typeof document !== 'undefined') {
       document.body.style.overflow = !showFilterDrawer ? 'hidden' : 'unset';
     }
+  };
+
+  const getActiveFilterCount = () => {
+    return Object.values(filters).filter(value => value !== "" && value !== false).length;
+  };
+
+  if (error) {
+    return (
+      <div className="flex justify-center items-center h-64">
+        <div className="text-xl text-red-500">Error: {error}</div>
+      </div>
+    );
+  }
+
+  if (loading && page === 1) {
+    return (
+      <div className="flex justify-center items-center h-64">
+        <div className="text-xl text-white">Loading products...</div>
+      </div>
+    );
+  }
+
+  const handleSortChange = (newSortBy) => {
+    setSortBy(newSortBy);
+    setShowSortDropdown(false);
   };
 
   const getSortDisplayText = () => {
@@ -151,18 +239,8 @@ const Main = ({ className = "", country }) => {
       case 'rating': return 'Sort by Rating';
       case 'reviews': return 'Sort by Reviews';
       case 'price': return 'Sort by Price';
-      default: return 'Sort-By';
+      default: return 'Sort By';
     }
-  };
-
-  const handleReset = () => {
-    setFilters({});
-    setSortBy("");
-    setShowSortDropdown(false);
-  };
-
-  const getActiveFilterCount = () => {
-    return Object.values(filters).filter(value => value !== "" && value !== false).length;
   };
 
   return (
@@ -173,7 +251,7 @@ const Main = ({ className = "", country }) => {
             <div className="flex items-center gap-4">
               <button
                 onClick={toggleFilterDrawer}
-                className="flex items-center gap-2 text-black px-4 py-2 bg-white border border-solid-1px border-black/15 rounded-[50px]"
+                className="flex items-center gap-2 text-black px-4 py-2 bg-[#fff] border border-solid-[1px] border-black rounded-[50px]"
               >
                 <svg xmlns="http://www.w3.org/2000/svg" className="w-4 h-4" viewBox="0 0 24 24" fill="none" stroke="currentColor">
                   <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M3 6h18M3 12h18M3 18h18" />
@@ -189,16 +267,16 @@ const Main = ({ className = "", country }) => {
             <div className="flex items-center gap-4">
               <div className="rounded-[50px] flex flex-row items-center justify-center py-2 px-6">
                 <div className="relative leading-[150%] font-medium mq450:hidden">
-                  {totalProducts} Items
+                  {(productsToRender && typeof productsToRender.length === "number" ? productsToRender.length : 0)} Items
                   {Object.values(filters).some(value => value !== "" && value !== false) &&
                     ` (Filtered)`
                   }
                 </div>
               </div>
 
-              <div className="relative sort-dropdown">
+              <div className="relative sort-dropdown mq450:gap-[24px]">
                 <div
-                  className="rounded-[50px] border-black/15 border-solid border-[1px] flex items-center py-1.5 px-[15px] gap-2 cursor-pointer"
+                  className="rounded-[50px] border-[#000] border-solid border-[1px] flex items-center py-1.5 px-[15px] gap-2 cursor-pointer"
                   onClick={() => setShowSortDropdown(!showSortDropdown)}
                 >
                   <div className="relative leading-[150%] font-medium text-sm">{getSortDisplayText()}</div>
@@ -292,25 +370,21 @@ const Main = ({ className = "", country }) => {
           </div>
 
           <div className="skeleton-grid flex flex-row items-start justify-start flex-wrap gap-8 mq750:gap-4 mq450:gap-2 mq450:justify-between w-full">
-            {loading ? (
+            {fetchLoading ? (
               // Show skeleton loaders during loading
               Array.from({ length: 8 }, (_, index) => (
-                <div key={`skeleton-${index}`} className="w-[calc(25%-24px)] min-w-[260px] max-w-[320px] mq750:w-[46%] mq450:w-[48%] mq450:min-w-0 min-h-[480px]">
+                <div key={`skeleton-${index}`} className="w-[calc(25%-24px)] min-w-[260px] max-w-[320px] mq750:w-[48%] mq450:w-[48%] mq450:min-w-0 min-h-[480px]">
                   <SkeletonLoader />
                 </div>
               ))
-            ) : products && products.length > 0 ? (
-              products.map((product, index) => {
+            ) : productsToRender.length > 0 ? (
+              productsToRender.map((product, index) => {
                 const currencySymbol = getCurrencySymbol(country);
-                const countryKey = country ? country.toLowerCase() : '';
-                const productPrice = product.price && countryKey
-                  ? product.price[countryKey] || Object.values(product.price)[0]
-                  : '';
+                const productPrice = getCountryPrice(product.price);
                 const displayPrice = productPrice ? `${currencySymbol} ${productPrice}` : '';
 
                 return (
-                  <div key={product._id || index} className="w-[calc(25%-24px)] min-w-[260px] max-w-[320px] mq750:w-[46%] mq450:w-[48%] mq450:min-w-0">
-                    {console.log("Rendering product:", product)}
+                  <div key={product._id || index} className="w-[calc(25%-24px)] min-w-[260px] max-w-[320px] mq750:w-[48%] mq450:w-[48%] mq450:min-w-0 ">
                     <Card
                       productId={product._id}
                       images={product.imageLinks?.image1}
@@ -332,7 +406,7 @@ const Main = ({ className = "", country }) => {
           {hasMore && !loading && (
             <div className="flex justify-center mt-12 mb-8">
               <button
-                onClick={loadMore}
+                onClick={onLoadMore}
                 disabled={loadingMore}
                 className="px-8 py-3 bg-black text-white rounded-full font-medium border border-solid-1px border-black hover:border-black hover:bg-white hover:text-black transition-colors cursor-pointer"
               >
@@ -358,12 +432,7 @@ const Main = ({ className = "", country }) => {
             style={{ touchAction: 'manipulation' }}
           >
             <div className="p-4 h-[calc(100%-72px)]">
-              <ShopFilter 
-                onFilterChange={handleFilterChange} 
-                initialFilters={filters} 
-                onReset={handleReset}
-                country={country} 
-              />
+              <ShopFilter onFilterChange={handleFilterChange} initialFilters={filters} onReset={handleReset} />
             </div>
           </div>
         </div>,
@@ -375,7 +444,19 @@ const Main = ({ className = "", country }) => {
 
 Main.propTypes = {
   className: PropTypes.string,
-  country: PropTypes.string,
+  products: PropTypes.shape({
+    data: PropTypes.array,
+    total: PropTypes.number
+  }).isRequired,
+  loading: PropTypes.bool.isRequired,
+  error: PropTypes.string,
+  page: PropTypes.number.isRequired,
+  onPageChange: PropTypes.func.isRequired,
+  totalPages: PropTypes.number.isRequired,
+  hasMore: PropTypes.bool.isRequired,
+  loadingMore: PropTypes.bool.isRequired,
+  onLoadMore: PropTypes.func.isRequired,
+  country: PropTypes.string
 };
 
 export default Main;

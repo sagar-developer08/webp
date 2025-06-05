@@ -49,6 +49,7 @@ const Navbar = ({
   const { user, clearUser } = useUser();
   const { selectedCountry, updateCountry } = useCountry();
   const [collections, setCollections] = useState([]);
+  const [categories, setCategories] = useState([]);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState(null);
 
@@ -68,11 +69,29 @@ const Navbar = ({
       }
     };
 
+    const fetchCategories = async () => {
+      try {
+        const response = await fetch('https://0vm9jauvgc.execute-api.us-east-1.amazonaws.com/stag/api/movement/all');
+        if (!response.ok) {
+          throw new Error('Failed to fetch categories');
+        }
+        const data = await response.json();
+        setCategories(data.data);
+      } catch (err) {
+        // Optionally handle error
+      }
+    };
+
     fetchCollections();
+    fetchCategories();
   }, []);
 
   const handleProductClick = (collectionId) => {
     router.push(`/collection?id=${collectionId}`);
+  };
+
+  const handleMovementClick = (collectionId) => {
+    router.push(`/movement?id=${collectionId}`);
   };
 
   const handleCountryChange = (e) => {
@@ -518,7 +537,7 @@ const Navbar = ({
 
           <div
             id="collection-dropdown"
-            className="w-40 transition-all duration-200"
+            className="w-40 bg-gray-900 rounded-md shadow-lg py-2 absolute z-[9999] transition-all duration-200"
             style={{
               display: 'none',
               opacity: 0,
@@ -561,7 +580,100 @@ const Navbar = ({
               </a>
             ))}
           </div>
+
           <motion.div
+            className="flex flex-row items-center justify-center py-1.5 px-3 gap-1 relative"
+            variants={menuItemVariants}
+            whileHover={{ scale: 1.05 }}
+            whileTap={{ scale: 0.95 }}
+            onMouseEnter={(e) => {
+              const dropdown = document.getElementById('category-dropdown');
+              if (dropdown) {
+                const rect = e.currentTarget.getBoundingClientRect();
+                dropdown.style.left = `${rect.left}px`;
+                dropdown.style.display = 'block';
+                setTimeout(() => {
+                  dropdown.style.opacity = '1';
+                  dropdown.style.visibility = 'visible';
+                }, 10);
+              }
+            }}
+            onMouseLeave={() => {
+              setTimeout(() => {
+                const dropdown = document.getElementById('category-dropdown');
+                if (dropdown) {
+                  dropdown.style.opacity = '0';
+                  dropdown.style.visibility = 'hidden';
+                  setTimeout(() => {
+                    if (dropdown.style.visibility === 'hidden') {
+                      dropdown.style.display = 'none';
+                    }
+                  }, 300);
+                }
+              }, 100);
+            }}
+            ref={(el) => {
+              if (el && isBrowser) {
+                el.setAttribute('data-menu', 'category');
+                const dropdown = document.getElementById('category-dropdown');
+                if (dropdown) {
+                  const rect = el.getBoundingClientRect();
+                  dropdown.style.left = `${rect.left}px`;
+                  dropdown.style.top = `${rect.bottom + window.scrollY}px`;
+                }
+              }
+            }}
+          >
+            <div className="relative leading-[150%] font-medium cursor-pointer">
+              Category
+            </div>
+          </motion.div>
+          <div
+            id="category-dropdown"
+            className="w-40 bg-gray-900 rounded-md shadow-lg py-2 absolute z-[9999] transition-all duration-200"
+            style={{
+              display: 'none',
+              opacity: 0,
+              visibility: 'hidden',
+              top: '60px'
+            }}
+            onMouseEnter={(e) => {
+              const dropdown = e.currentTarget;
+              dropdown.style.display = 'block';
+              dropdown.style.opacity = '1';
+              dropdown.style.visibility = 'visible';
+            }}
+            onMouseLeave={(e) => {
+              const dropdown = e.currentTarget;
+              dropdown.style.opacity = '0';
+              dropdown.style.visibility = 'hidden';
+              setTimeout(() => {
+                if (dropdown.style.visibility === 'hidden') {
+                  dropdown.style.display = 'none';
+                }
+              }, 300);
+            }}
+          >
+            {categories.map((category) => (
+              <a
+                key={category.id || category._id || category.name}
+                onClick={() => handleMovementClick(category.id || category._id || category.name)}
+                className="flex items-center text-center gap-2 px-4 py-2 text-sm text-white hover:bg-gray-800 transition-colors"
+              >
+                {/* {category.image && (
+                  <Image
+                    src={category.image}
+                    alt={category.name}
+                    width={24}
+                    height={24}
+                    className="rounded-full object-cover"
+                  />
+                )} */}
+                <span>{category.name}</span>
+              </a>
+            ))}
+          </div>
+          {/* <motion.div
             className="flex flex-row items-center justify-center py-1.5 px-3 cursor-pointer hover:text-gray-300 transition-colors"
             onClick={handleContactClick}
             variants={menuItemVariants}
@@ -569,7 +681,7 @@ const Navbar = ({
             whileTap={{ scale: 0.95 }}
           >
             <div className="relative leading-[150%] font-medium">Contact-Us</div>
-          </motion.div>
+          </motion.div> */}
         </motion.div>
 
         {windowWidth >= 768 && (
@@ -749,13 +861,57 @@ const Navbar = ({
                   </div>
                 </div>
 
-                <Link
+                {/* Category dropdown for mobile */}
+                <div className="border-b border-gray-800">
+                  <div
+                    className="flex justify-between items-center py-4 px-6 text-white hover:bg-gray-800 cursor-pointer"
+                    onClick={() => {
+                      const categoriesList = document.getElementById('mobile-categories-list');
+                      if (categoriesList) {
+                        categoriesList.classList.toggle('hidden');
+                      }
+                    }}
+                  >
+                    <span>Category</span>
+                    <svg
+                      xmlns="http://www.w3.org/2000/svg"
+                      className="h-5 w-5"
+                      fill="none"
+                      viewBox="0 0 24 24"
+                      stroke="currentColor"
+                    >
+                      <path
+                        strokeLinecap="round"
+                        strokeLinejoin="round"
+                        strokeWidth={2}
+                        d="M19 9l-7 7-7-7"
+                      />
+                    </svg>
+                  </div>
+                  <div id="mobile-categories-list" className="hidden">
+                    {categories.map((category) => (
+                      <div
+                        key={category.id || category._id || category.name}
+                        className="py-3 px-10 text-sm text-gray-300 hover:text-white hover:bg-gray-800 cursor-pointer"
+                        onClick={() => {
+                          handleMovementClick(category.id || category._id || category.name);
+                          setShowMobileMenu(false);
+                        }}
+                      >
+                        {category.name}
+                      </div>
+                    ))}
+                  </div>
+                </div>
+                {/* End category dropdown for mobile */}
+
+                {/* <Link
                   href="/contact"
                   className="block py-4 px-6 text-white no-underline hover:bg-gray-800 transition-colors border-b border-gray-800"
                   onClick={() => setShowMobileMenu(false)}
                 >
                   Contact-Us
-                </Link>
+                </Link> */}
 
                 <div className="mt-6">
                   {user ? (

@@ -81,7 +81,7 @@ const Blog = () => {
           {blogs.slice(0, firstRowCount).map((blog) => (
             <div
               key={blog._id}
-              className="w-full md:w-1/2 h-[300px] sm:h-[370px] md:h-[400px] lg:h-[470px] rounded-2xl flex flex-col items-start justify-end p-4 sm:p-6 md:py-10 md:pl-6 md:pr-5 box-border gap-3 sm:gap-4 bg-cover bg-no-repeat bg-[top] cursor-pointer"
+              className="w-full md:w-1/2 h-[300px] sm:h-[370px] md:h-[400px] lg:h-[470px] rounded-2xl flex flex-col items-start justify-end p-4 sm:p-6 md:py-10 md:pl-6 md:pr-5 box-border gap-3 sm:gap-4 bg-cover bg-no-repeat bg-[center] cursor-pointer"
               onClick={() => onCatContainerClick(blog._id)}
               style={{
                 backgroundImage: blog.featuredImage

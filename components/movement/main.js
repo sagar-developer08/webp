@@ -1,10 +1,11 @@
-import React, { useState, useMemo, useEffect } from "react";
+import React, { useState, useEffect } from "react";
 import Image from "next/image";
 import Card from "../card";
 import SkeletonLoader from "../SkeletonLoader";
 import PropTypes from "prop-types";
-import ShopFilter from "../../app/shop/ShopFilter";
+import ShopFilter from "../../app/movement/ShopFilter";
 import { createPortal } from "react-dom";
+import axios from "../../services/axios";
 
 const Main = ({
   className = "",
@@ -17,21 +18,85 @@ const Main = ({
   hasMore,
   loadingMore,
   onLoadMore,
-  selectedCountry
+  country,
+  movementId // <-- Accept movementId as a prop
 }) => {
   const [filters, setFilters] = useState({});
-  const [sortBy, setSortBy] = useState(""); // Default sort option
+  const [sortBy, setSortBy] = useState("");
   const [showSortDropdown, setShowSortDropdown] = useState(false);
   const [showFilterDrawer, setShowFilterDrawer] = useState(false);
   const [isBrowser, setIsBrowser] = useState(false);
+  const [fetchedProducts, setFetchedProducts] = useState([]);
+  const [fetchLoading, setFetchLoading] = useState(false);
+  // Track if filter is applied
+  const [filterApplied, setFilterApplied] = useState(false);
 
   useEffect(() => {
     setIsBrowser(true);
   }, []);
 
-  const getCurrencySymbol = (selectedCountry) => {
-    if (!selectedCountry) return '$';
-    const countryUpper = selectedCountry.toUpperCase();
+  // Fetch products from API only when filter is applied
+  useEffect(() => {
+    if (!filterApplied) return;
+    const fetchProductsFromApi = async () => {
+      setFetchLoading(true);
+      try {
+        const params = new URLSearchParams();
+
+        params.append('currency', country?.toLowerCase() || 'uae');
+        if (filters.priceMin !== undefined && filters.priceMin !== null && filters.priceMin !== "") {
+          params.append('priceMin', filters.priceMin);
+        }
+        if (filters.priceMax !== undefined && filters.priceMax !== null && filters.priceMax !== "") {
+          params.append('priceMax', filters.priceMax);
+        }
+        // Always send movement id as 'movement' param for filter API
+        if (movementId) {
+          params.append('movement', movementId);
+        }
+        Object.entries(filters).forEach(([key, value]) => {
+          if (
+            value !== "" &&
+            value !== false &&
+            key !== 'priceMin' &&
+            key !== 'priceMax' &&
+            key !== 'movement' // avoid duplicate
+          ) {
+            params.append(key, value);
+          }
+        });
+        if (sortBy) {
+          params.append('sortBy', sortBy);
+        }
+        params.append('page', page || 1);
+        params.append('limit', 12);
+
+        const url = `https://0vm9jauvgc.execute-api.us-east-1.amazonaws.com/stag/api/products/filters/search?${params.toString()}`;
+        // console.log("API URL with params:", url);
+
+        const response = await axios.get(url);
+        const data = response.data;
+
+        if (data && data.products) {
+          setFetchedProducts(data.products);
+        } else {
+          setFetchedProducts([]);
+        }
+      } catch (err) {
+        setFetchedProducts([]);
+        console.error("Error fetching products from API:", err);
+      } finally {
+        setFetchLoading(false);
+      }
+    };
+
+    fetchProductsFromApi();
+  }, [filters, sortBy, page, country, filterApplied]);
+
+  // Helper function to get currency symbol based on country
+  const getCurrencySymbol = (country) => {
+    if (!country) return '$';
+    const countryUpper = country.toUpperCase();
     switch (countryUpper) {
       case 'INDIA': return '₹';
       case 'UAE': return 'AED';
@@ -42,88 +107,93 @@ const Main = ({
     }
   };
 
+  // Helper function to get price for current country
   const getCountryPrice = (priceObj) => {
     if (!priceObj || typeof priceObj !== 'object') return '';
-    if (!selectedCountry) return Object.values(priceObj)[0] || '';
+    if (!country) return Object.values(priceObj)[0] || '';
 
-    const countryKey = selectedCountry.toLowerCase();
+    const countryKey = country.toLowerCase();
     return priceObj[countryKey] || Object.values(priceObj)[0] || '';
   };
 
   const handleFilterChange = (newFilters) => {
     setFilters(newFilters);
+    setFilterApplied(true); // Mark that filter is now applied
   };
 
-  const getFilteredProducts = () => {
-    if (!products || !Array.isArray(products)) return [];
-
-    if (!Object.values(filters).some(value => value !== "")) {
-      return products;
-    }
-
-    return products.filter(product => {
-      if (!product?.watchDetails) return false;
-
-      return Object.entries(filters).every(([key, value]) => {
-        if (!value) return true;
-        return product.watchDetails[key] === value;
-      });
-    });
+  const handleReset = () => {
+    setFilters({});
+    setSortBy("");
+    setShowSortDropdown(false);
+    setFilterApplied(false); // Reset to use parent products
+    setFetchedProducts([]);  // Clear fetched products
   };
 
-  const filteredProducts = getFilteredProducts();
-
-  // Apply sorting to the filtered products
-  const sortedProducts = useMemo(() => {
-    if (!filteredProducts) return [];
-
-    let sorted = [...filteredProducts];
-
-    // Helper to get price for sorting
-    const getSortPrice = (product) => {
-      if (!product.price || typeof product.price !== 'object') return 0;
-      if (!selectedCountry) return Number(Object.values(product.price)[0]) || 0;
-      const countryKey = selectedCountry.toLowerCase();
-      return Number(product.price[countryKey]) || Number(Object.values(product.price)[0]) || 0;
-    };
+  // Use products from parent for rendering, unless filter is applied, then use fetchedProducts
+  const getSortedProducts = (productsToSort) => {
+    if (!productsToSort || !Array.isArray(productsToSort)) return [];
 
     switch (sortBy) {
       case 'bestSeller':
-        sorted.sort((a, b) => (b.isBestSeller ? 1 : 0) - (a.isBestSeller ? 1 : 0));
-        break;
+        return [...productsToSort].sort((a, b) => (b.bestSeller || 0) - (a.bestSeller || 0));
       case 'newArrival':
-        sorted.sort((a, b) => (b.isNewArrival ? 1 : 0) - (a.isNewArrival ? 1 : 0));
-        break;
+        return [...productsToSort].sort((a, b) => new Date(b.createdAt) - new Date(a.createdAt));
       case 'nameAsc':
-        sorted.sort((a, b) => (a.name?.en || '').localeCompare(b.name?.en || ''));
-        break;
+        return [...productsToSort].sort((a, b) => a.name?.en?.localeCompare(b.name?.en || ''));
       case 'nameDesc':
-        sorted.sort((a, b) => (b.name?.en || '').localeCompare(a.name?.en || ''));
-        break;
+        return [...productsToSort].sort((a, b) => b.name?.en?.localeCompare(a.name?.en || ''));
       case 'priceLowToHigh':
-      case 'price':
-      case 'priceAsc':
-      case 'priceLow':
-        sorted.sort((a, b) => getSortPrice(a) - getSortPrice(b));
-        break;
+        return [...productsToSort].sort((a, b) => {
+          const priceA = parseFloat(getCountryPrice(a.price)) || 0;
+          const priceB = parseFloat(getCountryPrice(b.price)) || 0;
+          return priceA - priceB;
+        });
       case 'priceHighToLow':
-        sorted.sort((a, b) => getSortPrice(b) - getSortPrice(a));
-        break;
+        return [...productsToSort].sort((a, b) => {
+          const priceA = parseFloat(getCountryPrice(a.price)) || 0;
+          const priceB = parseFloat(getCountryPrice(b.price)) || 0;
+          return priceB - priceA;
+        });
       case 'newest':
-        sorted.sort((a, b) => new Date(b.createdAt || 0) - new Date(a.createdAt || 0));
-        break;
+        return [...productsToSort].sort((a, b) => new Date(b.createdAt) - new Date(a.createdAt));
       case 'rating':
-        sorted.sort((a, b) => (b.rating || 0) - (a.rating || 0));
-        break;
+        return [...productsToSort].sort((a, b) => (b.rating || 0) - (a.rating || 0));
       case 'reviews':
-        sorted.sort((a, b) => (b.reviewsCount || 0) - (a.reviewsCount || 0));
-        break;
+        return [...productsToSort].sort((a, b) => (b.reviewsCount || 0) - (a.reviewsCount || 0));
+      case 'price':
+        return [...productsToSort].sort((a, b) => {
+          const priceA = parseFloat(getCountryPrice(a.price)) || 0;
+          const priceB = parseFloat(getCountryPrice(b.price)) || 0;
+          return priceA - priceB;
+        });
       default:
-        break;
+        return productsToSort;
+    }
+  };
+
+  const getFilteredProducts = () => {
+    if (!products.data || !Array.isArray(products.data)) return [];
+
+    let result = [...products.data];
+
+    if (Object.values(filters).some(value => value !== "")) {
+      result = result.filter(product => {
+        if (!product.watchDetails) return false;
+
+        return Object.entries(filters).every(([key, value]) => {
+          if (!value) return true;
+          return product.watchDetails[key] === value;
+        });
+      });
     }
 
-    return sorted;
-  }, [filteredProducts, sortBy, selectedCountry]);
+    return getSortedProducts(result);
+  };
+
+  // If filter is applied, show fetchedProducts, else show parent products
+  const productsToRender = filterApplied
+    ? (fetchLoading ? [] : fetchedProducts)
+    : getFilteredProducts();
 
   const toggleFilterDrawer = () => {
     setShowFilterDrawer(!showFilterDrawer);
@@ -173,12 +243,6 @@ const Main = ({
     }
   };
 
-  const handleReset = () => {
-    setFilters({});
-    setSortBy("");
-    setShowSortDropdown(false);
-  };
-
   return (
     <div className={`flex flex-col items-center justify-start gap-10 text-center text-base text-black font-h5-24 mq450:gap-5 ${className}`}>
       <div className="w-full max-w-[1360px] flex flex-row items-start justify-between relative mq750:px-4 mq450:w-full">
@@ -203,14 +267,14 @@ const Main = ({
             <div className="flex items-center gap-4">
               <div className="rounded-[50px] flex flex-row items-center justify-center py-2 px-6">
                 <div className="relative leading-[150%] font-medium mq450:hidden">
-                  {sortedProducts.length} Items
+                  {(productsToRender && typeof productsToRender.length === "number" ? productsToRender.length : 0)} Items
                   {Object.values(filters).some(value => value !== "" && value !== false) &&
                     ` (Filtered)`
                   }
                 </div>
               </div>
 
-              <div className="relative sort-dropdown">
+              <div className="relative sort-dropdown mq450:gap-[24px]">
                 <div
                   className="rounded-[50px] border-[#000] border-solid border-[1px] flex items-center py-1.5 px-[15px] gap-2 cursor-pointer"
                   onClick={() => setShowSortDropdown(!showSortDropdown)}
@@ -305,28 +369,27 @@ const Main = ({
             </div>
           </div>
 
-          {/* Products Grid - Fixed the missing return statement here */}
           <div className="skeleton-grid flex flex-row items-start justify-start flex-wrap gap-8 mq750:gap-4 mq450:gap-2 mq450:justify-between w-full">
-            {loading ? (
+            {fetchLoading ? (
               // Show skeleton loaders during loading
               Array.from({ length: 8 }, (_, index) => (
                 <div key={`skeleton-${index}`} className="w-[calc(25%-24px)] min-w-[260px] max-w-[320px] mq750:w-[48%] mq450:w-[48%] mq450:min-w-0 min-h-[480px]">
                   <SkeletonLoader />
                 </div>
               ))
-            ) : sortedProducts.length > 0 ? (
-              sortedProducts.map((product, index) => {
-                const currencySymbol = getCurrencySymbol(selectedCountry);
+            ) : productsToRender.length > 0 ? (
+              productsToRender.map((product, index) => {
+                const currencySymbol = getCurrencySymbol(country);
                 const productPrice = getCountryPrice(product.price);
                 const displayPrice = productPrice ? `${currencySymbol} ${productPrice}` : '';
 
                 return (
-                  <div key={product._id || index} className="w-[calc(25%-24px)] min-w-[260px] max-w-[320px] mq750:w-[48%] mq450:w-[48%] mq450:min-w-0">
+                  <div key={product._id || index} className="w-[calc(25%-24px)] min-w-[260px] max-w-[320px] mq750:w-[48%] mq450:w-[48%] mq450:min-w-0 ">
                     <Card
                       productId={product._id}
                       images={product.imageLinks?.image1}
                       hoverImage={product.imageLinks?.image2}
-                      classic={product.collection?.name}
+                      classic={product.collection?.name || "Classic"}
                       name={product?.name?.en}
                       icroundStar="/icroundstar-1.svg"
                       dialColor={product?.watchDetails?.dialColor?.en}
@@ -340,16 +403,6 @@ const Main = ({
             )}
           </div>
 
-          {/* Pagination - Added the pagination component */}
-          {totalPages > 1 && (
-            <Pagination
-              currentPage={page}
-              totalPages={totalPages}
-              onPageChange={onPageChange}
-            />
-          )}
-
-          {/* Load More Button */}
           {hasMore && !loading && (
             <div className="flex justify-center mt-12 mb-8">
               <button
@@ -371,7 +424,6 @@ const Main = ({
         </div>
       </div>
 
-      {/* Filter Drawer */}
       {isBrowser && showFilterDrawer && createPortal(
         <div className="fixed inset-0 bg-white bg-opacity-70 z-[9999]" onClick={toggleFilterDrawer}>
           <div
@@ -390,80 +442,12 @@ const Main = ({
   );
 };
 
-// Define the Pagination component outside the Main component
-const Pagination = ({ currentPage, totalPages, onPageChange }) => {
-  const getPageNumbers = () => {
-    const pageNumbers = [];
-
-    if (totalPages <= 5) {
-      for (let i = 1; i <= totalPages; i++) {
-        pageNumbers.push(i);
-      }
-    } else {
-      pageNumbers.push(1);
-
-      const startPage = Math.max(2, currentPage - 1);
-      const endPage = Math.min(totalPages - 1, currentPage + 1);
-
-      if (startPage > 2) {
-        pageNumbers.push('...');
-      }
-
-      for (let i = startPage; i <= endPage; i++) {
-        pageNumbers.push(i);
-      }
-
-      if (endPage < totalPages - 1) {
-        pageNumbers.push('...');
-      }
-
-      pageNumbers.push(totalPages);
-    }
-
-    return pageNumbers;
-  };
-
-  return (
-    <div className="flex justify-center mt-6">
-      <nav className="flex items-center">
-        <button
-          onClick={() => onPageChange(currentPage - 1)}
-          disabled={currentPage === 1}
-          className={`px-3 py-2 rounded-l-md border border-gray-700 ${currentPage === 1 ? 'opacity-50 cursor-not-allowed' : 'hover:bg-gray-800'}`}
-        >
-          Previous
-        </button>
-
-        {getPageNumbers().map((number, index) => (
-          <button
-            key={index}
-            onClick={() => typeof number === 'number' ? onPageChange(number) : null}
-            className={`px-3 py-2 border-t border-b border-gray-700 ${number === '...'
-              ? 'pointer-events-none'
-              : currentPage === number
-                ? 'bg-white text-black'
-                : 'hover:bg-gray-800'
-              }`}
-          >
-            {number}
-          </button>
-        ))}
-
-        <button
-          onClick={() => onPageChange(currentPage + 1)}
-          disabled={currentPage === totalPages}
-          className={`px-3 py-2 rounded-r-md border border-gray-700 ${currentPage === totalPages ? 'opacity-50 cursor-not-allowed' : 'hover:bg-gray-800'}`}
-        >
-          Next
-        </button>
-      </nav>
-    </div>
-  );
-};
-
 Main.propTypes = {
   className: PropTypes.string,
-  products: PropTypes.array.isRequired,
+  products: PropTypes.shape({
+    data: PropTypes.array,
+    total: PropTypes.number
+  }).isRequired,
   loading: PropTypes.bool.isRequired,
   error: PropTypes.string,
   page: PropTypes.number.isRequired,
@@ -472,7 +456,7 @@ Main.propTypes = {
   hasMore: PropTypes.bool.isRequired,
   loadingMore: PropTypes.bool.isRequired,
   onLoadMore: PropTypes.func.isRequired,
-  selectedCountry: PropTypes.string
+  country: PropTypes.string
 };
 
 export default Main;

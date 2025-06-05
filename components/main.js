@@ -188,7 +188,7 @@ const Main = ({ className = "", country }) => {
             </div>
             <div className="flex items-center gap-4">
               <div className="rounded-[50px] flex flex-row items-center justify-center py-2 px-6">
-                <div className="relative leading-[150%] font-medium">
+                <div className="relative leading-[150%] font-medium mq450:hidden">
                   {totalProducts} Items
                   {Object.values(filters).some(value => value !== "" && value !== false) &&
                     ` (Filtered)`

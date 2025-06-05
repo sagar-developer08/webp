@@ -3,8 +3,9 @@ import Image from "next/image";
 import Card from "../card";
 import SkeletonLoader from "../SkeletonLoader";
 import PropTypes from "prop-types";
-import ShopFilter from "../../app/shop/ShopFilter";
+import ShopFilter from "../../app/collection/ShopFilter";
 import { createPortal } from "react-dom";
+import axios from "../../services/axios";
 
 const Main = ({
   className = "",
@@ -17,17 +18,80 @@ const Main = ({
   hasMore,
   loadingMore,
   onLoadMore,
-  country
+  country,
+  collectionId // <-- Accept collectionId as a prop
 }) => {
   const [filters, setFilters] = useState({});
   const [sortBy, setSortBy] = useState("");
   const [showSortDropdown, setShowSortDropdown] = useState(false);
   const [showFilterDrawer, setShowFilterDrawer] = useState(false);
   const [isBrowser, setIsBrowser] = useState(false);
+  const [fetchedProducts, setFetchedProducts] = useState([]);
+  const [fetchLoading, setFetchLoading] = useState(false);
+  // Track if filter is applied
+  const [filterApplied, setFilterApplied] = useState(false);
 
   useEffect(() => {
     setIsBrowser(true);
   }, []);
+
+  // Fetch products from API only when filter is applied
+  useEffect(() => {
+    if (!filterApplied) return;
+    const fetchProductsFromApi = async () => {
+      setFetchLoading(true);
+      try {
+        const params = new URLSearchParams();
+
+        params.append('currency', country?.toLowerCase() || 'uae');
+        if (filters.priceMin !== undefined && filters.priceMin !== null && filters.priceMin !== "") {
+          params.append('priceMin', filters.priceMin);
+        }
+        if (filters.priceMax !== undefined && filters.priceMax !== null && filters.priceMax !== "") {
+          params.append('priceMax', filters.priceMax);
+        }
+        // Always send collection id as 'collection' param for filter API
+        if (collectionId) {
+          params.append('collection', collectionId);
+        }
+        Object.entries(filters).forEach(([key, value]) => {
+          if (
+            value !== "" &&
+            value !== false &&
+            key !== 'priceMin' &&
+            key !== 'priceMax' &&
+            key !== 'collection' // avoid duplicate
+          ) {
+            params.append(key, value);
+          }
+        });
+        if (sortBy) {
+          params.append('sortBy', sortBy);
+        }
+        params.append('page', page || 1);
+        params.append('limit', 12);
+
+        const url = `https://0vm9jauvgc.execute-api.us-east-1.amazonaws.com/stag/api/products/filters/search?${params.toString()}`;
+        // console.log("API URL with params:", url);
+
+        const response = await axios.get(url);
+        const data = response.data;
+
+        if (data && data.products) {
+          setFetchedProducts(data.products);
+        } else {
+          setFetchedProducts([]);
+        }
+      } catch (err) {
+        setFetchedProducts([]);
+        console.error("Error fetching products from API:", err);
+      } finally {
+        setFetchLoading(false);
+      }
+    };
+
+    fetchProductsFromApi();
+  }, [filters, sortBy, page, country, filterApplied]);
 
   // Helper function to get currency symbol based on country
   const getCurrencySymbol = (country) => {
@@ -54,8 +118,18 @@ const Main = ({
 
   const handleFilterChange = (newFilters) => {
     setFilters(newFilters);
+    setFilterApplied(true); // Mark that filter is now applied
   };
 
+  const handleReset = () => {
+    setFilters({});
+    setSortBy("");
+    setShowSortDropdown(false);
+    setFilterApplied(false); // Reset to use parent products
+    setFetchedProducts([]);  // Clear fetched products
+  };
+
+  // Use products from parent for rendering, unless filter is applied, then use fetchedProducts
   const getSortedProducts = (productsToSort) => {
     if (!productsToSort || !Array.isArray(productsToSort)) return [];
 
@@ -116,7 +190,10 @@ const Main = ({
     return getSortedProducts(result);
   };
 
-  const filteredProducts = getFilteredProducts();
+  // If filter is applied, show fetchedProducts, else show parent products
+  const productsToRender = filterApplied
+    ? (fetchLoading ? [] : fetchedProducts)
+    : getFilteredProducts();
 
   const toggleFilterDrawer = () => {
     setShowFilterDrawer(!showFilterDrawer);
@@ -166,12 +243,6 @@ const Main = ({
     }
   };
 
-  const handleReset = () => {
-    setFilters({});
-    setSortBy("");
-    setShowSortDropdown(false);
-  };
-
   return (
     <div className={`flex flex-col items-center justify-start gap-10 text-center text-base text-black font-h5-24 mq450:gap-5 ${className}`}>
       <div className="w-full max-w-[1360px] flex flex-row items-start justify-between relative mq750:px-4 mq450:w-full">
@@ -195,15 +266,15 @@ const Main = ({
             </div>
             <div className="flex items-center gap-4">
               <div className="rounded-[50px] flex flex-row items-center justify-center py-2 px-6">
-                <div className="relative leading-[150%] font-medium">
-                  {filteredProducts.length} Items
+                <div className="relative leading-[150%] font-medium mq450:hidden">
+                  {(productsToRender && typeof productsToRender.length === "number" ? productsToRender.length : 0)} Items
                   {Object.values(filters).some(value => value !== "" && value !== false) &&
                     ` (Filtered)`
                   }
                 </div>
               </div>
 
-              <div className="relative sort-dropdown">
+              <div className="relative sort-dropdown mq450:gap-[24px]">
                 <div
                   className="rounded-[50px] border-[#000] border-solid border-[1px] flex items-center py-1.5 px-[15px] gap-2 cursor-pointer"
                   onClick={() => setShowSortDropdown(!showSortDropdown)}
@@ -299,21 +370,21 @@ const Main = ({
           </div>
 
           <div className="skeleton-grid flex flex-row items-start justify-start flex-wrap gap-8 mq750:gap-4 mq450:gap-2 mq450:justify-between w-full">
-            {loading ? (
+            {fetchLoading ? (
               // Show skeleton loaders during loading
               Array.from({ length: 8 }, (_, index) => (
                 <div key={`skeleton-${index}`} className="w-[calc(25%-24px)] min-w-[260px] max-w-[320px] mq750:w-[48%] mq450:w-[48%] mq450:min-w-0 min-h-[480px]">
                   <SkeletonLoader />
                 </div>
               ))
-            ) : filteredProducts.length > 0 ? (
-              filteredProducts.map((product, index) => {
+            ) : productsToRender.length > 0 ? (
+              productsToRender.map((product, index) => {
                 const currencySymbol = getCurrencySymbol(country);
                 const productPrice = getCountryPrice(product.price);
                 const displayPrice = productPrice ? `${currencySymbol} ${productPrice}` : '';
 
                 return (
-                  <div key={product._id || index} className="w-[calc(25%-24px)] min-w-[260px] max-w-[320px] mq750:w-[48%] mq450:w-[48%] mq450:min-w-0">
+                  <div key={product._id || index} className="w-[calc(25%-24px)] min-w-[260px] max-w-[320px] mq750:w-[48%] mq450:w-[48%] mq450:min-w-0 ">
                     <Card
                       productId={product._id}
                       images={product.imageLinks?.image1}

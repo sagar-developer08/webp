@@ -116,18 +116,8 @@ const ShopFilter = ({ onFilterChange, initialFilters, onReset, country = "india"
             // Only set local state for priceMin/priceMax if not already set by user/initialFilters
             setFilters(prev => {
               const updated = { ...prev };
-              // Only set priceMin/priceMax if they are not set at all (null/undefined/empty string)
-              // Do NOT overwrite if user/initialFilters already set a value (including 0)
-              if (
-                (prev.priceMin === undefined || prev.priceMin === null || prev.priceMin === "")
-              ) {
-                updated.priceMin = countrySpecificRange.min;
-              }
-              if (
-                (prev.priceMax === undefined || prev.priceMax === null || prev.priceMax === "")
-              ) {
-                updated.priceMax = countrySpecificRange.max;
-              }
+              if (!prev.priceMin) updated.priceMin = countrySpecificRange.min;
+              if (!prev.priceMax) updated.priceMax = countrySpecificRange.max;
               return updated;
             });
             // Do NOT call onFilterChange here, let user interaction trigger it
@@ -352,9 +342,9 @@ const ShopFilter = ({ onFilterChange, initialFilters, onReset, country = "india"
       <div className="px-3 text-black space-y-2 overflow-y-auto thin-scrollbar pb-3 flex-grow">
         {renderFilterSection("Collection", "collection", filterOptions.collections)}
         {/* {renderFilterSection("Movement", "movement", filterOptions.movements)} */}
-        {renderFilterSection("Movement", "displayType", filterOptions.displayTypes)}
+        {/* {renderFilterSection("Movement", "displayType", filterOptions.displayTypes)} */}
         {renderFilterSection("Case Color", "caseColor", filterOptions.caseColors)}
-        {/* {renderFilterSection("Case Material", "caseMaterial", filterOptions.bandMaterials)} */}
+        {/* {renderFilterSection("Case Material", "caseMaterial", filterOptions.caseMaterials)} */}
         {/* {renderFilterSection("Dial Color", "dialColor", filterOptions.dialColors)} */}
         {/* {renderFilterSection("Dial Shape", "dialShape", filterOptions.dialShapes)} */}
         {renderFilterSection("Band Color", "bandColor", filterOptions.bandColors)}

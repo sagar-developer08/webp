@@ -49,6 +49,7 @@ const Navbar = ({
   const { user, clearUser } = useUser();
   const { selectedCountry, updateCountry } = useCountry();
   const [collections, setCollections] = useState([]);
+  const [categories, setCategories] = useState([]);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState(null);
 
@@ -68,7 +69,21 @@ const Navbar = ({
       }
     };
 
+    const fetchCategories = async () => {
+      try {
+        const response = await fetch('http://localhost:8080/api/movement/all');
+        if (!response.ok) {
+          throw new Error('Failed to fetch categories');
+        }
+        const data = await response.json();
+        setCategories(data.data);
+      } catch (err) {
+        // Optionally handle error
+      }
+    };
+
     fetchCollections();
+    fetchCategories();
   }, []);
 
   const handleProductClick = (collectionId) => {
@@ -558,6 +573,99 @@ const Navbar = ({
                   />
                 )}
                 <span>{collection.name}</span>
+              </a>
+            ))}
+          </div>
+
+          <motion.div
+            className="flex flex-row items-center justify-center py-1.5 px-3 gap-1 relative"
+            variants={menuItemVariants}
+            whileHover={{ scale: 1.05 }}
+            whileTap={{ scale: 0.95 }}
+            onMouseEnter={(e) => {
+              const dropdown = document.getElementById('category-dropdown');
+              if (dropdown) {
+                const rect = e.currentTarget.getBoundingClientRect();
+                dropdown.style.left = `${rect.left}px`;
+                dropdown.style.display = 'block';
+                setTimeout(() => {
+                  dropdown.style.opacity = '1';
+                  dropdown.style.visibility = 'visible';
+                }, 10);
+              }
+            }}
+            onMouseLeave={() => {
+              setTimeout(() => {
+                const dropdown = document.getElementById('category-dropdown');
+                if (dropdown) {
+                  dropdown.style.opacity = '0';
+                  dropdown.style.visibility = 'hidden';
+                  setTimeout(() => {
+                    if (dropdown.style.visibility === 'hidden') {
+                      dropdown.style.display = 'none';
+                    }
+                  }, 300);
+                }
+              }, 100);
+            }}
+            ref={(el) => {
+              if (el && isBrowser) {
+                el.setAttribute('data-menu', 'category');
+                const dropdown = document.getElementById('category-dropdown');
+                if (dropdown) {
+                  const rect = el.getBoundingClientRect();
+                  dropdown.style.left = `${rect.left}px`;
+                  dropdown.style.top = `${rect.bottom + window.scrollY}px`;
+                }
+              }
+            }}
+          >
+            <div className="relative leading-[150%] font-medium cursor-pointer">
+              Category
+            </div>
+          </motion.div>
+          <div
+            id="category-dropdown"
+            className="w-40 bg-gray-900 rounded-md shadow-lg py-2 absolute z-[9999] transition-all duration-200"
+            style={{
+              display: 'none',
+              opacity: 0,
+              visibility: 'hidden',
+              top: '60px'
+            }}
+            onMouseEnter={(e) => {
+              const dropdown = e.currentTarget;
+              dropdown.style.display = 'block';
+              dropdown.style.opacity = '1';
+              dropdown.style.visibility = 'visible';
+            }}
+            onMouseLeave={(e) => {
+              const dropdown = e.currentTarget;
+              dropdown.style.opacity = '0';
+              dropdown.style.visibility = 'hidden';
+              setTimeout(() => {
+                if (dropdown.style.visibility === 'hidden') {
+                  dropdown.style.display = 'none';
+                }
+              }, 300);
+            }}
+          >
+            {categories.map((category) => (
+              <a
+                key={category.id || category._id || category.name}
+                onClick={() => handleProductClick(category.id || category._id || category.name)}
+                className="flex items-center gap-2 px-4 py-2 text-sm text-white hover:bg-gray-800 transition-colors"
+              >
+                {/* {category.image && (
+                  <Image
+                    src={category.image}
+                    alt={category.name}
+                    width={24}
+                    height={24}
+                    className="rounded-full object-cover"
+                  />
+                )} */}
+                <span>{category.name}</span>
               </a>
             ))}
           </div>

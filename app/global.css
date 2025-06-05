@@ -146,6 +146,29 @@ body {
   cursor: pointer;
 }
 
+/* Category dropdown styles */
+#category-dropdown {
+  position: fixed;
+  z-index: 99999 !important; /* Highest z-index to ensure it's above everything */
+  background-color: #1a1a1a;
+  border-radius: 4px;
+  box-shadow: 0 4px 12px rgba(0, 0, 0, 0.5);
+  overflow: hidden;
+  transition: opacity 0.3s ease, visibility 0.3s ease;
+}
+
+/* Add a small delay before hiding the dropdown to make it easier to interact with */
+#category-dropdown:hover {
+  opacity: 1 !important;
+  visibility: visible !important;
+  display: block !important;
+}
+
+/* Add cursor pointer to dropdown items */
+#category-dropdown a {
+  cursor: pointer;
+}
+
 /* Remove cursor-outline styles */
 
 /* Custom Swiper Navigation Styles */

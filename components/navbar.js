@@ -533,7 +533,7 @@ const Navbar = ({
 
           <div
             id="collection-dropdown"
-            className="w-40 transition-all duration-200"
+            className="w-40 bg-gray-900 rounded-md shadow-lg py-2 absolute z-[9999] transition-all duration-200"
             style={{
               display: 'none',
               opacity: 0,

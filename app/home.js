@@ -268,7 +268,7 @@ const Home = () => {
       <section className="self-stretch overflow-hidden flex flex-row flex-wrap items-start justify-center pb-[40px] pt-[60px] mq750:py-5 mq450:py-[40px] mq450:px-[24px] px-[40px] z-[5] text-center text-base text-[rgba(255,255,255,0.8)] font-h5-24 mq1050:gap-8 mq1050:py-5 mq1050:box-border">
         <div className="w-[1360px] flex flex-row flex-wrap items-center justify-between gap-0 mq1050:flex-col mq1050:gap-6">
           {/* First Card */}
-          <div className="h-[700px] w-[660px] rounded-3xl flex flex-row items-start justify-center p-10 box-border bg-[url('/limited@3x.webp')] bg-cover bg-no-repeat bg-center mq450:h-[520px] mq450:gap-[30px] mq1050:w-full mq1050:h-auto mq1050:p-6 relative">
+          <div className="h-[700px] w-[660px] rounded-3xl flex flex-row items-start justify-center p-10 box-border bg-[url('/aurora_eon_celestial3.webp')] bg-cover bg-no-repeat bg-center mq450:h-[520px] mq450:gap-[30px] mq1050:w-full mq1050:h-auto mq1050:p-6 relative">
             {/* Black overlay */}
             <div className="absolute inset-0 bg-black bg-opacity-40 rounded-3xl"></div>
             <div className="flex-1 flex flex-col items-center justify-start gap-6 relative z-[1]">
@@ -287,7 +287,7 @@ const Home = () => {
             </div>
           </div>
           {/* Second Card */}
-          <div className="h-[700px] w-[660px] rounded-3xl flex flex-row items-end justify-center p-10 box-border bg-[url('/cat9@3x.webp')] bg-cover bg-no-repeat bg-[top] mq450:h-[520px] mq750:pt-[26px] mq750:pb-[26px] mq750:box-border mq450:gap-[30px] mq1050:w-full mq1050:h-auto mq1050:p-6 relative">
+          <div className="h-[700px] w-[660px] rounded-3xl flex flex-row items-end justify-center p-10 box-border bg-[url('/aurora_eon_celestial1.webp')] bg-cover bg-no-repeat bg-[top] mq450:h-[520px] mq750:pt-[26px] mq750:pb-[26px] mq750:box-border mq450:gap-[30px] mq1050:w-full mq1050:h-auto mq1050:p-6 relative">
             {/* Black overlay */}
             <div className="absolute inset-0 bg-black bg-opacity-40 rounded-3xl"></div>
             <div className="flex-1 flex flex-col items-center justify-start gap-6 relative z-[1]">
@@ -322,7 +322,7 @@ const Home = () => {
         category3="VINTAGE"
       />
       <section className="self-stretch overflow-hidden flex flex-col items-center justify-start py-[60px] mq750:py-5 mq450:py-5 px-[40px] gap-[40px] z-[10] text-center text-29xl text-[#fff] font-h5-24 mq1050:gap-8 mq450:py-[40px] mq450:px-[24px] mq450:gap-[24px]">
-        <div className="w-[1360px] rounded-3xl flex flex-row items-center justify-center py-20 px-10 box-border bg-[url('/reason1@3x.webp')] bg-cover bg-no-repeat bg-[top] mq750:pt-[52px] mq750:pb-[52px] mq750:box-border mq450:gap-[30px] max-w-full mq450:py-10 mq450:px-5 mq450:h-[480px] mq450:w-[380px] relative">
+        <div className="w-[1360px] rounded-3xl flex flex-row items-center justify-center py-20 px-10 box-border bg-[url('/send_a_gift_to_a_friend.webp')] bg-cover bg-no-repeat bg-[top] mq750:pt-[52px] mq750:pb-[52px] mq750:box-border mq450:gap-[30px] max-w-full mq450:py-10 mq450:px-5 mq450:h-[480px] mq450:w-[380px] relative">
           {/* Black overlay with opacity */}
           <div className="absolute inset-0 bg-black bg-opacity-50 rounded-3xl"></div>
 

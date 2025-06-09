@@ -15,7 +15,7 @@ const Reason = ({ className = "", country }) => {
 
   return (
     <div
-      className={`w-[1360px] h-[700px] rounded-3xl flex flex-col items-center justify-center py-16 px-10 box-border bg-[url('/reason@3x.webp')] bg-cover bg-no-repeat bg-[top] text-center text-base text-[#fff] font-h5-24 ${mobileHeightClass} ${className} max-w-full mq750:h-[500px] mq750:py-[36px] mq750:px-8 mq450:py-[16px] mq450:px-5 relative overflow-hidden`}
+      className={`w-[1360px] h-[700px] rounded-3xl flex flex-col items-center justify-center py-16 px-10 box-border bg-[url('/reason_to_believe.webp')] bg-cover bg-no-repeat bg-[top] text-center text-base text-[#fff] font-h5-24 ${mobileHeightClass} ${className} max-w-full mq750:h-[500px] mq750:py-[36px] mq750:px-8 mq450:py-[16px] mq450:px-5 relative overflow-hidden`}
     >
       {/* Dark overlay */}
       <div className="absolute inset-0 bg-black/40 rounded-3xl"></div>

@@ -1,6 +1,6 @@
 "use client";
 
-import { useEffect } from 'react';
+import { useEffect, Suspense } from 'react';
 import { useRouter, useSearchParams } from 'next/navigation';
 import { toast } from 'react-hot-toast';
 import { useUser } from '../../../context/UserContext';
@@ -134,4 +134,23 @@ const AuthCallback = () => {
   );
 };
 
-export default AuthCallback; 
+// Loading fallback component
+const LoadingFallback = () => (
+  <div className="min-h-screen bg-white flex items-center justify-center">
+    <div className="text-center">
+      <div className="animate-spin rounded-full h-16 w-16 border-t-2 border-b-2 border-black mx-auto mb-4"></div>
+      <p className="text-black text-lg">Loading...</p>
+    </div>
+  </div>
+);
+
+// Wrapped component with Suspense boundary
+const AuthCallbackPage = () => {
+  return (
+    <Suspense fallback={<LoadingFallback />}>
+      <AuthCallback />
+    </Suspense>
+  );
+};
+
+export default AuthCallbackPage; 

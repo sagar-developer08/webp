@@ -4,6 +4,7 @@ import Image from "next/image";
 import PropTypes from "prop-types";
 import { useRouter } from "next/navigation";
 import { useCart } from "../context/CartContext";
+import { useWishlist } from "../context/WishlistContext";
 import { toast } from "react-hot-toast";
 import AnimateOnScroll from "../components/AnimateOnScroll";
 import { motion } from "framer-motion";
@@ -15,6 +16,7 @@ import "swiper/css/navigation";
 const R = ({ className = "", product, relatedProducts, selectedCountry }) => {
   const router = useRouter();
   const { addToCart, isLoggedIn } = useCart();
+  const { addToWishlist, removeFromWishlist, isInWishlist } = useWishlist();
   const [quantity, setQuantity] = useState(1);
   const [selectedColor, setSelectedColor] = useState(null);
 
@@ -129,6 +131,26 @@ const R = ({ className = "", product, relatedProducts, selectedCountry }) => {
   const productPrice = getCountryPrice(product?.price);
   const currencySymbol = getCurrencySymbol(selectedCountry);
   const displayPrice = productPrice ? `${currencySymbol} ${productPrice}` : '';
+
+  const handleWishlist = () => {
+    if (!product) return;
+    const prodId = product._id || product.id;
+    if (!prodId) return;
+    const prod = {
+      _id: prodId,
+      name: product.name?.en || product.name || "",
+      price: product.price,
+      imageLinks: product.imageLinks,
+      watchDetails: product.watchDetails,
+      classic: product.classic,
+      dialColor: product.dialColor,
+    };
+    if (isInWishlist && isInWishlist(prodId)) {
+      removeFromWishlist(prodId);
+    } else if (addToWishlist) {
+      addToWishlist(prod);
+    }
+  };
 
   return (
     <div
@@ -333,9 +355,9 @@ const R = ({ className = "", product, relatedProducts, selectedCountry }) => {
               height={48}
               alt=""
               src="/icroundminus@2x.webp"
-              onClick={decreaseQuantity} // Added click handler
+              onClick={decreaseQuantity}
             />
-            <div className="relative leading-[150%] font-medium">{quantity}</div> {/* Added dynamic quantity */}
+            <div className="relative leading-[150%] font-medium">{quantity}</div>
             <Image
               className="h-12 w-[42.9px] relative overflow-hidden shrink-0 object-contain cursor-pointer"
               loading="lazy"
@@ -343,32 +365,67 @@ const R = ({ className = "", product, relatedProducts, selectedCountry }) => {
               height={48}
               alt=""
               src="/icroundplus@2x.webp"
-              onClick={increaseQuantity} // Added click handler
+              onClick={increaseQuantity}
             />
           </div>
-          <div className="flex-1 rounded-[50px] border-[#000] border-solid border-[1px] box-border overflow-hidden flex flex-row items-center justify-center !pt-2.5 !pb-2.5 !pl-10 !pr-10 min-w-[92px] text-center text-base cursor-pointer"
+          {/* Wishlist button next to quantity */}
+          <div
+            className={`h-12 w-12 rounded-[100px] border-[rgba(0,0,0,0.08)] border-solid border-[1px] box-border overflow-hidden flex items-center justify-center cursor-pointer ml-2 ${isInWishlist && isInWishlist(product?._id || product?.id) ? 'bg-red-50' : ''}`}
+            onClick={handleWishlist}
+          >
+            <Image
+              className="h-12 w-12"
+              width={32}
+              height={32}
+              alt="Wishlist"
+              src="/wish-1.svg"
+              style={{
+                filter: isInWishlist && isInWishlist(product?._id || product?.id)
+                  ? "invert(27%) sepia(98%) saturate(7491%) hue-rotate(346deg) brightness(97%) contrast(101%)"
+                  : "none"
+              }}
+            />
+          </div>
+        </div>
+        {/* Add to Cart and Buy It Now in a column, full width */}
+        <div className="self-stretch flex flex-col items-stretch justify-start gap-4 text-center text-base text-[#fff]">
+          <div
+            className="w-full rounded-[50px] border-[#000] border-solid border-[1px] box-border overflow-hidden flex flex-row items-center justify-center !pt-3 !pb-3 !pl-10 !pr-10 min-w-[92px] text-center text-base cursor-pointer bg-white text-black"
             onClick={handleAddToCart}
           >
             <div className="relative leading-[150%] font-medium">
               Add To Cart
             </div>
           </div>
-        </div>
-        <div className="self-stretch flex flex-row items-center justify-start gap-4 text-center text-base text-[#fff] mq750:flex-wrap ">
-          <div className="flex-1 rounded-[50px] bg-[#000] overflow-hidden flex flex-row items-center justify-center !pt-3 !pb-3 !pl-10 !pr-10 box-border min-w-[83px] cursor-pointer"
-            onClick={handleBuyNow}
+          <div
+            className="w-full rounded-[50px] bg-[#000] overflow-hidden flex flex-row items-center justify-center !pt-3 !pb-3 !pl-10 !pr-10 box-border min-w-[83px] cursor-pointer"
+            onClick={() => {
+              // Add to cart logic for both guest and logged in
+              if (product) {
+                let countryPrice = product.price;
+                if (product.price && typeof product.price === "object" && selectedCountry) {
+                  const countryKey = selectedCountry.toLowerCase();
+                  countryPrice = product.price[countryKey] || Object.values(product.price)[0] || "";
+                }
+                const cartItem = {
+                  productId: product._id || product.id,
+                  name: product.name?.en || product.name || "",
+                  price: countryPrice,
+                  images: product.imageLinks ? Object.values(product.imageLinks) : [product.imageLinks?.image1],
+                  image: product.imageLinks?.image1,
+                  quantity: quantity,
+                };
+                addToCart(cartItem);
+                toast.success("Added to cart successfully!");
+                // Route to cart for both guest and logged in
+                router.push("/cart");
+              }
+            }}
           >
             <div className="relative leading-[150%] font-medium">
               Buy It Now
             </div>
           </div>
-          <Image
-            className="h-12 w-12 relative rounded-[100px] overflow-hidden shrink-0 cursor-pointer"
-            width={48}
-            height={48}
-            alt=""
-            src="/wish-1.svg"
-          />
         </div>
       </div>
     </div>

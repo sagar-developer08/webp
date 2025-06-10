@@ -23,12 +23,12 @@ const DeliveryPolicy = () => {
             <main className="flex-grow">
                 {/* Page Banner */}
                 <PageBanner
-                    title="Delivery Policy"
-                    breadcrumb="Home > Delivery Policy"
+                    title="Shipping & Delivery Policy"
+                    breadcrumb="Home > Shipping & Delivery Policy"
                 />
 
                 {/* Delivery Policy Content */}
-                <div className="max-w-4xl mx-auto px-4 py-8 md:py-12 space-y-6">
+                <div className="max-w-[1360px] mx-auto px-[40px] py-[60px] space-y-6 mq450:py-[40px] mq450:px-[24px] mq450:gap-[24px]">
                     <section>
                         <p className="mb-4">
                             1. All Products purchased from the Website shall be delivered to the User by standard courier services by www.tornado.store on behalf of the respective Sellers through a logistics partner or by the Sellers themselves. All deliveries where applicable shall be made on a best efforts basis, and while the Website will endeavor to deliver the Products on the dates intimated, the Website disclaims any claims or liabilities arising from any delay in this regard. On behalf of the Seller, a nominal fee may be charged on all cash on delivery ("COD") orders. The COD charge can be viewed at the time of placing the order and in all order related emails. This charge shall not be refunded if an item is returned or if the cancellation request is raised after the order is shipped.

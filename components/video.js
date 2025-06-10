@@ -9,7 +9,7 @@ const Video = ({ className = "" }) => {
     router.push(path);
   }
   return (
-    <section className={`w-full max-w-[1360px] mx-auto px-5 sm:px-6 md:px-8 lg:px-5 box-border text-left text-[#fff] font-h5-24 items-center justify-center py-8 md:py-12 ${className}`}>
+    <section className={`w-full max-w-[1360px] overflow-hidden mx-auto px-[8px] mq450:px-[8px] box-border text-left text-[#fff] font-h5-24 items-center justify-center py-[60px] mq450:py-[40px] ${className}`}>
       <div className="w-full max-w-[1360px] mx-auto">
         <div className="w-full h-[300px] sm:h-[400px] md:h-[500px] lg:h-[600px] rounded-2xl md:rounded-3xl flex flex-row items-end justify-start py-6 sm:py-8 md:py-12 lg:py-[60px] px-4 sm:px-6 md:px-8 lg:px-10 box-border gap-4 sm:gap-6 md:gap-8 lg:gap-[60px] bg-[url('/content@3x.webp')] bg-cover bg-no-repeat bg-[center]">
           <div className="flex-1 flex flex-col items-start justify-start gap-3 sm:gap-4 md:gap-6">

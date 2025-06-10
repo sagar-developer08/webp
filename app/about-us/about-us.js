@@ -92,7 +92,7 @@ const AboutUs = () => {
       </section> */}
       <section className="self-stretch overflow-hidden flex flex-row items-start justify-center p-10 z-[4] text-left text-base text-[rgba(255,255,255,0.8)] font-h5-24 mq450:px-[24px] mq450:py-[40px] mq450:gap-[24px] mq450:box-border mq1050:gap-5">
         <div className="w-[1360px] max-w-full flex flex-row items-center justify-between gap-6 mq1050:flex-col mq1050:gap-8">
-          <div className="h-[419px] w-[660px] rounded-3xl flex flex-row items-end justify-start py-[60px] px-10 box-border bg-[url('/limited1@3x.webp')] bg-cover bg-no-repeat bg-[top] mq1050:gap-[30px] mq1050:w-full mq750:py-[40px] mq750:px-6 mq450:h-[350px] mq450:py-[30px] mq450:px-4 relative">
+          <div className="h-[420px] w-[660px] rounded-3xl flex flex-row items-end justify-start py-[60px] px-10 box-border bg-[url('/limited1@3x.webp')] bg-cover bg-no-repeat bg-[top] mq1050:gap-[30px] mq1050:w-full mq750:py-[40px] mq750:px-6 mq450:h-[350px] mq450:py-[30px] mq450:px-4 relative">
             {/* Add overlay for better text readability */}
             <div className="absolute inset-0 bg-black/40 rounded-3xl"></div>
 
@@ -108,7 +108,7 @@ const AboutUs = () => {
               </div>
             </div>
           </div>
-          <div className="h-[419px] w-[660px] rounded-3xl flex flex-row items-end justify-start py-[60px] px-10 box-border bg-[url('/limited2@3x.webp')] bg-cover bg-no-repeat bg-[top] mq1050:gap-[30px] mq1050:w-full mq750:py-[40px] mq750:px-6 mq450:h-[350px] mq450:py-[30px] mq450:px-4 relative">
+          <div className="h-[420px] w-[660px] rounded-3xl flex flex-row items-end justify-start py-[60px] px-10 box-border bg-[url('/limited2@3x.webp')] bg-cover bg-no-repeat bg-[top] mq1050:gap-[30px] mq1050:w-full mq750:py-[40px] mq750:px-6 mq450:h-[350px] mq450:py-[30px] mq450:px-4 relative">
             {/* Add overlay for better text readability */}
             <div className="absolute inset-0 bg-black/40 rounded-3xl"></div>
 

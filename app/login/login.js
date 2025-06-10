@@ -11,6 +11,7 @@ import { useUser } from "../../context/UserContext";
 import Navbar from "../../components/navbar";
 import Footer from "../../components/footer";
 import Cookies from "js-cookie";
+import { initiateGoogleLogin, initiateAppleLogin, handleAppleLogin } from "../../services/authService";
 
 const Login = () => {
   const router = useRouter();
@@ -19,6 +20,7 @@ const Login = () => {
   const [formData, setFormData] = useState({ email: "", password: "" });
   const [loading, setLoading] = useState(false);
   const [errors, setErrors] = useState({});
+  const [socialLoading, setSocialLoading] = useState({ google: false, apple: false });
 
   const handleChange = (e) => {
     const { name, value } = e.target;
@@ -107,6 +109,89 @@ const Login = () => {
     }
   };
 
+  const handleGoogleLogin = async () => {
+    setSocialLoading({ ...socialLoading, google: true });
+    try {
+      initiateGoogleLogin();
+    } catch (error) {
+      toast.error('Failed to initiate Google login');
+      setSocialLoading({ ...socialLoading, google: false });
+    }
+  };
+
+  const handleAppleLoginClick = async () => {
+    setSocialLoading({ ...socialLoading, apple: true });
+    try {
+      const appleAuthData = await initiateAppleLogin();
+      const response = await handleAppleLogin(appleAuthData);
+      
+      if (response.success) {
+        localStorage.setItem("token", response.token);
+        updateUser(response.user);
+        await checkAuthAndFetchCart();
+        toast.success("Successfully signed in with Apple!");
+        
+        // Handle pending cart item and redirects (same logic as regular login)
+        const pendingCartItem = localStorage.getItem("pendingCartItem");
+        const redirectUrl = localStorage.getItem("redirectAfterLogin");
+
+        if (pendingCartItem) {
+          const product = JSON.parse(pendingCartItem);
+          const { productId, quantity = 1, name } = product;
+          await checkAuthAndFetchCart();
+
+          const selectedCountry = localStorage.getItem('selectedCountry') || 'uae';
+
+          await axiosInstance.post(`/cart`, {
+            productId,
+            quantity,
+            currency: selectedCountry
+          });
+          toast.success(`Added ${name} to cart`);
+          await checkAuthAndFetchCart();
+          localStorage.removeItem("pendingCartItem");
+        }
+
+        // Handle guest wishlist migration
+        let guestWishlist = [];
+        try {
+          guestWishlist = JSON.parse(localStorage.getItem("guestWishlist") || "[]");
+        } catch { guestWishlist = []; }
+        
+        if (guestWishlist.length > 0) {
+          const migrationResults = await Promise.allSettled(
+            guestWishlist.map(item =>
+              axiosInstance.post(`/wishlist/${item._id || item.productId}`).catch(() => null)
+            )
+          );
+
+          const successfulMigrations = migrationResults.filter(
+            result => result.status === "fulfilled"
+          ).length;
+
+          if (successfulMigrations > 0) {
+            toast.success(`Migrated ${successfulMigrations} item(s) from guest wishlist`);
+          }
+
+          localStorage.removeItem("guestWishlist");
+          Cookies.remove("guestWishlist");
+        }
+
+        if (redirectUrl) {
+          localStorage.removeItem("redirectAfterLogin");
+          router.push(redirectUrl);
+        } else {
+          router.push("/");
+        }
+      }
+    } catch (error) {
+      toast.error('Apple login failed. Please try again.');
+      console.error('Apple login error:', error);
+    } finally {
+      setSocialLoading({ ...socialLoading, apple: false });
+    }
+  };
+
   return (
     <div className="w-full bg-white text-black overflow-hidden flex flex-col">
       <Navbar
@@ -189,13 +274,33 @@ const Login = () => {
               </div>
 
               <div className="flex space-x-4 justify-center">
-                <button type="button" className="p-2 md:p-3 bg-white text-black rounded-full">
-                  <Image src="/google_symbol.svg.webp" alt="Google" width={24} height={24} className="w-6 h-6 md:w-8 md:h-8" />
+                <button 
+                  type="button" 
+                  onClick={handleGoogleLogin}
+                  disabled={socialLoading.google}
+                  className="p-2 md:p-3 bg-white text-black rounded-full border border-gray-300 hover:bg-gray-50 transition-colors disabled:opacity-50"
+                  title="Sign in with Google"
+                >
+                  {socialLoading.google ? (
+                    <div className="w-6 h-6 md:w-8 md:h-8 animate-spin rounded-full border-2 border-gray-300 border-t-black"></div>
+                  ) : (
+                    <Image src="/google_symbol.svg.webp" alt="Google" width={24} height={24} className="w-6 h-6 md:w-8 md:h-8" />
+                  )}
                 </button>
-                <button type="button" className="p-2 md:p-3 bg-white text-black rounded-full">
-                  <Image src="/linkedin_symbol.svg.webp" alt="Apple" width={24} height={24} className="w-6 h-6 md:w-8 md:h-8" />
+                <button 
+                  type="button" 
+                  onClick={handleAppleLoginClick}
+                  disabled={socialLoading.apple}
+                  className="p-2 md:p-3 bg-white text-black rounded-full border border-gray-300 hover:bg-gray-50 transition-colors disabled:opacity-50"
+                  title="Sign in with Apple"
+                >
+                  {socialLoading.apple ? (
+                    <div className="w-6 h-6 md:w-8 md:h-8 animate-spin rounded-full border-2 border-gray-300 border-t-black"></div>
+                  ) : (
+                    <Image src="/linkedin_symbol.svg.webp" alt="Apple" width={24} height={24} className="w-6 h-6 md:w-8 md:h-8" />
+                  )}
                 </button>
-                <button type="button" className="p-2 md:p-3 bg-white text-black rounded-full">
+                <button type="button" className="p-2 md:p-3 bg-white text-black rounded-full border border-gray-300 hover:bg-gray-50 transition-colors opacity-50 cursor-not-allowed" title="Coming Soon">
                   <Image src="/Symbol.svg.webp" alt="Facebook" width={24} height={24} className="w-6 h-6 md:w-8 md:h-8" />
                 </button>
               </div>

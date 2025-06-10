@@ -27,17 +27,19 @@ export const updateUserAddress = async (addressData) => {
 export const logoutUser = async () => {
   try {
     const token = localStorage.getItem('token');
-    if (!token) throw new Error('No authentication token found');
+    if (!token) {
+      // If no token, just clear localStorage and return
+      localStorage.removeItem('token');
+      return true;
+    }
 
-    const response = await axiosInstance.get('/users/logout', null, {
-      headers: {
-        Authorization: `Bearer ${token}`
-      }
-    });
+    const response = await axiosInstance.get('/users/logout');
     localStorage.removeItem('token');
-    return true;
+    return response.data;
   } catch (error) {
     console.error('Error logging out:', error);
+    // Even if logout API fails, clear token locally
+    localStorage.removeItem('token');
     throw error;
   }
 };

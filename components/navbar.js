@@ -12,6 +12,7 @@ import { logoutUser } from "../services/userService";
 import { searchProducts } from "../services/productService";
 import { useCountry } from '../context/CountryContext';
 import CollectionsDropdown from "./collectionDropDown";
+import { toast } from "react-hot-toast";
 
 const Navbar = ({
   className = "",
@@ -218,14 +219,20 @@ const Navbar = ({
   }, [router]);
 
   const handleLogout = useCallback(async () => {
+    // Add confirmation dialog
+    const confirmLogout = window.confirm("Are you sure you want to logout?");
+    if (!confirmLogout) return;
+
     try {
       await logoutUser();
       clearUser();
       setShowAccountDropdown(false);
       clearCart(); // Clear the cart state on logout
+      toast.success("Successfully logged out!");
       router.push("/login");
     } catch (error) {
       console.error("Logout failed:", error);
+      toast.error("Logout failed. Please try again.");
     }
   }, [clearUser, clearCart, router]);
 

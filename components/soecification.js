@@ -12,12 +12,12 @@ const Specification = ({ className = "", product }) => {
           width={500}
           height={500}
           alt=""
-          src="/aruror.webp"
+          src="/about_2.webp"
         />
       </div>
       <div className="flex-1 flex flex-col items-center justify-center gap-6 min-w-[520px] mq750:min-w-full">
-        <h1 className="m-0 self-stretch relative text-inherit leading-[120%] font-bold font-[inherit] mq450:text-[34px] mq450:leading-[40px] mq1050:text-[45px] mq1050:leading-[54px]">
-          Specification
+        <h1 className="m-0 self-stretch relative text-[56px] leading-[120%] font-bold font-[inherit] mq450:text-[34px] mq450:leading-[40px] mq1050:text-[45px] mq1050:leading-[54px]">
+          Specifications
         </h1>
         <div className="self-stretch flex flex-row items-start text-left justify-start gap-6 text-[18px] font-[500] mq750:flex-wrap">
           <div className="flex-1 flex flex-col items-start justify-start gap-4 min-w-[244px]">

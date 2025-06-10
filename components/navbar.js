@@ -13,6 +13,7 @@ import { searchProducts } from "../services/productService";
 import { useCountry } from '../context/CountryContext';
 import CollectionsDropdown from "./collectionDropDown";
 import { toast } from "react-hot-toast";
+import { useWishlist } from "../context/WishlistContext";
 
 const Navbar = ({
   className = "",
@@ -49,6 +50,7 @@ const Navbar = ({
   const { itemCount, clearCart } = useCart();
   const { user, clearUser } = useUser();
   const { selectedCountry, updateCountry } = useCountry();
+  const { wishlist } = useWishlist();
   const [collections, setCollections] = useState([]);
   const [categories, setCategories] = useState([]);
   const [loading, setLoading] = useState(true);
@@ -1028,15 +1030,26 @@ const Navbar = ({
               </div>
               <motion.div whileHover={{ scale: 1.1 }} whileTap={{ scale: 0.9 }}
                 onClick={handlewishlistClick}
+                className="relative"
               >
-                <Image
-                  className="h-11 w-11 relative"
-                  loading="lazy"
-                  width={44}
-                  height={44}
-                  alt="Wishlist"
-                  src="/wish.svg"
-                />
+                {/* Wishlist badge */}
+                <div className="relative">
+                  <Image
+                    className="h-11 w-11 relative"
+                    loading="lazy"
+                    width={44}
+                    height={44}
+                    alt="Wishlist"
+                    src="/wish.svg"
+                  />
+                  {wishlist && wishlist.length > 0 && (
+                    <div className="absolute -top-[-11px] -right-[-2px] w-5 h-5 bg-red-600 rounded-full flex items-center justify-center z-20">
+                      <div className="text-white text-xs font-semibold">
+                        {wishlist.length}
+                      </div>
+                    </div>
+                  )}
+                </div>
               </motion.div>
               <motion.div
                 className="w-11 flex flex-col items-center justify-center pt-0 pb-[5px] pl-[11px] pr-[6.1px] box-border relative cursor-pointer"

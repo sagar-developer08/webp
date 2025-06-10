@@ -182,7 +182,7 @@ const Card = ({
               </button>
               <button
                 onClick={handleWishlist}
-                className={`p-2 rounded-full transition-colors flex items-center justify-center ${isInWishlist(_id || productId)
+                className={`p-2 rounded-full transition-colors bg-white flex items-center justify-center ${isInWishlist(_id || productId)
                   ? 'text-red-500 hover:text-red-600'
                   : 'text-black hover:text-gray-900'}`}
                 style={{ background: "none" }}

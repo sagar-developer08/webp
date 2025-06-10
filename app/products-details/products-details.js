@@ -166,7 +166,7 @@ function ProductDetailsContent({ className = "", textStyle = {} }) {
             width={500}
             height={500}
             alt=""
-            src="/img@2x.webp"
+            src="/about_3.jpg"
           />
         </AnimateOnScroll>
       </section>

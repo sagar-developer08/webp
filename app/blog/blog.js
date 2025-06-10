@@ -84,8 +84,8 @@ const Blog = () => {
               className="w-full md:w-1/2 h-[300px] sm:h-[370px] md:h-[400px] lg:h-[470px] rounded-2xl flex flex-col items-start justify-end p-4 sm:p-6 md:py-10 md:pl-6 md:pr-5 box-border gap-3 sm:gap-4 bg-cover bg-no-repeat bg-[center] cursor-pointer"
               onClick={() => onCatContainerClick(blog._id)}
               style={{
-                backgroundImage: blog.featuredImage
-                  ? `url('${blog.featuredImage}')`
+                backgroundImage: blog.sectionImages
+                  ? `url('${blog.sectionImages}')`
                   : "url('/cat@3x.webp')"
               }}
             >
@@ -108,8 +108,8 @@ const Blog = () => {
                 className="w-full md:w-1/2 lg:w-1/3 h-[300px] sm:h-[370px] md:h-[400px] lg:h-[470px] rounded-2xl flex flex-col items-start justify-end p-4 sm:p-6 md:py-10 md:pl-6 md:pr-5 box-border gap-6 sm:gap-4 bg-cover bg-no-repeat bg-[top] cursor-pointer"
                 onClick={() => onCatContainerClick(blog._id)}
                 style={{
-                  backgroundImage: blog.featuredImage
-                    ? `url('${blog.featuredImage}')`
+                  backgroundImage: blog.sectionImages
+                    ? `url('${blog.sectionImages}')`
                     : "url('/cat@3x.webp')"
                 }}
               >
@@ -133,8 +133,8 @@ const Blog = () => {
                 className="w-full h-[300px] sm:h-[370px] md:h-[400px] lg:h-[470px] rounded-2xl flex flex-col items-start justify-end p-4 sm:p-6 md:py-10 md:pl-6 md:pr-5 box-border gap-6 sm:gap-6 bg-cover bg-no-repeat bg-[top] cursor-pointer"
                 onClick={() => onCatContainerClick(blog._id)}
                 style={{
-                  backgroundImage: blog.featuredImage
-                    ? `url('${blog.featuredImage}')`
+                  backgroundImage: blog.sectionImages
+                    ? `url('${blog.sectionImages}')`
                     : "url('/cat@3x.webp')"
                 }}
               >

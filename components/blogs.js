@@ -149,8 +149,8 @@ const Blogs = ({
               <div
                 className="h-[500px] w-full rounded-3xl flex flex-col items-start justify-end py-10 pl-6 pr-5 box-border gap-4 bg-cover bg-no-repeat bg-[top] relative transition-transform duration-300 mq750:h-[400px] mq450:h-[500px] mq350:w-[350px] mq450:py-6 mq450:px-4 mq450:rounded-xl"
                 style={{
-                  backgroundImage: blog.featuredImage
-                    ? `url('${blog.featuredImage}')`
+                  backgroundImage: blog.sectionImages
+                    ? `url('${blog.sectionImages}')`
                     : "url('/cat@3x.webp')",
                   backgroundPosition: 'center'
                 }}

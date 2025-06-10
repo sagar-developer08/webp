@@ -28,7 +28,7 @@ const PrivacyPolicy = () => {
                 />
 
                 {/* Privacy Policy Content */}
-                <div className="max-w-4xl mx-auto px-4 py-8 md:py-12 space-y-6">
+                <div className="max-w-[1360px] mx-auto px-[40px] py-[60px] space-y-6 mq450:py-[40px] mq450:px-[24px] mq450:gap-[24px]">
                     <section>
                         <p className="mb-4">
                             1.1. This privacy policy ("Privacy Policy") shall form an integral part of the Terms of Use of the Website ("Terms") set out at https://www.tornado.store/terms-and-conditions and shall be read along with the Terms. Any capitalized term not specifically defined herein shall draw its meaning from the meaning ascribed to such term in the Terms.

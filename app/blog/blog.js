@@ -13,6 +13,7 @@ const Blog = () => {
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState(null);
   const [windowWidth, setWindowWidth] = useState(0);
+  const [visibleCount, setVisibleCount] = useState(9); // Show 9 blogs initially
 
   useEffect(() => {
     // Set the initial window width after component mounts
@@ -72,13 +73,16 @@ const Blog = () => {
   const firstRowCount = 2;
   const secondRowCount = isMobile ? 1 : 3;
 
+  // Only show up to visibleCount blogs
+  const visibleBlogs = blogs.slice(0, visibleCount);
+
   return (
     <div className="w-full relative bg-white text-black overflow-hidden flex flex-col items-start justify-start leading-[normal] tracking-[normal]">
       <PageBanner title="Blogs" breadcrumb="Home > Blogs" />
       <section className="self-stretch flex flex-col items-center justify-start p-4 sm:p-6 md:p-8 lg:p-10 gap-6 z-[2] text-left text-base text-[#fff] font-h5-24 mq450:px-[24px] mq450:py-[40px] mq450:gap-[24px]">
         {/* First row - shows 1 blog on mobile, 2 on tablet/desktop */}
         <div className="w-full max-w-[1360px] flex flex-col md:flex-row items-center justify-center gap-6 sm:gap-6">
-          {blogs.slice(0, firstRowCount).map((blog) => (
+          {visibleBlogs.slice(0, firstRowCount).map((blog) => (
             <div
               key={blog._id}
               className="w-full md:w-1/2 h-[300px] sm:h-[370px] md:h-[400px] lg:h-[470px] rounded-2xl flex flex-col items-start justify-end p-4 sm:p-6 md:py-10 md:pl-6 md:pr-5 box-border gap-3 sm:gap-4 bg-cover bg-no-repeat bg-[center] cursor-pointer"
@@ -100,9 +104,9 @@ const Blog = () => {
         </div>
 
         {/* Second row - shows 1 blog on mobile, 2-3 on tablet/desktop */}
-        {blogs.length > firstRowCount && (
+        {visibleBlogs.length > firstRowCount && (
           <div className="w-full max-w-[1360px] flex flex-col md:flex-row items-center justify-center gap-6 sm:gap-6">
-            {blogs.slice(firstRowCount, firstRowCount + secondRowCount).map((blog) => (
+            {visibleBlogs.slice(firstRowCount, firstRowCount + secondRowCount).map((blog) => (
               <div
                 key={blog._id}
                 className="w-full md:w-1/2 lg:w-1/3 h-[300px] sm:h-[370px] md:h-[400px] lg:h-[470px] rounded-2xl flex flex-col items-start justify-end p-4 sm:p-6 md:py-10 md:pl-6 md:pr-5 box-border gap-6 sm:gap-4 bg-cover bg-no-repeat bg-[top] cursor-pointer"
@@ -125,9 +129,9 @@ const Blog = () => {
         )}
 
         {/* Third row - for remaining blogs */}
-        {blogs.length > (firstRowCount + secondRowCount) && (
+        {visibleBlogs.length > (firstRowCount + secondRowCount) && (
           <div className="w-full max-w-[1360px] grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6 sm:gap-6">
-            {blogs.slice(firstRowCount + secondRowCount).map((blog) => (
+            {visibleBlogs.slice(firstRowCount + secondRowCount).map((blog) => (
               <div
                 key={blog._id}
                 className="w-full h-[300px] sm:h-[370px] md:h-[400px] lg:h-[470px] rounded-2xl flex flex-col items-start justify-end p-4 sm:p-6 md:py-10 md:pl-6 md:pr-5 box-border gap-6 sm:gap-6 bg-cover bg-no-repeat bg-[top] cursor-pointer"
@@ -149,9 +153,15 @@ const Blog = () => {
           </div>
         )}
 
-        <button className="rounded-[100px] bg-[#fff] border border-solid border-[#000] hover:bg-[#000] hover:text-[#fff] overflow-hidden flex flex-row items-center justify-center py-2 px-6 sm:py-3 sm:px-10 text-center text-sm sm:text-base text-[#000]">
-          <div className="relative leading-[150%] font-medium">Load More</div>
-        </button>
+        {/* Load More button */}
+        {visibleCount < blogs.length && (
+          <button
+            className="rounded-[100px] bg-[#fff] border border-solid border-[#000] hover:bg-[#000] hover:text-[#fff] overflow-hidden flex flex-row items-center justify-center py-2 px-6 sm:py-3 sm:px-10 text-center text-sm sm:text-base text-[#000]"
+            onClick={() => setVisibleCount((prev) => prev + 9)}
+          >
+            <div className="relative leading-[150%] font-medium">Load More</div>
+          </button>
+        )}
       </section>
       <Footer
         footerAlignSelf="stretch"

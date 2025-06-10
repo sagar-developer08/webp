@@ -10,7 +10,7 @@ import R1 from "../../components/r1";
 import Description from "../../components/description";
 import Video from "../../components/video";
 import Soecification from "../../components/soecification";
-import Testimonials from "../../components/testimonials";
+import Testimonials from "../../components/pdpreview";
 import Card from "../../components/card";
 import Footer from "../../components/footer";
 import Navbar from "../../components/navbar";
@@ -19,8 +19,10 @@ import { Navigation } from "swiper/modules";
 import "swiper/css";
 import "swiper/css/navigation";
 import { useCountry } from "../../context/CountryContext";
+import AnimateOnScroll from "../../components/AnimateOnScroll";
+import { motion } from "framer-motion";
 
-function ProductDetailsContent() {
+function ProductDetailsContent({ className = "", textStyle = {} }) {
   const searchParams = useSearchParams();
   const router = useRouter();
   const { addToCart } = useCart();
@@ -105,7 +107,7 @@ function ProductDetailsContent() {
   };
 
   return (
-    <div className="w-full relative bg-white overflow-hidden flex flex-col items-center justify-start pt-[13px] px-4 sm:px-6 md:px-8 lg:px-10 box-border leading-[normal] tracking-[normal] text-left text-xs text-[rgba(0,0,0,0.6)] font-h5-24">
+    <div className="w-full relative bg-white overflow-hidden flex flex-col items-center justify-start pt-[13px] box-border leading-[normal] px-4 tracking-[normal] text-left text-xs text-[rgba(0,0,0,0.6)] font-h5-24">
       <Navbar
         logoSrc="/1623314804-bd8bf9c117ab50f7f842-1@2x.webp"
         search="/search.svg"
@@ -116,12 +118,12 @@ function ProductDetailsContent() {
       />
 
       {/* Breadcrumb section */}
-      <div className="w-full max-w-[1360px] flex flex-row items-center justify-start py-4 box-border">
+      <div className="w-full max-w-[1360px] flex flex-row items-center justify-start py-4 mq450:py-6 box-border">
         {/* <div className="relative leading-[150%] font-medium text-[10px] sm:text-xs">{`Home > Shop > AUTONOVA Automatic Watch`}</div> */}
       </div>
 
       {/* Product details section */}
-      <section className="w-full max-w-[1360px] bg-[#fff] text-black overflow-hidden flex flex-col lg:flex-row items-center justify-center py-[25px] sm:py-[60px] px-0 box-border gap-[30px] sm:gap-[60px] text-lg text-[#000] font-h5-24">
+      <section className="w-[1360px] max-w-full bg-[#fff] overflow-hidden text-black overflow-hidden flex flex-col lg:flex-row items-center justify-center px-[8px] py-[60px] gap-[60px] mq450:gap-[24px] mq450:px-[8px] mq450:py-[24px] box-border  text-lg text-[#000] font-h5-24">
         <Left product={product?.data?.product} />
         <div className="w-full lg:flex-1 flex flex-col items-center justify-center gap-6 min-w-0 lg:min-w-[455px]">
           <R product={product?.data?.product} relatedProducts={product?.data?.relatedProducts} selectedCountry={selectedCountry} />
@@ -130,32 +132,61 @@ function ProductDetailsContent() {
       </section>
 
       {/* Description section */}
-      <div className="w-full max-w-[1360px] px-0 sm:px-4">
-        <Description description="Description" img="/img@2x.webp" product={product?.data?.product} />
-      </div>
+      <section
+        className={`self-stretch overflow-hidden flex flex-row mx-auto items-center justify-center box-border gap-[60px] max-w-[1360px] text-37xl text-[#000] font-h5-24 px-[8px] mq450:px-[8px] mq750:gap-[30px] mq750:pt-[26px] mq750:pb-[26px] mq750:box-border mq1125:flex-wrap ${className}`}
+      >
+        <AnimateOnScroll
+          animation="slideRight"
+          className="flex-1 flex flex-col items-center justify-start gap-6 min-w-[520px] pt-0 mq750:min-w-full"
+          style={textStyle}
+        >
+          <motion.h1
+            initial={{ opacity: 0, y: 20 }}
+            animate={{ opacity: 1, y: 0 }}
+            transition={{ duration: 0.5 }}
+            className="m-0 self-stretch relative text-black text-inherit leading-[120%] font-bold font-[inherit] mq450:text-[34px] mq450:leading-[40px] mq1050:text-[45px] mq1050:leading-[54px]"
+          >
+            Description
+          </motion.h1>
+          <motion.div
+            initial={{ opacity: 0, y: 20 }}
+            animate={{ opacity: 1, y: 0 }}
+            transition={{ duration: 0.5, delay: 0.2 }}
+            className="self-stretch relative text-black text-base mq450:text-sm leading-[150%] font-medium"
+          >
+            {/* Read More logic */}
+            <ReadMoreDescription desc={product?.data?.product?.description?.en || ""} />
+          </motion.div>
+        </AnimateOnScroll>
+
+        <AnimateOnScroll animation="slideLeft">
+          <Image
+            className="h-[500px] w-[500px] rounded-3xl object-cover max-w-full mq1125:flex-1 mq450:w-[400px] mq450:h-[300px]"
+            loading="lazy"
+            width={500}
+            height={500}
+            alt=""
+            src="/img@2x.webp"
+          />
+        </AnimateOnScroll>
+      </section>
 
       {/* Video section */}
-      <div className="w-full max-w-[1360px] px-0 sm:px-4">
-        <Video />
-      </div>
+      <Video />
 
       {/* Specification section */}
-      <div className="w-full max-w-[1360px] px-0 sm:px-4">
-        <Soecification product={product?.data?.product} />
-      </div>
+      <Soecification product={product?.data?.product} />
 
       {/* Reviews section */}
-      <div className="w-full max-w-[1360px] px-0 sm:px-4">
-        <Testimonials Heading="Reviews" />
-      </div>
+      <Testimonials Heading="Reviews" />
 
       {/* Related Products section */}
-      <section className="w-full max-w-[1360px] overflow-hidden flex flex-col items-center justify-start py-10 px-0 sm:px-4 gap-5 sm:gap-10 text-left text-29xl mq450:py-0 text-[#000] font-h5-24">
-        <div className="w-full flex flex-row sm:flex-row items-center justify-between gap-4 mq450:gap-2 px-4 sm:px-0">
-          <h1 className="m-0 w-full sm:flex-1 relative text-black text-[44px] leading-[120%] font-medium font-[inherit] mq450:text-[22px]">
+      <section className="self-stretch overflow-hidden flex flex-col items-center justify-start pb-[60px] px-[80px] gap-[60px] z-[2] text-left text-37xl text-black font-h5-24 mq1050:gap-[30px] mq1050:pt-[39px] mq1050:pb-[39px] mq1050:box-border mq450:px-[8px] mq450:py-[0px] mq450:pb-[40px]">
+        <div className="w-full flex flex-row items-center justify-between gap-4 px-5 sm:px-0">
+          <h1 className="m-0 w-full flex-1 relative text-black text-[28px] sm:text-[36px] md:text-[44px] leading-[120%] font-medium font-[inherit]">
             Related Products
           </h1>
-          <div className="flex flex-row items-start justify-center gap-2 sm:gap-4">
+          <div className="flex flex-row items-start justify-center gap-2 sm:gap-4 mq450:hidden">
             <button
               className="swiper-button-prev-custom focus:outline-none bg-transparent"
               onClick={() => swiperRef.current?.swiper.slidePrev()}
@@ -184,7 +215,7 @@ function ProductDetailsContent() {
             </button>
           </div>
         </div>
-        <div className="w-full px-4">
+        <div className="w-full px-5 sm:px-10 md:px-[60px]">
           <Swiper
             ref={swiperRef}
             modules={[Navigation]}
@@ -232,7 +263,6 @@ function ProductDetailsContent() {
           </Swiper>
         </div>
       </section>
-
       <Footer
         footerAlignSelf="unset"
         footerWidth="100%"
@@ -242,6 +272,7 @@ function ProductDetailsContent() {
         itemImg1="/item--img-1.svg"
         itemImg2="/item--img-2.svg"
       />
+
     </div>
   );
 }
@@ -255,3 +286,58 @@ const ProductsDetails = () => {
 };
 
 export default ProductsDetails;
+
+// Add this helper component at the bottom of the file (before export)
+function ReadMoreDescription({ desc }) {
+  const [showMore, setShowMore] = useState(false);
+  const [isMobile, setIsMobile] = useState(false);
+
+  useEffect(() => {
+    // Check if window is defined (for SSR safety)
+    const checkMobile = () => {
+      if (typeof window !== "undefined") {
+        setIsMobile(window.innerWidth <= 600);
+      }
+    };
+    checkMobile();
+    window.addEventListener("resize", checkMobile);
+    return () => window.removeEventListener("resize", checkMobile);
+  }, []);
+
+  if (!desc) return null;
+  const firstDotIdx = desc.indexOf(".");
+  if (!isMobile) {
+    // Desktop/tablet: show full description
+    return desc;
+  }
+  if (firstDotIdx === -1 || firstDotIdx === desc.length - 1) {
+    return desc;
+  }
+  const firstPart = desc.slice(0, firstDotIdx + 1);
+  const restPart = desc.slice(firstDotIdx + 1);
+  return (
+    <>
+      {showMore ? (
+        <>
+          {desc}
+          <div
+            className="w-[100px] rounded-[100px] bg-[#000] overflow-hidden flex flex-row items-center justify-center py-3 px-10 text-center text-base text-[#fff] font-h5-24 cursor-pointer mt-2 mq450:w-[80px] mq450:px-6 mq450:py-2 mq450:text-[14px]"
+            onClick={() => setShowMore(false)}
+          >
+            <div className="relative leading-[150%] font-medium">View less</div>
+          </div>
+        </>
+      ) : (
+        <>
+          {firstPart}
+          <div
+            className="w-[100px] rounded-[100px] bg-[#000] overflow-hidden flex flex-row items-center justify-center py-3 px-10 text-center text-base text-[#fff] font-h5-24 cursor-pointer mt-2 mq450:w-[80px] mq450:px-6 mq450:py-2 mq450:text-[14px]"
+            onClick={() => setShowMore(true)}
+          >
+            <div className="relative leading-[150%] font-medium">Read More</div>
+          </div>
+        </>
+      )}
+    </>
+  );
+}

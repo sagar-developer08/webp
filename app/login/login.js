@@ -193,7 +193,7 @@ const Login = () => {
   };
 
   return (
-    <div className="w-full bg-white text-black overflow-hidden flex flex-col">
+    <div className="w-full bg-white text-black overflow-hidden flex flex-col min-h-screen">
       <Navbar
         logoSrc="/1623314804-bd8bf9c117ab50f7f842-1@2x.webp"
         search="/search1.svg"
@@ -202,126 +202,128 @@ const Login = () => {
         navbarBackgroundColor={"rgba(0, 0, 0, 0.5)"}
       />
 
-      <div className="flex flex-col md:flex-row justify-center w-full min-h-[calc(100vh-80px)] mq450:w-full mq450:ml-[-30px] mq450:px-4 mt-10 md:mt-20">
-        {/* Left form section */}
-        <div className="w-full md:w-1/2 flex items-center justify-center p-3 sm:p-6 md:p-8 bg-white">
-          <div className="w-full max-w-[340px] sm:max-w-md px-3 sm:px-4 md:px-0">
-            <h1 className="text-2xl sm:text-3xl md:text-4xl font-semibold mb-3 md:mb-6">WELCOME TO TORNADO</h1>
-            <p className="text-black text-[16px] sm:text-sm mb-4 md:mb-8">Login to your Tornado account</p>
+      <main className="flex-grow flex items-center justify-center w-full">
+        <div className="flex flex-col md:flex-row justify-center items-center w-full max-w-[1400px] px-[40px] py-[60px]">
+          {/* Left form section */}
+          <div className="w-full md:w-1/2 flex items-center justify-center bg-white mq450:px-[24px] mq450:py-[40px]">
+            <div className="w-full max-w-[400px]">
+              <h1 className="text-2xl sm:text-3xl md:text-4xl font-semibold mb-3 md:mb-6">WELCOME TO TORNADO</h1>
+              <p className="text-black text-[16px] sm:text-sm mb-4 md:mb-8">Login to your Tornado account</p>
 
-            {errors.general && (
-              <div className="mb-3 p-2 sm:p-3 bg-red-900/20 border border-red-800 text-red-300 rounded-lg text-center text-xs sm:text-sm">
-                {errors.general}
-              </div>
-            )}
-
-            <form onSubmit={handleSubmit} className="space-y-3 sm:space-y-4 md:space-y-5">
-              <div>
-                <label className="block text-xs sm:text-sm mb-1">Email Address</label>
-                <input
-                  type="email"
-                  name="email"
-                  value={formData.email}
-                  onChange={handleChange}
-                  className={`w-full py-2 sm:py-2.5 md:py-3 sm:px-4 rounded-lg bg-white border ${errors.email ? "border-red-500" : "border-black"
-                    } text-black placeholder-gray-500 text-xs sm:text-sm md:text-base`}
-                  placeholder="you@example.com"
-                />
-                {errors.email && <p className="text-red-500 text-[10px] sm:text-xs mt-1">{errors.email}</p>}
-              </div>
-
-              <div>
-                <div className="flex justify-between mb-1">
-                  <label className="block text-xs sm:text-sm">Password</label>
-                  <Link href="/forgot-password" className="text-xs sm:text-sm text-teal-400">
-                    Forgot Password?
-                  </Link>
+              {errors.general && (
+                <div className="mb-3 p-2 sm:p-3 bg-red-900/20 border border-red-800 text-red-300 rounded-lg text-center text-xs sm:text-sm">
+                  {errors.general}
                 </div>
-                <input
-                  type="password"
-                  name="password"
-                  value={formData.password}
-                  onChange={handleChange}
-                  className={`w-full py-2 sm:py-2.5 md:py-3 sm:px-4 rounded-lg bg-white border ${errors.password ? "border-red-500" : "border-black"
-                    } text-black placeholder-gray-500 text-xs sm:text-sm md:text-base`}
-                  placeholder="••••••••"
-                />
-                {errors.password && <p className="text-red-500 text-[10px] sm:text-xs mt-1">{errors.password}</p>}
-              </div>
+              )}
 
-              <div className="flex flex-col sm:flex-row gap-3 sm:gap-4 mt-6">
-                <Link href="/register" className="flex-1">
+              <form onSubmit={handleSubmit} className="space-y-3 sm:space-y-4 md:space-y-5">
+                <div>
+                  <label className="block text-xs sm:text-sm mb-1">Email Address</label>
+                  <input
+                    type="email"
+                    name="email"
+                    value={formData.email}
+                    onChange={handleChange}
+                    className={`w-full py-2 sm:py-2.5 md:py-3 sm:px-4 rounded-lg bg-white border ${errors.email ? "border-red-500" : "border-black"
+                      } text-black placeholder-gray-500 text-xs sm:text-sm md:text-base`}
+                    placeholder="you@example.com"
+                  />
+                  {errors.email && <p className="text-red-500 text-[10px] sm:text-xs mt-1">{errors.email}</p>}
+                </div>
+
+                <div>
+                  <div className="flex justify-between mb-1">
+                    <label className="block text-xs sm:text-sm">Password</label>
+                    <Link href="/forgot-password" className="text-xs sm:text-sm text-teal-400">
+                      Forgot Password?
+                    </Link>
+                  </div>
+                  <input
+                    type="password"
+                    name="password"
+                    value={formData.password}
+                    onChange={handleChange}
+                    className={`w-full py-2 sm:py-2.5 md:py-3 sm:px-4 rounded-lg bg-white border ${errors.password ? "border-red-500" : "border-black"
+                      } text-black placeholder-gray-500 text-xs sm:text-sm md:text-base`}
+                    placeholder="••••••••"
+                  />
+                  {errors.password && <p className="text-red-500 text-[10px] sm:text-xs mt-1">{errors.password}</p>}
+                </div>
+
+                <div className="flex flex-col sm:flex-row gap-3 sm:gap-4 mt-6">
+                  <Link href="/register" className="flex-1">
+                    <button
+                      type="button"
+                      className="w-full py-2.5 md:py-3 rounded-[100px] bg-white border border-black text-black font-semibold transition cursor-pointer hover:bg-gray-100 text-sm md:text-base"
+                    >
+                      Create Account
+                    </button>
+                  </Link>
                   <button
-                    type="button"
-                    className="w-full py-2.5 md:py-3 rounded-[100px] bg-white border border-black text-black font-semibold transition cursor-pointer hover:bg-gray-100 text-sm md:text-base"
+                    type="submit"
+                    disabled={loading}
+                    className="flex-1 py-2.5 md:py-3 rounded-[100px] bg-black text-white font-semibold transition disabled:opacity-70 cursor-pointer hover:bg-gray-800 text-sm md:text-base"
                   >
-                    Create Account
+                    {loading ? "Signing in..." : "Sign In"}
                   </button>
-                </Link>
-                <button
-                  type="submit"
-                  disabled={loading}
-                  className="flex-1 py-2.5 md:py-3 rounded-[100px] bg-black text-white font-semibold transition disabled:opacity-70 cursor-pointer hover:bg-gray-800 text-sm md:text-base"
-                >
-                  {loading ? "Signing in..." : "Sign In"}
-                </button>
-              </div>
+                </div>
 
-              <div className="flex items-center my-4">
-                <div className="flex-grow h-px bg-black"></div>
-                <span className="mx-3 text-black text-sm">or</span>
-                <div className="flex-grow h-px bg-black"></div>
-              </div>
+                <div className="flex items-center my-4">
+                  <div className="flex-grow h-px bg-black"></div>
+                  <span className="mx-3 text-black text-sm">or</span>
+                  <div className="flex-grow h-px bg-black"></div>
+                </div>
 
-              <div className="flex space-x-4 justify-center">
-                <button 
-                  type="button" 
-                  onClick={handleGoogleLogin}
-                  disabled={socialLoading.google}
-                  className="p-2 md:p-3 bg-white text-black rounded-full border border-gray-300 hover:bg-gray-50 transition-colors disabled:opacity-50"
-                  title="Sign in with Google"
-                >
-                  {socialLoading.google ? (
-                    <div className="w-6 h-6 md:w-8 md:h-8 animate-spin rounded-full border-2 border-gray-300 border-t-black"></div>
-                  ) : (
-                    <Image src="/google_symbol.svg.webp" alt="Google" width={24} height={24} className="w-6 h-6 md:w-8 md:h-8" />
-                  )}
-                </button>
-                <button 
-                  type="button" 
-                  onClick={handleAppleLoginClick}
-                  disabled={socialLoading.apple}
-                  className="p-2 md:p-3 bg-white text-black rounded-full border border-gray-300 hover:bg-gray-50 transition-colors disabled:opacity-50"
-                  title="Sign in with Apple"
-                >
-                  {socialLoading.apple ? (
-                    <div className="w-6 h-6 md:w-8 md:h-8 animate-spin rounded-full border-2 border-gray-300 border-t-black"></div>
-                  ) : (
-                    <Image src="/linkedin_symbol.svg.webp" alt="Apple" width={24} height={24} className="w-6 h-6 md:w-8 md:h-8" />
-                  )}
-                </button>
-                <button type="button" className="p-2 md:p-3 bg-white text-black rounded-full border border-gray-300 hover:bg-gray-50 transition-colors opacity-50 cursor-not-allowed" title="Coming Soon">
-                  <Image src="/Symbol.svg.webp" alt="Facebook" width={24} height={24} className="w-6 h-6 md:w-8 md:h-8" />
-                </button>
-              </div>
-            </form>
+                <div className="flex space-x-4 justify-center">
+                  <button 
+                    type="button" 
+                    onClick={handleGoogleLogin}
+                    disabled={socialLoading.google}
+                    className="p-2 md:p-3 bg-white text-black rounded-full border border-black hover:bg-gray-50 transition-colors disabled:opacity-50"
+                    title="Sign in with Google"
+                  >
+                    {socialLoading.google ? (
+                      <div className="w-6 h-6 md:w-8 md:h-8 animate-spin rounded-full border-2 border-black border-t-black"></div>
+                    ) : (
+                      <Image src="/google_symbol.svg.webp" alt="Google" width={24} height={24} className="w-6 h-6 md:w-8 md:h-8 object-contain" />
+                    )}
+                  </button>
+                  <button 
+                    type="button" 
+                    onClick={handleAppleLoginClick}
+                    disabled={socialLoading.apple}
+                    className="p-2 md:p-3 bg-white text-black rounded-full border border-black hover:bg-gray-50 transition-colors disabled:opacity-50"
+                    title="Sign in with Apple"
+                  >
+                    {socialLoading.apple ? (
+                      <div className="w-6 h-6 md:w-8 md:h-8 animate-spin rounded-full border-2 border-gray-300 border-t-black"></div>
+                    ) : (
+                      <Image src="/Apple-logo.png" alt="Apple" width={24} height={24} className="w-6 h-6 md:w-8 md:h-8 object-contain" />
+                    )}
+                  </button>
+                  {/* <button type="button" className="p-2 md:p-3 bg-white text-black rounded-full border border-gray-300 hover:bg-gray-50 transition-colors opacity-50 cursor-not-allowed" title="Coming Soon">
+                    <Image src="/Symbol.svg.webp" alt="Facebook" width={24} height={24} className="w-6 h-6 md:w-8 md:h-8" />
+                  </button> */}
+                </div>
+              </form>
+            </div>
+          </div>
+
+          {/* Right image section */}
+          <div className="hidden md:flex w-full md:w-1/2 items-center justify-center py-[60px] ">
+            <div className="relative w-full max-w-[500px] h-[500px] lg:h-[600px]">
+              <Image
+                src="/cat@3x.webp"
+                alt="Register"
+                layout="fill"
+                objectFit="cover"
+                priority
+                className="rounded-[25px] shadow-xl"
+              />
+            </div>
           </div>
         </div>
-
-        {/* Right image section */}
-        <div className="hidden md:flex w-full md:w-1/2 items-center justify-center p-8 mt-20">
-          <div className="relative w-[610px] h-[710px]">
-            <Image
-              src="/cat@3x.webp"
-              alt="Register"
-              layout="fill"
-              objectFit="cover"
-              priority
-              className="rounded-[25px] shadow-xl"
-            />
-          </div>
-        </div>
-      </div>
+      </main>
 
       <Footer
         maskGroup="/mask-group@2x.webp"

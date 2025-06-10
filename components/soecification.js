@@ -4,15 +4,17 @@ import PropTypes from "prop-types";
 const Specification = ({ className = "", product }) => {
   return (
     <section
-      className={`self-stretch overflow-hidden flex flex-row items-center px-5 justify-center box-border gap-[60px] max-w-[1360px] text-left text-37xl text-[#000] font-h5-24 mq750:gap-[30px] mq750:pt-[26px] mq750:pb-[26px] mq750:box-border mq1125:flex-wrap ${className}`}
+      className={`w-[1360px] self-stretch overflow-hidden max-w-full flex flex-row mx-auto px-[8px] mq450:px-[8px] box-border text-left text-[#000] font-h5-24 items-center justify-center py:[60px] mq450:py-[40px] ${className}`}
     >
-      <Image
-        className="h-[500px] w-[500px] rounded-3xl object-cover max-w-full mq1125:flex-1 mq450:w-[400px] mq450:hidden"
-        width={500}
-        height={500}
-        alt=""
-        src="/aruror.webp"
-      />
+      <div className="pr-12 mq450:pr-0"> {/* Added padding-right container */}
+        <Image
+          className="h-[500px] w-[500px] rounded-3xl object-cover max-w-full mq1125:flex-1 mq450:hidden"
+          width={500}
+          height={500}
+          alt=""
+          src="/aruror.webp"
+        />
+      </div>
       <div className="flex-1 flex flex-col items-center justify-center gap-6 min-w-[520px] mq750:min-w-full">
         <h1 className="m-0 self-stretch relative text-inherit leading-[120%] font-bold font-[inherit] mq450:text-[34px] mq450:leading-[40px] mq1050:text-[45px] mq1050:leading-[54px]">
           Specification

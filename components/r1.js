@@ -13,45 +13,45 @@ const R1 = ({ className = "", product }) => {
     >
       <div className="flex flex-row items-center justify-start gap-2">
         <Image
-          className="w-[18px] relative h-[18px] overflow-hidden shrink-0"
+          className="w-[18px] relative h-[18px] overflow-hidden shrink-0 mq450:w-[16px] mq450:h-[16px]"
           width={18}
           height={18}
           alt=""
           src="/materialsymbolsinfooutlinerounded.svg"
         />
-        <div className="relative leading-[150%] font-medium">
+        <div className="relative leading-[150%] font-medium mq450:text-[16px] mq450:leading-[16px]">
           Ask a question
         </div>
       </div>
       <div className="flex flex-row items-center justify-start gap-2">
         <Image
-          className="w-[18px] relative h-[18px] overflow-hidden shrink-0"
+          className="w-[18px] relative h-[18px] overflow-hidden shrink-0 mq450:w-[16px] mq450:h-[16px]"
           width={18}
           height={18}
           alt=""
           src="/solarboxlinear.svg"
         />
-        <div className="relative leading-[150%] font-medium">
+        <div className="relative leading-[150%] font-medium mq450:text-[16px] mq450:leading-[16px]">
           Delivery Return
         </div>
       </div>
-      <div className="flex flex-row items-center justify-start gap-[7px]">
+      <div className="flex flex-row items-center justify-start gap-[2px]">
         <Image
-          className="w-[18px] relative rounded-[100px] h-[18px] overflow-hidden shrink-0"
+          className="w-[18px] relative rounded-[100px] h-[18px] overflow-hidden shrink-0 mq450:w-[16px] mq450:h-[16px]"
           width={18}
           height={18}
           alt=""
           src="/hugeiconstick02.svg"
         />
-        <div className="relative leading-[150%] font-medium">
+        <div className="relative leading-[150%] font-medium mq450:text-[16px] mq450:leading-[16px]">
           1 Year Warranty
         </div>
       </div>
       <div className="flex flex-row items-center justify-start gap-[7px]">
         <div className="relative leading-[150%] font-medium">Share:</div>
-        <div className="flex flex-row items-center justify-start gap-4">
+        <div className="flex flex-row items-center justify-start gap-4 mq450:gap-2">
           <Image
-            className="w-[18px] relative h-[18px] object-cover"
+            className="w-[18px] relative h-[18px] object-cover mq450:w-[16px] mq450:h-[16px]"
             width={18}
             height={18}
             alt=""
@@ -63,7 +63,7 @@ const R1 = ({ className = "", product }) => {
             }
           />
           <Image
-            className="h-[18px] w-[18px] relative object-cover"
+            className="h-[18px] w-[18px] relative object-cover mq450:w-[16px] mq450:h-[16px]"
             width={18}
             height={18}
             alt=""
@@ -75,7 +75,7 @@ const R1 = ({ className = "", product }) => {
             }
           />
           <Image
-            className="w-[18px] relative h-[18px] object-cover"
+            className="w-[18px] relative h-[18px] object-cover mq450:w-[16px] mq450:h-[16px]"
             width={18}
             height={18}
             alt=""
@@ -87,7 +87,7 @@ const R1 = ({ className = "", product }) => {
             }
           />
           <Image
-            className="h-[18px] w-[18px] relative object-cover"
+            className="h-[18px] w-[18px] relative object-cover mq450:w-[16px] mq450:h-[16px]"
             width={18}
             height={18}
             alt=""

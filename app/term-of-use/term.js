@@ -28,7 +28,7 @@ const TermsOfService = () => {
                 />
 
                 {/* Terms Content */}
-                <div className="max-w-4xl mx-auto px-4 py-8 md:py-12 space-y-8">
+                <div className="max-w-[1360px] mx-auto px-[40px] py-[60px] space-y-6 mq450:py-[40px] mq450:px-[24px] mq450:gap-[24px]">
                     <section className="space-y-4">
                         <h2 className="text-2xl font-bold">Contractual Partner</h2>
                         <p>
@@ -146,17 +146,17 @@ const TermsOfService = () => {
                         <div className="space-y-4">
                             <h3 className="text-xl font-semibold">17. Dispute Resolution</h3>
                             <ul className="list-disc pl-6 space-y-2">
-                                <li><strong>17.1</strong> Parties shall attempt amicable settlement (15 days minimum).</li>
-                                <li><strong>17.2</strong> Unresolved disputes referred to sole arbitrator appointed by Website.</li>
-                                <li><strong>17.3</strong> Contact: info@tornado.store or contact us page.</li>
+                                <li><strong>13.1</strong> Parties shall attempt amicable settlement (15 days minimum).</li>
+                                <li><strong>13.2</strong> Unresolved disputes referred to sole arbitrator appointed by Website.</li>
+                                <li><strong>13.3</strong> Contact: info@tornado.store or contact us page.</li>
                             </ul>
                         </div>
 
                         <div className="space-y-4">
                             <h3 className="text-xl font-semibold">18. User Protection Program</h3>
                             <ul className="list-disc pl-6 space-y-2">
-                                <li><strong>18.1</strong> Provides resolution for disputes regarding refunds/replacements/non-delivery.</li>
-                                <li><strong>18.2</strong> Contact info@tornado.store if issue with Seller remains unresolved.</li>
+                                <li><strong>14.1</strong> Provides resolution for disputes regarding refunds/replacements/non-delivery.</li>
+                                <li><strong>14.2</strong> Contact info@tornado.store if issue with Seller remains unresolved.</li>
                             </ul>
                         </div>
 

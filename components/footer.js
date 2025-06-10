@@ -334,7 +334,7 @@ const Footer = ({
                     </div>
                     <div className="self-stretch flex flex-row items-start justify-start py-1 px-0 cursor-pointer">
                       <div className="flex-1 relative leading-[150%] font-medium">
-                        Faqs
+                        FAQs
                       </div>
                     </div>
                     <div className="self-stretch flex flex-row items-start justify-start py-1 px-0 cursor-pointer"
@@ -376,7 +376,7 @@ const Footer = ({
                   </div>
                   <div className="self-stretch flex flex-row items-start justify-start py-1 px-0 cursor-pointer">
                     <div className="flex-1 relative leading-[150%] font-medium">
-                      Faqs
+                      FAQs
                     </div>
                   </div>
                   <div className="self-stretch flex flex-row items-start justify-start py-1 px-0 cursor-pointer"
@@ -597,7 +597,7 @@ const Footer = ({
               width={24}
               height={24}
               alt=""
-              src="/tamara.webp"
+              src="/tap.png"
             />
           </div>
           <div

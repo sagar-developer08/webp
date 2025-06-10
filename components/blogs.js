@@ -160,9 +160,9 @@ const Blogs = ({
                 <h2 className="m-0 self-stretch relative text-[24px] leading-[140%] text-[#fff] font-[600] font-[inherit] mq1050:text-[19px] mq1050:leading-[27px] mq450:text-[24px] mq450:leading-[150%] mq450:line-clamp-2 z-10">
                   {blog.title}
                 </h2>
-                <div className="self-stretch relative text-base leading-[150%] font-medium text-[rgba(255,255,255,0.8)] mq450:text-sm z-10">
+                {/* <div className="self-stretch relative text-base leading-[150%] font-medium text-[rgba(255,255,255,0.8)] mq450:text-sm z-10">
                   {formatDate(blog.publishedAt)}
-                </div>
+                </div> */}
               </div>
             </SwiperSlide>
           ))}

@@ -19,12 +19,18 @@ const R = ({ className = "", product, relatedProducts, selectedCountry }) => {
   const { addToWishlist, removeFromWishlist, isInWishlist } = useWishlist();
   const [quantity, setQuantity] = useState(1);
   const [selectedColor, setSelectedColor] = useState(null);
+  const [addedToCart, setAddedToCart] = useState(false);
+  const [showNotifyModal, setShowNotifyModal] = useState(false);
+  const [notifyForm, setNotifyForm] = useState({ name: "", email: "", phone: "" });
+  const [notifySubmitted, setNotifySubmitted] = useState(false);
 
   useEffect(() => {
     // Set the current product's color as selected
     if (product?.watchDetails?.dialColor?.en) {
       setSelectedColor(product.watchDetails.dialColor.en);
     }
+    // Reset addedToCart when product changes
+    setAddedToCart(false);
   }, [product]);
 
   // console.log("Product details:", product?.imageLinks?.image1);
@@ -51,6 +57,7 @@ const R = ({ className = "", product, relatedProducts, selectedCountry }) => {
       // addToCart function in CartContext will handle login check
       addToCart(cartItem);
       toast.success("Added to cart successfully!");
+      setAddedToCart(true); // Mark as added
     }
   };
 
@@ -152,6 +159,32 @@ const R = ({ className = "", product, relatedProducts, selectedCountry }) => {
     }
   };
 
+  // Use product.stock or product.quantity for stock check
+  const stock =
+    typeof product?.stock === "number"
+      ? product.stock
+      : typeof product?.stock === "string"
+      ? parseInt(product.stock, 10)
+      : typeof product?.quantity === "number"
+      ? product.quantity
+      : typeof product?.quantity === "string"
+      ? parseInt(product.quantity, 10)
+      : undefined;
+
+  const isOutOfStock = !stock || stock <= 0;
+
+  const handleNotifySubmit = (e) => {
+    e.preventDefault();
+    // Here you can send notifyForm data to your backend or API
+    setNotifySubmitted(true);
+    // Optionally close modal after some time
+    setTimeout(() => {
+      setShowNotifyModal(false);
+      setNotifySubmitted(false);
+      setNotifyForm({ name: "", email: "", phone: "" });
+    }, 2000);
+  };
+
   return (
     <div
       className={`self-stretch flex flex-col items-start justify-start gap-4 text-left text-base text-[#000] font-H5-24 ${className}`}
@@ -185,8 +218,8 @@ const R = ({ className = "", product, relatedProducts, selectedCountry }) => {
             <div className="flex-1 relative leading-[140%] inline-block min-w-[224px] mq450:text-[19px] mq450:leading-[27px]">
               {displayPrice}
             </div>
-            <div className="flex-1 relative text-base leading-[150%] font-medium text-right inline-block min-w-[224px]">
-              In Stock
+            <div className={`flex-1 relative text-base leading-[150%] font-medium text-right inline-block min-w-[224px] ${isOutOfStock ? "text-red-600" : ""}`}>
+              {isOutOfStock ? "Out of Stock" : "In Stock"}
             </div>
           </div>
         </div>
@@ -369,64 +402,140 @@ const R = ({ className = "", product, relatedProducts, selectedCountry }) => {
             />
           </div>
           {/* Wishlist button next to quantity */}
-          <div
-            className={`h-12 w-12 rounded-[100px] border-[rgba(0,0,0,0.08)] border-solid border-[1px] box-border overflow-hidden flex items-center justify-center cursor-pointer ml-2 ${isInWishlist && isInWishlist(product?._id || product?.id) ? 'bg-red-50' : ''}`}
+          <button
             onClick={handleWishlist}
+            className={`p-3 rounded-full transition-colors bg-white border-[rgba(0,0,0,0.08)] border-solid border-[1px] flex items-center justify-center ml-2 ${isInWishlist && isInWishlist(product?._id || product?.id)
+              ? 'text-red-500 hover:text-red-600'
+              : 'text-black hover:text-gray-900'
+              }`}
+            style={{ background: "none" }}
           >
-            <Image
-              className="h-12 w-12"
-              width={32}
-              height={32}
-              alt="Wishlist"
-              src="/wish-1.svg"
-              style={{
-                filter: isInWishlist && isInWishlist(product?._id || product?.id)
-                  ? "invert(27%) sepia(98%) saturate(7491%) hue-rotate(346deg) brightness(97%) contrast(101%)"
-                  : "none"
-              }}
-            />
-          </div>
+            <svg
+              xmlns="http://www.w3.org/2000/svg"
+              className="h-5 w-5"
+              fill={isInWishlist && isInWishlist(product?._id || product?.id) ? "currentColor" : "none"}
+              viewBox="0 0 24 24"
+              stroke="currentColor"
+              strokeWidth={2}
+            >
+              <path
+                strokeLinecap="round"
+                strokeLinejoin="round"
+                d="M4.318 6.318a4.5 4.5 0 016.364 0L12 7.636l1.318-1.318a4.5 4.5 0 116.364 6.364L12 21.364l-7.682-7.682a4.5 4.5 0 010-6.364z"
+              />
+            </svg>
+          </button>
         </div>
         {/* Add to Cart and Buy It Now in a column, full width */}
         <div className="self-stretch flex flex-col items-stretch justify-start gap-4 text-center text-base text-[#fff]">
+          {!isOutOfStock && (
+            !addedToCart ? (
+              <div
+                className="w-full rounded-[50px] border-[#000] border-solid border-[1px] box-border overflow-hidden flex flex-row items-center justify-center !pt-3 !pb-3 !pl-10 !pr-10 min-w-[92px] text-center text-base cursor-pointer bg-white text-black"
+                onClick={handleAddToCart}
+              >
+                <div className="relative leading-[150%] font-medium">
+                  Add To Cart
+                </div>
+              </div>
+            ) : (
+              <div
+                className="w-full rounded-[50px] border-[#000] border-solid border-[1px] box-border overflow-hidden flex flex-row items-center justify-center !pt-3 !pb-3 !pl-10 !pr-10 min-w-[92px] text-center text-base cursor-pointer bg-white text-black"
+                onClick={() => router.push("/cart")}
+              >
+                <div className="relative leading-[150%] font-medium">
+                  Go to Cart
+                </div>
+              </div>
+            )
+          )}
           <div
-            className="w-full rounded-[50px] border-[#000] border-solid border-[1px] box-border overflow-hidden flex flex-row items-center justify-center !pt-3 !pb-3 !pl-10 !pr-10 min-w-[92px] text-center text-base cursor-pointer bg-white text-black"
-            onClick={handleAddToCart}
-          >
-            <div className="relative leading-[150%] font-medium">
-              Add To Cart
-            </div>
-          </div>
-          <div
-            className="w-full rounded-[50px] bg-[#000] overflow-hidden flex flex-row items-center justify-center !pt-3 !pb-3 !pl-10 !pr-10 box-border min-w-[83px] cursor-pointer"
+            className={`w-full rounded-[50px] ${isOutOfStock ? "bg-[#000]" : "bg-[#000]"} overflow-hidden flex flex-row items-center justify-center !pt-3 !pb-3 !pl-10 !pr-10 box-border min-w-[83px] cursor-pointer`}
             onClick={() => {
-              // Add to cart logic for both guest and logged in
-              if (product) {
-                let countryPrice = product.price;
-                if (product.price && typeof product.price === "object" && selectedCountry) {
-                  const countryKey = selectedCountry.toLowerCase();
-                  countryPrice = product.price[countryKey] || Object.values(product.price)[0] || "";
+              if (isOutOfStock) {
+                setShowNotifyModal(true);
+              } else {
+                // Add to cart logic for both guest and logged in
+                if (product) {
+                  let countryPrice = product.price;
+                  if (product.price && typeof product.price === "object" && selectedCountry) {
+                    const countryKey = selectedCountry.toLowerCase();
+                    countryPrice = product.price[countryKey] || Object.values(product.price)[0] || "";
+                  }
+                  const cartItem = {
+                    productId: product._id || product.id,
+                    name: product.name?.en || product.name || "",
+                    price: countryPrice,
+                    images: product.imageLinks ? Object.values(product.imageLinks) : [product.imageLinks?.image1],
+                    image: product.imageLinks?.image1,
+                    quantity: quantity,
+                  };
+                  addToCart(cartItem);
+                  toast.success("Added to cart successfully!");
+                  router.push("/cart");
                 }
-                const cartItem = {
-                  productId: product._id || product.id,
-                  name: product.name?.en || product.name || "",
-                  price: countryPrice,
-                  images: product.imageLinks ? Object.values(product.imageLinks) : [product.imageLinks?.image1],
-                  image: product.imageLinks?.image1,
-                  quantity: quantity,
-                };
-                addToCart(cartItem);
-                toast.success("Added to cart successfully!");
-                // Route to cart for both guest and logged in
-                router.push("/cart");
               }
             }}
           >
             <div className="relative leading-[150%] font-medium">
-              Buy It Now
+              {isOutOfStock ? "Notify Me" : "Buy Now"}
             </div>
           </div>
         </div>
+        {/* Notify Me Modal */}
+        {showNotifyModal && (
+          <div className="fixed inset-0 z-50 flex items-center justify-center bg-black bg-opacity-50">
+            <div className="bg-white rounded-lg p-6 w-full max-w-sm shadow-lg relative">
+              <button
+                className="absolute top-2 right-2 text-gray-500 hover:text-black text-xl"
+                onClick={() => setShowNotifyModal(false)}
+              >
+                &times;
+              </button>
+              {!notifySubmitted ? (
+                <>
+                  <h2 className="text-xl font-bold mb-4 text-black">Get Notified</h2>
+                  <form onSubmit={handleNotifySubmit} className="flex flex-col gap-3">
+                    <input
+                      type="text"
+                      placeholder="Name"
+                      className="border rounded px-3 py-2"
+                      value={notifyForm.name}
+                      onChange={e => setNotifyForm({ ...notifyForm, name: e.target.value })}
+                      required
+                    />
+                    <input
+                      type="email"
+                      placeholder="Email"
+                      className="border rounded px-3 py-2"
+                      value={notifyForm.email}
+                      onChange={e => setNotifyForm({ ...notifyForm, email: e.target.value })}
+                      required
+                    />
+                    <input
+                      type="tel"
+                      placeholder="Phone Number"
+                      className="border rounded px-3 py-2"
+                      value={notifyForm.phone}
+                      onChange={e => setNotifyForm({ ...notifyForm, phone: e.target.value })}
+                      required
+                    />
+                    <button
+                      type="submit"
+                      className="mt-2 rounded-[50px] bg-[#000] text-white py-2 font-medium"
+                    >
+                      Submit
+                    </button>
+                  </form>
+                </>
+              ) : (
+                <div className="text-center text-black">
+                  Thank you! You will be notified when the product is back in stock.
+                </div>
+              )}
+            </div>
+          </div>
+        )}
       </div>
     </div>
   );

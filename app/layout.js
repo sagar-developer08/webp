@@ -48,6 +48,18 @@ export default function RootLayout({ children }) {
           type="font/woff2"
           crossOrigin="anonymous"
         />
+        
+        {/* Apple Sign In SDK */}
+        <script 
+          type="text/javascript" 
+          src="https://appleid.cdn-apple.com/appleauth/static/jsapi/appleid/1/en_US/appleid.auth.js"
+          async
+        ></script>
+        <meta name="appleid-signin-client-id" content={process.env.NEXT_PUBLIC_APPLE_CLIENT_ID || "your-apple-client-id"} />
+        <meta name="appleid-signin-scope" content="name email" />
+        <meta name="appleid-signin-redirect-uri" content={`${process.env.NEXT_PUBLIC_FRONTEND_URL || 'http://localhost:3000'}/auth/callback`} />
+        <meta name="appleid-signin-state" content="apple-signin" />
+        <meta name="appleid-signin-use-popup" content="true" />
       </head>
       <body>
         <ClientProviders>

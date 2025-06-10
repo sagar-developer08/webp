@@ -9,6 +9,7 @@ import { motion } from "framer-motion";
 import Navbar from "../../components/navbar";
 import Footer from "../../components/footer";
 import AnimateOnScroll from "../../components/AnimateOnScroll";
+import { initiateGoogleLogin, initiateAppleLogin, handleAppleLogin } from "../../services/authService";
 
 const Register = () => {
   const router = useRouter();
@@ -22,6 +23,7 @@ const Register = () => {
   });
   const [loading, setLoading] = useState(false);
   const [errors, setErrors] = useState({});
+  const [socialLoading, setSocialLoading] = useState({ google: false, apple: false });
 
   const handleChange = (e) => {
     const { name, value } = e.target;
@@ -84,6 +86,35 @@ const Register = () => {
       }
     } finally {
       setLoading(false);
+    }
+  };
+
+  const handleGoogleLogin = async () => {
+    setSocialLoading({ ...socialLoading, google: true });
+    try {
+      initiateGoogleLogin();
+    } catch (error) {
+      toast.error('Failed to initiate Google login');
+      setSocialLoading({ ...socialLoading, google: false });
+    }
+  };
+
+  const handleAppleLoginClick = async () => {
+    setSocialLoading({ ...socialLoading, apple: true });
+    try {
+      const appleAuthData = await initiateAppleLogin();
+      const response = await handleAppleLogin(appleAuthData);
+      
+      if (response.success) {
+        localStorage.setItem("token", response.token);
+        toast.success("Successfully signed in with Apple!");
+        router.push("/");
+      }
+    } catch (error) {
+      toast.error('Apple login failed. Please try again.');
+      console.error('Apple login error:', error);
+    } finally {
+      setSocialLoading({ ...socialLoading, apple: false });
     }
   };
 
@@ -292,6 +323,44 @@ const Register = () => {
                     style={{ fontWeight: 500 }}
                   >
                     {loading ? "Creating Account..." : "Create Account"}
+                  </button>
+                </div>
+
+                <div className="flex items-center my-6 mq450:px-4">
+                  <div className="flex-grow h-px bg-black"></div>
+                  <span className="mx-3 text-black text-sm">or sign up with</span>
+                  <div className="flex-grow h-px bg-black"></div>
+                </div>
+
+                <div className="flex space-x-4 justify-center mq450:px-4">
+                  <button 
+                    type="button" 
+                    onClick={handleGoogleLogin}
+                    disabled={socialLoading.google}
+                    className="p-2 md:p-3 bg-white text-black rounded-full border border-gray-300 hover:bg-gray-50 transition-colors disabled:opacity-50"
+                    title="Sign up with Google"
+                  >
+                    {socialLoading.google ? (
+                      <div className="w-6 h-6 md:w-8 md:h-8 animate-spin rounded-full border-2 border-gray-300 border-t-black"></div>
+                    ) : (
+                      <Image src="/google_symbol.svg.webp" alt="Google" width={24} height={24} className="w-6 h-6 md:w-8 md:h-8" />
+                    )}
+                  </button>
+                  <button 
+                    type="button" 
+                    onClick={handleAppleLoginClick}
+                    disabled={socialLoading.apple}
+                    className="p-2 md:p-3 bg-white text-black rounded-full border border-gray-300 hover:bg-gray-50 transition-colors disabled:opacity-50"
+                    title="Sign up with Apple"
+                  >
+                    {socialLoading.apple ? (
+                      <div className="w-6 h-6 md:w-8 md:h-8 animate-spin rounded-full border-2 border-gray-300 border-t-black"></div>
+                    ) : (
+                      <Image src="/linkedin_symbol.svg.webp" alt="Apple" width={24} height={24} className="w-6 h-6 md:w-8 md:h-8" />
+                    )}
+                  </button>
+                  <button type="button" className="p-2 md:p-3 bg-white text-black rounded-full border border-gray-300 hover:bg-gray-50 transition-colors opacity-50 cursor-not-allowed" title="Coming Soon">
+                    <Image src="/Symbol.svg.webp" alt="Facebook" width={24} height={24} className="w-6 h-6 md:w-8 md:h-8" />
                   </button>
                 </div>
               </motion.form>

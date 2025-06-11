@@ -48,11 +48,14 @@ const WishlistPage = () => {
   };
 
   const getCountryPrice = (priceObj) => {
-    if (!priceObj || typeof priceObj !== 'object') return '';
-    if (!selectedCountry) return Object.values(priceObj)[0] || '';
-
-    const countryKey = selectedCountry.toLowerCase();
-    return priceObj[countryKey] || Object.values(priceObj)[0] || '';
+    if (!priceObj) return '';
+    if (typeof priceObj === 'object') {
+      if (!selectedCountry) return Object.values(priceObj)[0] || '';
+      const countryKey = selectedCountry.toLowerCase();
+      return priceObj[countryKey] || Object.values(priceObj)[0] || '';
+    }
+    // If price is a string or number, just return it
+    return priceObj;
   };
 
   // Add to cart
@@ -129,7 +132,16 @@ const WishlistPage = () => {
                     {currentItems.map((product, index) => {
                       const productPrice = getCountryPrice(product?.price);
                       const currencySymbol = getCurrencySymbol(selectedCountry);
-                      const displayPrice = productPrice ? `${currencySymbol} ${productPrice}` : '';
+
+                      // Only prepend the currency symbol if productPrice does not already start with it
+                      let displayPrice = '';
+                      if (typeof productPrice === 'string' && productPrice.trim().toUpperCase().startsWith(currencySymbol.toUpperCase())) {
+                        displayPrice = productPrice;
+                      } else if (productPrice) {
+                        displayPrice = `${currencySymbol} ${productPrice}`;
+                      } else if (product?.price) {
+                        displayPrice = `${currencySymbol} ${product.price}`;
+                      }
 
                       return (
                         <div

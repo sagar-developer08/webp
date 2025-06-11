@@ -386,6 +386,7 @@ const Main = ({
                 return (
                   <div key={product._id || index} className="w-[calc(25%-24px)] min-w-[260px] max-w-[320px] mq750:w-[48%] mq450:w-[48%] mq450:min-w-0 ">
                     <Card
+                      stock={product.stock}
                       productId={product._id}
                       images={product.imageLinks?.image1}
                       hoverImage={product.imageLinks?.image2}

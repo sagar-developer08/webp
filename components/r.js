@@ -173,16 +173,33 @@ const R = ({ className = "", product, relatedProducts, selectedCountry }) => {
 
   const isOutOfStock = !stock || stock <= 0;
 
-  const handleNotifySubmit = (e) => {
+  const handleNotifySubmit = async (e) => {
     e.preventDefault();
-    // Here you can send notifyForm data to your backend or API
-    setNotifySubmitted(true);
-    // Optionally close modal after some time
-    setTimeout(() => {
-      setShowNotifyModal(false);
-      setNotifySubmitted(false);
+    try {
+      const payload = {
+        name: notifyForm.name,
+        email: notifyForm.email,
+        phone: notifyForm.phone,
+        productId: product?._id || product?.id
+      };
+      const res = await fetch("https://0vm9jauvgc.execute-api.us-east-1.amazonaws.com/stag/api/notify/notify-me", {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify(payload),
+      });
+      if (!res.ok) {
+        throw new Error("Failed to submit notification request. Please try again.");
+      }
+      setNotifySubmitted(true);
+      toast.success("You will be notified when the product is back in stock!");
       setNotifyForm({ name: "", email: "", phone: "" });
-    }, 2000);
+      setTimeout(() => {
+        setShowNotifyModal(false);
+        setNotifySubmitted(false);
+      }, 2000);
+    } catch (err) {
+      toast.error(err.message || "Something went wrong.");
+    }
   };
 
   return (
@@ -499,7 +516,7 @@ const R = ({ className = "", product, relatedProducts, selectedCountry }) => {
                     <input
                       type="text"
                       placeholder="Name"
-                      className="border rounded px-3 py-2"
+                      className="self-stretch rounded-lg border-[rgba(0,0,0,0.24)] border-solid border-[1px] flex flex-row items-center justify-start py-3 px-[11px] bg-transparent text-black placeholder-[rgba(0,0,0,0.7)] focus:outline-none"
                       value={notifyForm.name}
                       onChange={e => setNotifyForm({ ...notifyForm, name: e.target.value })}
                       required
@@ -507,7 +524,7 @@ const R = ({ className = "", product, relatedProducts, selectedCountry }) => {
                     <input
                       type="email"
                       placeholder="Email"
-                      className="border rounded px-3 py-2"
+                      className="self-stretch rounded-lg border-[rgba(0,0,0,0.24)] border-solid border-[1px] flex flex-row items-center justify-start py-3 px-[11px] bg-transparent text-black placeholder-[rgba(0,0,0,0.7)] focus:outline-none"
                       value={notifyForm.email}
                       onChange={e => setNotifyForm({ ...notifyForm, email: e.target.value })}
                       required
@@ -515,14 +532,14 @@ const R = ({ className = "", product, relatedProducts, selectedCountry }) => {
                     <input
                       type="tel"
                       placeholder="Phone Number"
-                      className="border rounded px-3 py-2"
+                      className="self-stretch rounded-lg border-[rgba(0,0,0,0.24)] border-solid border-[1px] flex flex-row items-center justify-start py-3 px-[11px] bg-transparent text-black placeholder-[rgba(0,0,0,0.7)] focus:outline-none"
                       value={notifyForm.phone}
                       onChange={e => setNotifyForm({ ...notifyForm, phone: e.target.value })}
                       required
                     />
                     <button
                       type="submit"
-                      className="mt-2 rounded-[50px] bg-[#000] text-white py-2 font-medium"
+                      className="mt-2 rounded-[50px] bg-[#000] text-white py-4 font-medium"
                     >
                       Submit
                     </button>

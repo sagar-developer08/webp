@@ -6,6 +6,7 @@ import { getTopCollections, getTopProducts } from "../services/productService";
 import Link from "next/link";
 import { useRouter } from "next/navigation";
 import { useCountry } from "../context/CountryContext";
+import { toast } from "react-hot-toast"; // <-- Add this import
 
 const Footer = ({
   className = "",
@@ -91,6 +92,39 @@ const Footer = ({
       onCountrySelect(value);
     } else {
       updateCountry(value);
+    }
+  };
+
+  // Newsletter form state
+  const [newsletterForm, setNewsletterForm] = useState({ name: "", email: "" });
+  const [newsletterLoading, setNewsletterLoading] = useState(false);
+  const [newsletterSuccess, setNewsletterSuccess] = useState(false);
+  const [newsletterError, setNewsletterError] = useState("");
+
+  // Newsletter form submit handler
+  const handleNewsletterSubmit = async (e) => {
+    e.preventDefault();
+    setNewsletterLoading(true);
+    setNewsletterError("");
+    setNewsletterSuccess(false);
+
+    try {
+      const res = await fetch("https://0vm9jauvgc.execute-api.us-east-1.amazonaws.com/stag/api/notify/newsletter-signup", {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify(newsletterForm),
+      });
+      if (!res.ok) {
+        throw new Error("Failed to subscribe. Please try again.");
+      }
+      setNewsletterSuccess(true);
+      setNewsletterForm({ name: "", email: "" });
+      toast.success("Thank you for subscribing!"); // <-- Show toast on success
+    } catch (err) {
+      setNewsletterError(err.message || "Something went wrong.");
+      toast.error(err.message || "Something went wrong."); // <-- Show toast on error
+    } finally {
+      setNewsletterLoading(false);
     }
   };
 
@@ -485,22 +519,41 @@ const Footer = ({
 
           {/* Form section */}
           <div className="self-stretch flex flex-col items-start justify-start gap-4">
-            <form className="m-0 self-stretch flex flex-col items-start justify-start gap-4">
-              <div className="self-stretch rounded-lg border-[#fff] border-solid border-[1px] flex flex-row items-center justify-start p-3">
-                <div className="flex-1 relative text-sm leading-[150%] font-medium font-p4-14 text-[#fff] text-left">
-                  Enter your name
-                </div>
-              </div>
-              <div className="self-stretch rounded-lg border-[#fff] border-solid border-[1px] flex flex-row items-center justify-start p-3">
-                <div className="flex-1 relative text-sm leading-[150%] font-medium font-p4-14 text-[#fff] text-left">
-                  Enter your email
-                </div>
-              </div>
-              <div className="self-stretch rounded-[100px] bg-[#fff] flex flex-row items-center justify-center py-3 px-6">
+            <form
+              className="m-0 self-stretch flex flex-col items-start justify-start gap-4"
+              onSubmit={handleNewsletterSubmit}
+            >
+              <input
+                type="text"
+                placeholder="Enter your name"
+                className="self-stretch rounded-lg border-[#fff] border-solid border-[1px] flex flex-row items-center justify-start p-3 bg-transparent text-sm leading-[150%] font-medium font-p4-14 text-[#fff] text-left placeholder-[#fff] focus:outline-none"
+                value={newsletterForm.name}
+                onChange={e => setNewsletterForm({ ...newsletterForm, name: e.target.value })}
+                required
+              />
+              <input
+                type="email"
+                placeholder="Enter your email"
+                className="self-stretch rounded-lg border-[#fff] border-solid border-[1px] flex flex-row items-center justify-start p-3 bg-transparent text-sm leading-[150%] font-medium font-p4-14 text-[#fff] text-left placeholder-[#fff] focus:outline-none"
+                value={newsletterForm.email}
+                onChange={e => setNewsletterForm({ ...newsletterForm, email: e.target.value })}
+                required
+              />
+              <button
+                type="submit"
+                className="self-stretch rounded-[100px] bg-[#fff] flex flex-row items-center justify-center py-3 px-6"
+                disabled={newsletterLoading}
+              >
                 <div className="relative text-sm leading-[150%] font-medium font-p4-14 text-[#000] text-center">
-                  Join
+                  {newsletterLoading ? "Submitting..." : "Join"}
                 </div>
-              </div>
+              </button>
+              {newsletterSuccess && (
+                <div className="text-green-400 mt-2">Thank you for subscribing!</div>
+              )}
+              {newsletterError && (
+                <div className="text-red-400 mt-2">{newsletterError}</div>
+              )}
             </form>
           </div>
 

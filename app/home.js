@@ -246,6 +246,7 @@ const Home = () => {
                   return (
                     <SwiperSlide key={product._id} className="flex justify-center">
                       <Card
+                        stock={product.stock}
                         productId={product._id}
                         images={product?.imageLinks?.image1 || "/default-watch.jpg"}
                         hoverImage={product?.imageLinks?.image2 || "/default-watch.jpg"}

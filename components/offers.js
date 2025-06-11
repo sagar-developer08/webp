@@ -127,8 +127,8 @@ const Offers = ({ className = "", country, selectedCountry }) => {
                 rel === 0
                   ? "scale(1)"
                   : rel < visibleCount
-                  ? `scale(${1 - rel * 0.07}) translateY(${rel * 15}px)`
-                  : "scale(0.93) translateY(40px)",
+                    ? `scale(${1 - rel * 0.07}) translateY(${rel * 15}px)`
+                    : "scale(0.93) translateY(40px)",
               pointerEvents: rel === 0 ? "auto" : "none",
               visibility: rel < visibleCount ? "visible" : "hidden",
             };
@@ -136,6 +136,7 @@ const Offers = ({ className = "", country, selectedCountry }) => {
             return (
               <div key={product._id} style={style}>
                 <Card
+                  stock={product.stock}
                   productId={product._id}
                   images={product?.imageLinks?.image1 || "/default-watch.jpg"}
                   hoverImage={product?.imageLinks?.image2 || "/default-watch.jpg"}

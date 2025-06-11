@@ -19,6 +19,7 @@ const Card = ({
   originalPrice,
   dialColor,
   productId,
+  stock,
   _id,
 }) => {
   const router = useRouter();
@@ -57,10 +58,19 @@ const Card = ({
   const handleWishlist = (e) => {
     e.stopPropagation();
 
+    // If the original product object is available, use its price object
+    let priceObj = price;
+    if (typeof price === "string" || typeof price === "number") {
+      // Try to get the full price object from props if available
+      if (typeof _id === "string" && window && window.__ALL_PRODUCTS__) {
+        // Optional: If you have a global product list, you could fetch the full object here
+      }
+    }
+
     const product = {
       _id: _id || productId,
       name: name?.en || name || "",
-      price,
+      price: priceObj, // Store as object if possible
       imageLinks: { image1: images },
       watchDetails: { watchType: { en: classic } },
       classic,
@@ -80,6 +90,16 @@ const Card = ({
 
   // For mobile, always show actions. For desktop, show on hover
   const shouldShowActions = isMobile || showActions;
+
+  // Check for stock (assume 0 means out of stock)
+  const resolvedStock =
+    typeof stock === "number"
+      ? stock
+      : typeof stock === "string"
+      ? parseInt(stock, 10)
+      : undefined;
+
+  const isOutOfStock = !resolvedStock || resolvedStock <= 0;
 
   return (
     <div
@@ -158,7 +178,7 @@ const Card = ({
           <span className="text-[15px] mq750:text-sm mq450:text-xs text-black leading-[150%] font-500">
             {price}
           </span>
-          {isMobile && (
+          {isMobile && !isOutOfStock && (
             <div className="flex items-center gap-0">
               <button
                 onClick={handleAddToCart}
@@ -198,11 +218,15 @@ const Card = ({
                   <path
                     strokeLinecap="round"
                     strokeLinejoin="round"
+                    strokeWidth={2}
                     d="M4.318 6.318a4.5 4.5 0 016.364 0L12 7.636l1.318-1.318a4.5 4.5 0 116.364 6.364L12 21.364l-7.682-7.682a4.5 4.5 0 010-6.364z"
                   />
                 </svg>
               </button>
             </div>
+          )}
+          {isMobile && isOutOfStock && (
+            <span className="text-red-500 font-semibold ml-2">Out of Stock</span>
           )}
         </div>
       </div>
@@ -210,47 +234,55 @@ const Card = ({
       {/* Desktop hover actions */}
       {!isMobile && shouldShowActions && (
         <div className="absolute inset-0 flex items-center justify-center gap-4 mq450:gap-1 mq450:flex-col">
-          <button
-            onClick={handleAddToCart}
-            className="bg-black text-white py-2 px-6 mq750:px-4 mq450:px-2 mq450:py-1 rounded-full font-medium transition-colors z-10 text-sm mq450:text-[10px] cursor-pointer focus:outline-none flex items-center gap-2"
-          >
-            <svg
-              xmlns="http://www.w3.org/2000/svg"
-              className="h-4 w-4"
-              fill="none"
-              viewBox="0 0 24 24"
-              stroke="currentColor"
-            >
-              <path
-                strokeLinecap="round"
-                strokeLinejoin="round"
-                strokeWidth={2}
-                d="M3 3h2l.4 2M7 13h10l4-8H5.4M7 13L5.4 5M7 13l-2.293 2.293c-.63.63-.184 1.707.707 1.707H17m0 0a2 2 0 100 4 2 2 0 000-4zm-8 2a2 2 0 11-4 0 2 2 0 014 0z"
-              />
-            </svg>
-            Add to Cart
-          </button>
-          <button
-            onClick={handleWishlist}
-            className={`p-3 mq450:p-1.5 rounded-full hover:bg-gray-200 transition-colors h-10 w-10 mq450:h-6 mq450:w-6 z-10 flex items-center justify-center cursor-pointer focus:outline-none ${isInWishlist(_id || productId) ? 'text-red-500' : 'text-black bg-gray-200'
-              }`}
-            aria-label={isInWishlist(_id || productId) ? "Remove from Wishlist" : "Add to Wishlist"}
-          >
-            <svg
-              xmlns="http://www.w3.org/2000/svg"
-              className="h-5 w-5 mq450:h-4 mq450:w-4"
-              fill={isInWishlist(_id || productId) ? "currentColor" : "none"}
-              viewBox="0 0 24 24"
-              stroke="currentColor"
-            >
-              <path
-                strokeLinecap="round"
-                strokeLinejoin="round"
-                strokeWidth={2}
-                d="M4.318 6.318a4.5 4.5 0 016.364 0L12 7.636l1.318-1.318a4.5 4.5 0 116.364 6.364L12 21.364l-7.682-7.682a4.5 4.5 0 010-6.364z"
-              />
-            </svg>
-          </button>
+          {isOutOfStock ? (
+            <div className="bg-gray-300 text-red-600 py-2 px-6 rounded-full font-medium text-sm cursor-not-allowed select-none">
+              Out of Stock
+            </div>
+          ) : (
+            <>
+              <button
+                onClick={handleAddToCart}
+                className="bg-black text-white py-2 px-6 mq750:px-4 mq450:px-2 mq450:py-1 rounded-full font-medium transition-colors z-10 text-sm mq450:text-[10px] cursor-pointer focus:outline-none flex items-center gap-2"
+              >
+                <svg
+                  xmlns="http://www.w3.org/2000/svg"
+                  className="h-4 w-4"
+                  fill="none"
+                  viewBox="0 0 24 24"
+                  stroke="currentColor"
+                >
+                  <path
+                    strokeLinecap="round"
+                    strokeLinejoin="round"
+                    strokeWidth={2}
+                    d="M3 3h2l.4 2M7 13h10l4-8H5.4M7 13L5.4 5M7 13l-2.293 2.293c-.63.63-.184 1.707.707 1.707H17m0 0a2 2 0 100 4 2 2 0 000-4zm-8 2a2 2 0 11-4 0 2 2 0 014 0z"
+                  />
+                </svg>
+                Add to Cart
+              </button>
+              <button
+                onClick={handleWishlist}
+                className={`p-3 mq450:p-1.5 rounded-full hover:bg-gray-200 transition-colors h-10 w-10 mq450:h-6 mq450:w-6 z-10 flex items-center justify-center cursor-pointer focus:outline-none ${isInWishlist(_id || productId) ? 'text-red-500' : 'text-black bg-gray-200'
+                  }`}
+                aria-label={isInWishlist(_id || productId) ? "Remove from Wishlist" : "Add to Wishlist"}
+              >
+                <svg
+                  xmlns="http://www.w3.org/2000/svg"
+                  className="h-5 w-5 mq450:h-4 mq450:w-4"
+                  fill={isInWishlist(_id || productId) ? "currentColor" : "none"}
+                  viewBox="0 0 24 24"
+                  stroke="currentColor"
+                >
+                  <path
+                    strokeLinecap="round"
+                    strokeLinejoin="round"
+                    strokeWidth={2}
+                    d="M4.318 6.318a4.5 4.5 0 016.364 0L12 7.636l1.318-1.318a4.5 4.5 0 116.364 6.364L12 21.364l-7.682-7.682a4.5 4.5 0 010-6.364z"
+                  />
+                </svg>
+              </button>
+            </>
+          )}
         </div>
       )}
     </div>

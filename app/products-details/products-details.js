@@ -118,12 +118,12 @@ function ProductDetailsContent({ className = "", textStyle = {} }) {
       />
 
       {/* Breadcrumb section */}
-      <div className="w-full max-w-[1360px] flex flex-row items-center justify-start py-4 mq450:py-6 box-border">
-        {/* <div className="relative leading-[150%] font-medium text-[10px] sm:text-xs">{`Home > Shop > AUTONOVA Automatic Watch`}</div> */}
+      <div className="w-full max-w-[1360px] flex flex-row items-center justify-start pt-[120px] mq450:pt-[110px] box-border">
+        <div className="relative leading-[150%] font-medium text-[10px] sm:text-xs">{`Home > Shop > AUTONOVA Automatic Watch`}</div>
       </div>
 
       {/* Product details section */}
-      <section className="w-[1360px] max-w-full bg-[#fff] overflow-hidden text-black overflow-hidden flex flex-col lg:flex-row items-center justify-center px-[8px] py-[60px] gap-[60px] mq450:gap-[24px] mq450:px-[8px] mq450:py-[24px] box-border  text-lg text-[#000] font-h5-24">
+      <section className="w-[1360px] max-w-full bg-[#fff] overflow-hidden text-black overflow-hidden flex flex-col lg:flex-row items-center justify-center px-[8px] py-[60px] gap-[60px] mq450:gap-[24px] mq450:px-[8px] mq450:py-[16px] box-border  text-lg text-[#000] font-h5-24">
         <Left product={product?.data?.product} />
         <div className="w-full lg:flex-1 flex flex-col items-center justify-center gap-6 min-w-0 lg:min-w-[455px]">
           <R product={product?.data?.product} relatedProducts={product?.data?.relatedProducts} selectedCountry={selectedCountry} />

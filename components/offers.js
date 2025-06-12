@@ -139,7 +139,7 @@ const Offers = ({ className = "", country, selectedCountry }) => {
                   stock={product.stock}
                   productId={product._id}
                   images={product?.imageLinks?.image1 || "/default-watch.jpg"}
-                  hoverImage={product?.imageLinks?.image2 || "/default-watch.jpg"}
+                  hoverImage={product.imageLinks?.image3}
                   classic={product.collection?.name || "Classic"}
                   name={product.name?.en}
                   icroundStar="/icroundstar-1.svg"

@@ -48,7 +48,12 @@ const nextConfig = {
       },
       {
         protocol: 'https',
-        hostname: 'thprolink.com',   // 👈 added this line
+        hostname: 'thprolink.com',
+        pathname: '**',
+      },
+      {
+        protocol: 'https',
+        hostname: 'd30830icnyj9e1.cloudfront.net',
         pathname: '**',
       },
     ],

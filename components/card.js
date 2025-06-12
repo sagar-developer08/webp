@@ -262,8 +262,7 @@ const Card = ({
               </button>
               <button
                 onClick={handleWishlist}
-                className={`p-3 mq450:p-1.5 rounded-full hover:bg-gray-200 transition-colors h-10 w-10 mq450:h-6 mq450:w-6 z-10 flex items-center justify-center cursor-pointer focus:outline-none ${isInWishlist(_id || productId) ? 'text-red-500' : 'text-black bg-gray-200'
-                  }`}
+                className={`p-3 mq450:p-1.5 rounded-full hover:bg-gray-200 transition-colors h-10 w-10 mq450:h-6 mq450:w-6 z-10 flex items-center justify-center cursor-pointer focus:outline-none bg-white shadow ${isInWishlist(_id || productId) ? 'text-red-500' : 'text-black'}`}
                 aria-label={isInWishlist(_id || productId) ? "Remove from Wishlist" : "Add to Wishlist"}
               >
                 <svg

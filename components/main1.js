@@ -5,6 +5,7 @@ import { toast } from "react-hot-toast";
 import { useCart } from "../context/CartContext";
 import { useCountry } from "../context/CountryContext";
 import { useRouter } from "next/navigation";
+import { useWishlist } from "../context/WishlistContext";
 
 const Main1 = ({
   className = "",
@@ -25,6 +26,7 @@ const Main1 = ({
   paymentMethod,
   setPaymentMethod,
   handleContinueShopping,
+  wishlistFromcart,
   handleCashfreePay,
   isCashfreeAvailable
 }) => {
@@ -34,6 +36,7 @@ const Main1 = ({
   const [filteredCart, setFilteredCart] = useState([]);
   const [filteredTotal, setFilteredTotal] = useState(0);
   const router = useRouter();
+  const { addToWishlist, removeFromWishlist, isInWishlist } = useWishlist();
 
   // Use memoized function to prevent excessive calculations
   const updateFilteredCart = useCallback(() => {
@@ -165,8 +168,35 @@ const Main1 = ({
           <div className="flex-1 flex flex-col gap-4 max-w-full mq750:min-w-full">
             {filteredCart.map((item) => {
               const displayCurrency = getDisplayCurrency(item.currency || currency);
-              // Use a unique key: prefer _id, fallback to productId
               const itemKey = item._id || item.productId;
+              const isGuest = !useCart().isLoggedIn;
+              const inWishlist = isInWishlist(item._id || item.productId);
+
+              // Add to wishlist and remove from cart without confirmation or alert
+              const handleWishlistAndRemove = async () => {
+                const formattedProduct = {
+                  _id: item._id || item.productId,
+                  name: item.name,
+                  price: item.price,
+                  imageLinks: { image1: item.image || (item.images && item.images[0]) || "/default-watch.jpg" },
+                  watchDetails: item.watchDetails || {},
+                  classic: item.classic,
+                  dialColor: item.dialColor,
+                  createdAt: new Date().toISOString()
+                };
+                if (!inWishlist) {
+                  await addToWishlist(formattedProduct);
+                  await wishlistFromcart(item._id || item.productId);
+                } else {
+                  removeFromWishlist(item._id || item.productId);
+                }
+              };
+
+              // Remove from cart without confirmation
+              const handleRemoveFromCart = () => {
+                removeFromCart(item._id || item.productId);
+              };
+
               return (
                 <div
                   key={itemKey}
@@ -250,21 +280,31 @@ const Main1 = ({
                             </button>
                           </div>
                           <div className="w-[395px] flex flex-col items-start justify-start max-w-full mq450:w-auto mq450:flex-1">
-                            <button className="w-10 h-10 flex items-center justify-center mq450:mx-2">
-                              <Image
-                                className="w-10 h-10 relative"
-                                loading="lazy"
-                                width={24}
-                                height={24}
-                                alt="Add to wishlist"
-                                src="/wish2.svg"
-                              />
+                            <button
+                              className={`p-3 mq450:p-1.5 rounded-full hover:bg-gray-200 transition-colors h-10 w-10 mq450:h-6 mq450:w-6 z-10 flex items-center justify-center cursor-pointer focus:outline-none bg-white shadow ${inWishlist ? 'text-red-500' : 'text-black'}`}
+                              aria-label={inWishlist ? "Remove from Wishlist" : "Add to Wishlist"}
+                              onClick={handleWishlistAndRemove}
+                            >
+                              <svg
+                                xmlns="http://www.w3.org/2000/svg"
+                                className="h-5 w-5 mq450:h-4 mq450:w-4"
+                                fill={inWishlist ? "currentColor" : "none"}
+                                viewBox="0 0 24 24"
+                                stroke="currentColor"
+                              >
+                                <path
+                                  strokeLinecap="round"
+                                  strokeLinejoin="round"
+                                  strokeWidth={2}
+                                  d="M4.318 6.318a4.5 4.5 0 016.364 0L12 7.636l1.318-1.318a4.5 4.5 0 116.364 6.364L12 21.364l-7.682-7.682a4.5 4.5 0 010-6.364z"
+                                />
+                              </svg>
                             </button>
                           </div>
                           <div className="flex flex-col items-start justify-end pt-0 px-4 pb-[9px] text-left text-[rgba(0,0,0,0.4)] font-h5-24 mq450:flex-1 mq450:items-end mq450:pb-0">
                             <button
                               // Remove by correct id: use _id if present, else productId
-                              onClick={() => removeFromCart(item._id || item.productId)}
+                              onClick={handleRemoveFromCart}
                               className="w-[54px] relative [text-decoration:underline] leading-[150%] font-medium inline-block hover:text-[#000]"
                             >
                               Remove

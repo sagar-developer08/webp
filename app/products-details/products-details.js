@@ -248,9 +248,10 @@ function ProductDetailsContent({ className = "", textStyle = {} }) {
               return (
                 <SwiperSlide key={product._id}>
                   <Card
+                    stock={product.stock}
                     productId={product._id}
                     images={product?.imageLinks?.image1 || "/default-watch.jpg"}
-                    hoverImage={product?.imageLinks?.image2 || "/default-watch.jpg"}
+                    hoverImage={product?.imageLinks?.image3 || "/default-watch.jpg"}
                     classic={product.watchDetails?.watchType?.en || "Classic"}
                     name={product.name?.en}
                     icroundStar="/icroundstar-1.svg"

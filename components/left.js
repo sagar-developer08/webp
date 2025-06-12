@@ -7,7 +7,19 @@ const Left = ({ className = "", product }) => {
   const [thumbnailStartIndex, setThumbnailStartIndex] = useState(0);
 
   // Get all image URLs from the product object
-  const imageLinks = product?.imageLinks ? Object.values(product.imageLinks).filter(Boolean) : [];
+  // Map images in order: image1, image2, image3, ...
+  const imageLinks = product?.imageLinks
+    ? Object.keys(product.imageLinks)
+        .filter((key) => /^image\d+$/.test(key))
+        .sort((a, b) => {
+          // Extract the number after "image" and sort numerically
+          const numA = parseInt(a.replace("image", ""), 10);
+          const numB = parseInt(b.replace("image", ""), 10);
+          return numA - numB;
+        })
+        .map((key) => product.imageLinks[key])
+        .filter(Boolean)
+    : [];
   const hasImages = imageLinks.length > 0;
   const visibleThumbnails = 4;
 

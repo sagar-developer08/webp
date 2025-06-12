@@ -335,7 +335,7 @@ const Home = () => {
               {countryData?.Send_a_Gift_to_a_Friend}
             </div>
             <BtnShop
-              onClick={() => handleProductClick("6810d72c482bd53e0f12fc54")}
+              onClick={() => handleNavigate("/shop")}
               contact_us="Shop Now"
               btnShopPosition="unset"
               btnShopWidth="unset"

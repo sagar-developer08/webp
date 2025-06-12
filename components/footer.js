@@ -366,7 +366,9 @@ const Footer = ({
                         Blogs
                       </div>
                     </div>
-                    <div className="self-stretch flex flex-row items-start justify-start py-1 px-0 cursor-pointer">
+                    <div className="self-stretch flex flex-row items-start justify-start py-1 px-0 cursor-pointer"
+                      onClick={() => handleNavigate("/faqs")}
+                    >
                       <div className="flex-1 relative leading-[150%] font-medium">
                         FAQs
                       </div>
@@ -408,7 +410,9 @@ const Footer = ({
                       Blogs
                     </div>
                   </div>
-                  <div className="self-stretch flex flex-row items-start justify-start py-1 px-0 cursor-pointer">
+                  <div className="self-stretch flex flex-row items-start justify-start py-1 px-0 cursor-pointer"
+                    onClick={() => handleNavigate("/faqs")}
+                  >
                     <div className="flex-1 relative leading-[150%] font-medium">
                       FAQs
                     </div>

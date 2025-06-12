@@ -30,6 +30,8 @@ const Main = ({
   const [fetchLoading, setFetchLoading] = useState(false);
   // Track if filter is applied
   const [filterApplied, setFilterApplied] = useState(false);
+  // If filter is applied, show fetchedProducts, else show parent products
+  const [visibleCount, setVisibleCount] = useState(12);
 
   useEffect(() => {
     setIsBrowser(true);
@@ -191,9 +193,22 @@ const Main = ({
   };
 
   // If filter is applied, show fetchedProducts, else show parent products
+  // Only show up to 12 products, unless "Load More" is clicked
   const productsToRender = filterApplied
     ? (fetchLoading ? [] : fetchedProducts)
     : getFilteredProducts();
+
+  // Prevent duplicates by slicing the array, not concatenating
+  const visibleProducts = productsToRender.slice(0, visibleCount);
+
+  const handleLoadMore = () => {
+    // Only increase if there are more products to show
+    setVisibleCount((prev) => {
+      const nextCount = prev + 12;
+      return nextCount > productsToRender.length ? productsToRender.length : nextCount;
+    });
+    // Do NOT call onLoadMore, as all products are already in productsToRender
+  };
 
   const toggleFilterDrawer = () => {
     setShowFilterDrawer(!showFilterDrawer);
@@ -377,8 +392,8 @@ const Main = ({
                   <SkeletonLoader />
                 </div>
               ))
-            ) : productsToRender.length > 0 ? (
-              productsToRender.map((product, index) => {
+            ) : visibleProducts.length > 0 ? (
+              visibleProducts.map((product, index) => {
                 const currencySymbol = getCurrencySymbol(country);
                 const productPrice = getCountryPrice(product.price);
                 const displayPrice = productPrice ? `${currencySymbol} ${productPrice}` : '';
@@ -389,7 +404,7 @@ const Main = ({
                       stock={product.stock}
                       productId={product._id}
                       images={product.imageLinks?.image1}
-                      hoverImage={product.imageLinks?.image2}
+                      hoverImage={product.imageLinks?.image3}
                       classic={product.collection?.name || "Classic"}
                       name={product?.name?.en}
                       icroundStar="/icroundstar-1.svg"
@@ -404,10 +419,10 @@ const Main = ({
             )}
           </div>
 
-          {hasMore && !loading && (
+          {visibleCount < productsToRender.length && (
             <div className="flex justify-center mt-12 mb-8">
               <button
-                onClick={onLoadMore}
+                onClick={handleLoadMore}
                 disabled={loadingMore}
                 className="px-8 py-3 bg-black text-white rounded-full font-medium border border-solid-1px border-black hover:border-black hover:bg-white hover:text-black transition-colors cursor-pointer"
               >

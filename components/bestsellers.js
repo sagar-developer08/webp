@@ -59,12 +59,13 @@ const Bestsellers = ({ className = "", country, selectedCountry }) => {
     <section
       className={`self-stretch overflow-hidden flex flex-col items-center justify-start py-[60px] px-[40px] gap-[60px] z-[2] text-left text-37xl text-black font-h5-24 mq1050:gap-[30px] mq1050:pt-[39px] mq1050:pb-[39px] mq1050:box-border mq450:px-[24px] mq450:gap-[24px] mq450:py-[40px] ${className}`}
     >
-      <div className="w-[1360px] flex flex-row items-start justify-between gap-[60px] mq450:gap-[30px] max-w-full mq750:flex-col mq450:item-center mq450:justify-center">
+      <div className="w-[1360px] flex flex-row items-start justify-between gap-[60px] mq450:gap-[30px] max-w-full mq1050:flex-col mq750:flex-col mq450:items-center mq450:justify-center">
+        {/* Removed mq1050:flex-col so titles stay in row for iPads */}
         <h2 className="m-0 relative text-[48px] leading-[120%] font-semibold font-[inherit] mq450:text-center mq750:text-[34px] mq750:leading-[40px] mq1050:text-[45px] mq1050:leading-[54px] mq450:text-[24px] mq450:leading-[120%]">
           {country?.best_Seller_title && (
             <>
               {country.best_Seller_title.split(' ').slice(0, 5).join(' ')}
-              <br className="mq450:hidden" />
+              <br className="mq450:hidden mq1050:hidden" />
               {country.best_Seller_title.split(' ').slice(5).join(' ')}
             </>
           )}
@@ -125,7 +126,7 @@ const Bestsellers = ({ className = "", country, selectedCountry }) => {
                       stock={product.stock}
                       productId={product._id}
                       images={product?.imageLinks?.image1 || "/default-watch.jpg"}
-                      hoverImage={product?.imageLinks?.image2 || "/default-watch.jpg"}
+                      hoverImage={product.imageLinks?.image3}
                       classic={product.collection?.name || "Classic"}
                       name={product.name?.en}
                       icroundStar="/icroundstar-1.svg"

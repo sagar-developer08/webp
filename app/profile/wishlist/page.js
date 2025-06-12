@@ -70,6 +70,9 @@ const WishlistPage = () => {
         quantity: 1
       });
 
+      // Remove from wishlist after adding to cart
+      removeFromWishlist(product._id);
+
       toast.success(`${product.name?.en || product.name} added to cart`);
     } catch (error) {
       console.error('Error adding to cart:', error);

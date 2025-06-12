@@ -164,7 +164,8 @@ const Home = () => {
         <Reason country={countryData} />
       </section>
       <section className="self-stretch overflow-hidden flex flex-col items-center justify-start py-[60px] mq750:py-5 mq450:py-5 px-[40px] gap-12 z-[6] text-left text-29xl text-[#000] font-h5-24 mq1050:gap-8 mq1050:py-5 mq1050:box-border mq450:px-[24px] mq450:gap-[24px] mq450:py-[40px]">
-        <div className="w-[1360px] max-w-full flex flex-row items-center justify-between gap-12 mq450:gap-6">
+        <div className="w-[1360px] max-w-full flex flex-row items-center justify-between gap-12 mq450:flex-col mq450:gap-6">
+          {/* Changed mq750:flex-col to mq450:flex-col so only mobile is column, iPad/desktop remain row */}
           <h2 className="m-0 relative text-[48px] leading-[120%] font-bold font-[inherit] mq450:text-center mq750:text-[34px] mq750:leading-[40px] mq1050:text-[45px] mq1050:leading-[54px] mq450:text-[24px] mq450:leading-[120%]">
             {countryData?.new_Seller_title}
           </h2>
@@ -249,7 +250,7 @@ const Home = () => {
                         stock={product.stock}
                         productId={product._id}
                         images={product?.imageLinks?.image1 || "/default-watch.jpg"}
-                        hoverImage={product?.imageLinks?.image2 || "/default-watch.jpg"}
+                        hoverImage={product.imageLinks?.image3}
                         classic={product.collection?.name || "Classic"}
                         name={product.name?.en}
                         icroundStar="/icroundstar-1.svg"
@@ -266,10 +267,10 @@ const Home = () => {
           )}
         </div>
       </section>
-      <section className="self-stretch overflow-hidden flex flex-row flex-wrap items-start justify-center pb-[40px] pt-[60px] mq750:py-5 mq450:py-[40px] mq450:px-[24px] px-[40px] z-[5] text-center text-base text-[rgba(255,255,255,0.8)] font-h5-24 mq1050:gap-8 mq1050:py-5 mq1050:box-border">
-        <div className="w-[1360px] flex flex-row flex-wrap items-center justify-between gap-0 mq1050:flex-col mq1050:gap-6">
+      <section className="self-stretch overflow-hidden flex flex-row flex-wrap items-start justify-center pb-[40px] pt-[60px] mq750:py-5 mq450:py-[40px] mq450:px-[24px] px-[40px] z-[5] text-center text-base text-[rgba(255,255,255,0.8)] font-h5-24 mq1050:flex-row mq1050:gap-8 mq1050:py-5 mq1050:box-border">
+        <div className="w-[1360px] flex flex-row flex-wrap items-center justify-between gap-0 mq1050:flex-row mq1050:gap-6 mq750:flex-col">
           {/* First Card */}
-          <div className="h-[700px] w-[660px] rounded-3xl flex flex-row items-start justify-center p-10 box-border bg-[url('/aurora_eon_celestial3.webp')] bg-cover bg-no-repeat bg-center mq450:h-[520px] mq450:gap-[30px] mq1050:w-full mq1050:h-auto mq1050:p-6 relative">
+          <div className="h-[700px] w-[660px] rounded-3xl flex flex-row items-start justify-center p-10 box-border bg-[url('/aurora_eon_celestial3.webp')] bg-cover bg-no-repeat bg-center mq450:h-[520px] mq450:gap-[30px] mq1050:w-[48%] mq1050:h-[600px] mq1050:p-8 mq750:w-full mq750:h-auto mq750:p-6 relative">
             {/* Black overlay */}
             <div className="absolute inset-0 bg-black bg-opacity-40 rounded-3xl"></div>
             <div className="flex-1 flex flex-col items-center justify-start gap-6 relative z-[1]">
@@ -277,7 +278,7 @@ const Home = () => {
                 <div className="self-stretch relative leading-[150%] font-medium">
                   Limited Offer
                 </div>
-                <b className="self-stretch relative text-[48px] leading-[120%] mq450:text-[24px] text-[#fff] mq750:text-[34px] mq750:leading-[40px] mq1050:text-[45px] mq1050:leading-[120%] mq450:leading-[120%]">
+                <b className="self-stretch relative text-[48px] leading-[120%] mq450:text-[24px] text-[#fff] mq750:text-[34px] mq750:leading-[40px] mq1050:text-[40px] mq1050:leading-[120%] mq450:leading-[120%]">
                   Aurora Eon Celestial
                 </b>
                 <div className="self-stretch relative leading-[150%] font-medium mq450:text-[16px] mq450:leading-[150%] mq450:pb-[30px]">
@@ -288,7 +289,7 @@ const Home = () => {
             </div>
           </div>
           {/* Second Card */}
-          <div className="h-[700px] w-[660px] rounded-3xl flex flex-row items-end justify-center p-10 box-border bg-[url('/aurora_eon_celestial1.webp')] bg-cover bg-no-repeat bg-[top] mq450:h-[520px] mq750:pt-[26px] mq750:pb-[26px] mq750:box-border mq450:gap-[30px] mq1050:w-full mq1050:h-auto mq1050:p-6 relative">
+          <div className="h-[700px] w-[660px] rounded-3xl flex flex-row items-end justify-center p-10 box-border bg-[url('/aurora_eon_celestial1.webp')] bg-cover bg-no-repeat bg-[top] mq450:h-[520px] mq750:pt-[26px] mq750:pb-[26px] mq750:box-border mq450:gap-[30px] mq1050:w-[48%] mq1050:h-[600px] mq1050:p-8 mq750:w-full mq750:h-auto mq750:p-6 relative">
             {/* Black overlay */}
             <div className="absolute inset-0 bg-black bg-opacity-40 rounded-3xl"></div>
             <div className="flex-1 flex flex-col items-center justify-start gap-6 relative z-[1]">
@@ -296,7 +297,7 @@ const Home = () => {
                 <div className="self-stretch relative leading-[150%] font-medium">
                   Recommended
                 </div>
-                <h1 className="m-0 self-stretch relative text-[48px] mq450:text-[24px] leading-[120%] font-bold font-[inherit] text-[#fff] mq750:text-[34px] mq750:leading-[40px] mq1050:text-[45px] mq1050:leading-[120%] mq450:leading-[120%]">
+                <h1 className="m-0 self-stretch relative text-[48px] mq450:text-[24px] leading-[120%] font-bold font-[inherit] text-[#fff] mq750:text-[34px] mq750:leading-[40px] mq1050:text-[40px] mq1050:leading-[120%] mq450:leading-[120%]">
                   Personalized Watches
                 </h1>
                 <div className="self-stretch relative leading-[150%] font-medium">
@@ -306,7 +307,6 @@ const Home = () => {
               <BtnShop contact_us="Contact Us" onClick={() => handleSocialIcons("https://api.whatsapp.com/send/?phone=971505057445&text=Hi&type=phone_number&app_absent=0")} />
             </div>
           </div>
-
         </div>
       </section>
 

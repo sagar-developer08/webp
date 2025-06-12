@@ -61,7 +61,7 @@ const Cart = () => {
     const timer = setTimeout(() => {
       updateFilteredCart();
     }, 100);
-    
+
     return () => clearTimeout(timer);
   }, [updateFilteredCart]);
 
@@ -122,6 +122,15 @@ const Cart = () => {
         setCouponDetails(null);
         setCouponCode("");
       }
+    }
+  };
+
+  const handleWishlistRemoveItem = async (itemId) => {
+    await removeFromCart(itemId);
+    if (cart.length === 1) {
+      setDiscount(0);
+      setCouponDetails(null);
+      setCouponCode("");
     }
   };
 
@@ -221,30 +230,30 @@ const Cart = () => {
         tax: totals.tax,
         shipping: totals.shipping,
         total: totals.total,
-        currency: currentCurrency
+        currency: currentCurrency,
+        shippingAddress: {
+          address: "123 Main St",
+          city: "New York",
+          postalCode: "10001",
+          country: selectedCountry || "uae"
+        }
       };
 
-      if (shippingAddress && shippingAddress.address) {
-        orderPayload.shippingAddress = {
-          address: shippingAddress.address,
-          city: shippingAddress.city,
-          postalCode: shippingAddress.postalCode,
-          country: shippingAddress.country,
-        };
-      }
-
       const response = await axiosInstance.post("/orders", orderPayload);
+
+      // Get cartId from the nested response structure
       const cartId = response.data?.strablCheckout?.data?.data?.cartId;
 
       if (cartId) {
         toast.success("Order placed successfully! Redirecting to payment...");
-        const strablCheckoutUrl = `https://sandbox.checkout.strabl.io/?token=${cartId}`;
-        window.open(strablCheckoutUrl, "_blank");
+        // Redirect to the Strabl checkout page using the cartId
+        window.location.href = `https://sandbox.checkout.strabl.io/?token=${cartId}`;
+        // Optionally clear cart and reset state after redirect if needed
         await clearCart();
         setDiscount(0);
         setCouponDetails(null);
         setCouponCode("");
-        router.push("/order-success");
+        // router.push("/order-success"); // Remove this, as redirect is handled above
       } else {
         console.error("No cartId found in response:", response.data);
         toast.error("Could not process payment. Please try again.");
@@ -313,6 +322,7 @@ const Cart = () => {
       <section className="self-stretch overflow-hidden flex flex-col items-center justify-center py-0 px-0 z-[10] text-center text-29xl text-[#fff] font-h5-24 mq1050:gap-[30px] mq450:px-4 max-w-[1360px] mx-auto w-full">
         <Main1
           cart={cart}
+          wishlistFromcart={handleWishlistRemoveItem}
           removeFromCart={handleRemoveItem}
           updateQuantity={updateQuantity}
           cartTotal={cartTotal}

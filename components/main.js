@@ -315,7 +315,7 @@ const Main = ({ className = "", country }) => {
                       stock={product.stock}
                       productId={product._id}
                       images={product.imageLinks?.image1}
-                      hoverImage={product.imageLinks?.image2}
+                      hoverImage={product.imageLinks?.image3}
                       classic={product.collection?.name || "Classic"}
                       name={product?.name?.en}
                       icroundStar="/icroundstar-1.svg"

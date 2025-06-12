@@ -78,7 +78,7 @@ const Left = ({ className = "", product }) => {
       className={`h-auto flex flex-col justify-center items-center relative min-w-[300px] max-w-full md:min-w-[600px] mq750:min-w-full mq1125:flex-1 ${className}`}
     >
       {/* Main Image Container */}
-      <div className="relative w-full h-[300px] sm:h-[400px] md:h-[600px] flex justify-center items-center">
+      <div className="relative w-full h-[300px] sm:h-[400px] md:h-[500px] flex justify-center items-center">
         {hasImages ? (
           <Image
             className="rounded-3xl w-full h-full object-contain"

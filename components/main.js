@@ -308,9 +308,20 @@ const Main = ({ className = "", country }) => {
                   : '';
                 const displayPrice = productPrice ? `${currencySymbol} ${productPrice}` : '';
 
+                const productDiscountPrice = product.discountPrice && countryKey
+                  ? product.discountPrice[countryKey] || Object.values(product.discountPrice)[0]
+                  : '';
+                const displayDiscountPrice = productDiscountPrice ? `${currencySymbol} ${productDiscountPrice}` : '';
+
+
+                const productRating = product.ratings && countryKey
+                  ? product.ratings[countryKey] || Object.values(product.ratings)[0]
+                  : '';
+                const displayProductRating = productRating ? ` ${productRating}` : '';
+
                 return (
                   <div key={product._id || index} className="w-[calc(25%-24px)] min-w-[260px] max-w-[320px] mq750:w-[46%] mq450:w-[48%] mq450:min-w-0">
-                    {console.log("Rendering product:", product)}
+                    {/* {console.log("Rendering product:", product)} */}
                     <Card
                       stock={product.stock}
                       productId={product._id}
@@ -321,6 +332,9 @@ const Main = ({ className = "", country }) => {
                       icroundStar="/icroundstar-1.svg"
                       dialColor={product?.watchDetails?.dialColor?.en}
                       price={displayPrice}
+                      discountPrice={displayDiscountPrice}
+                      country={country}
+                      rating={displayProductRating}
                     />
                   </div>
                 );

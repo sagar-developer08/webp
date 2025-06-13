@@ -1,13 +1,13 @@
 "use client";
 import { useState, useEffect, Suspense, useRef } from "react";
 import { useSearchParams, useRouter } from "next/navigation";
+import Link from "next/link";
 import axios from "axios";
 import Image from "next/image";
 import { useCart } from "../../context/CartContext";
 import Left from "../../components/left";
 import R from "../../components/r";
 import R1 from "../../components/r1";
-import Description from "../../components/description";
 import Video from "../../components/video";
 import Soecification from "../../components/soecification";
 import Testimonials from "../../components/pdpreview";
@@ -119,7 +119,17 @@ function ProductDetailsContent({ className = "", textStyle = {} }) {
 
       {/* Breadcrumb section */}
       <div className="w-full max-w-[1360px] flex flex-row items-center justify-start pt-[120px] mq450:pt-[110px] box-border">
-        <div className="relative leading-[150%] font-medium text-[10px] sm:text-xs">{`Home > Shop > AUTONOVA Automatic Watch`}</div>
+        <div className="relative leading-[150%] font-medium text-[10px] sm:text-xs space-x-1">
+          <Link href="/" className="text-gray-500 no-underline cursor-pointer">
+            Home
+          </Link>
+          <span>{`>`}</span>
+          <Link href="/shop" className="text-gray-500 no-underline cursor-pointer ">
+            Shop
+          </Link>
+          <span>{`>`}</span>
+          <span className="text-gray-500">{product?.data?.product?.name?.en}</span>
+        </div>
       </div>
 
       {/* Product details section */}
@@ -244,6 +254,11 @@ function ProductDetailsContent({ className = "", textStyle = {} }) {
               const currencySymbol = getCurrencySymbol(selectedCountry);
               const productPrice = getCountryPrice(product.price);
               const displayPrice = productPrice ? `${currencySymbol} ${productPrice}` : '';
+              const productDiscountPrice = getCountryPrice(product.discountPrice);
+              const displayDiscountPrice = productDiscountPrice ? `${currencySymbol} ${productDiscountPrice}` : '';
+
+              const productRating = getCountryPrice(product.ratings);
+              const displayProductRatings = productRating ? `${productRating}` : '';
 
               return (
                 <SwiperSlide key={product._id}>
@@ -251,12 +266,15 @@ function ProductDetailsContent({ className = "", textStyle = {} }) {
                     stock={product.stock}
                     productId={product._id}
                     images={product?.imageLinks?.image1 || "/default-watch.jpg"}
-                    hoverImage={product?.imageLinks?.image3 || "/default-watch.jpg"}
+                    hoverImage={product?.imageLinks?.image2 || "/default-watch.jpg"}
                     classic={product.watchDetails?.watchType?.en || "Classic"}
                     name={product.name?.en}
                     icroundStar="/icroundstar-1.svg"
                     dialColor={product.watchDetails?.dialColor?.en || "Black"}
                     price={displayPrice}
+                    discountPrice={displayDiscountPrice}
+                    rating={displayProductRatings}
+                    country={selectedCountry}
                   />
                 </SwiperSlide>
               );

@@ -21,7 +21,11 @@ const Card = ({
   productId,
   stock,
   _id,
+  country,
+  discountPrice,
+  rating,
 }) => {
+  // console.log(rating, "rating in card");
   const router = useRouter();
   const { addToCart } = useCart();
   const { user } = useUser();
@@ -34,7 +38,7 @@ const Card = ({
   // Check if device is mobile
   useEffect(() => {
     const checkMobile = () => {
-      setIsMobile(window.innerWidth <= 750);
+      setIsMobile(window.innerWidth <= 1050);
     };
 
     checkMobile();
@@ -92,14 +96,38 @@ const Card = ({
   const shouldShowActions = isMobile || showActions;
 
   // Check for stock (assume 0 means out of stock)
-  const resolvedStock =
-    typeof stock === "number"
-      ? stock
-      : typeof stock === "string"
-      ? parseInt(stock, 10)
-      : undefined;
+  const countryKey = country.toLowerCase();
+  stock = stock[countryKey];
+  // fallback to first available stock if not found
+  if (typeof stock === "undefined") {
+    stock = Object.values(stock)[0];
+  } else if (typeof stock === "number") {
+  } else if (typeof stock === "string") {
+    stock = parseInt(stock, 10);
+  } else {
+    stock = undefined;
+  }
 
-  const isOutOfStock = !resolvedStock || resolvedStock <= 0;
+  const isOutOfStock = !stock || stock <= 0;
+
+  const formatPriceDisplay = (price, discountPrice, country) => {
+
+    if (!discountPrice || discountPrice === "0" || discountPrice === 0) {
+      return <span className="text-[15px]"> {price}</span>;
+    }
+
+    return (
+      <div className="flex items-center gap-2">
+        <span className="text-[15px] text-black">
+          {discountPrice}
+        </span>
+        <span className="text-[13px] line-through text-gray-500">
+          {price}
+        </span>
+      </div>
+    );
+  };
+
 
   return (
     <div
@@ -149,7 +177,7 @@ const Card = ({
               alt="Rating"
               src={icroundStar}
             />
-            <div className="relative leading-[150%] text-black font-medium mq450:text-xs">4.0</div>
+            <div className="relative leading-[150%] text-black font-medium mq450:text-xs">{rating}</div>
           </div>
         )}
       </div>
@@ -171,12 +199,12 @@ const Card = ({
               ? `${name.substring(0, 200)}...`
               : name}
         </div>
-        <div className="self-stretch relative text-[18px] mq750:text-sm mq450:text-xs text-black leading-[150%] font-500 cursor-pointer">
+        <div className="self-stretch relative text-[18px] mq750:text-sm mq450:text-xs text-black leading-[150%] font-500 whitespace-nowrap overflow-hidden text-ellipsis cursor-pointer">
           {dialColor}
         </div>
         <div className="self-stretch flex items-center justify-between gap-2">
           <span className="text-[15px] mq750:text-sm mq450:text-xs text-black leading-[150%] font-500">
-            {price}
+            {formatPriceDisplay(price, discountPrice, country)}
           </span>
           {isMobile && !isOutOfStock && (
             <div className="flex items-center gap-0">

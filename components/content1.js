@@ -68,7 +68,7 @@ const Content1 = ({ className = "", countryData }) => {
         width={650}
         height={550}
         alt=""
-        src="/image-container@2x.webp"
+        src="/get_in_touch.jpg"
       />
     </section>
   );

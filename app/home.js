@@ -35,9 +35,19 @@ const Home = () => {
     try {
       setLoading(true);
       setError(null);
-      const response = await axios.get(`https://0vm9jauvgc.execute-api.us-east-1.amazonaws.com/stag/api/products/new-arrivals`);
+      const response = await axios.get(
+        `https://0vm9jauvgc.execute-api.us-east-1.amazonaws.com/stag/api/products/new-arrivals` // Adjusted endpoint to match your API
+      );
       // console.log(response.data, "Products data from API");
-      setProducts(response.data);
+
+      if (selectedCountry) {
+        const countryKey = selectedCountry.toLowerCase();
+        const countryProducts = response.data.data[countryKey] || [];
+        setProducts(countryProducts);
+      } else {
+        // Default to US or empty array if no country selected
+        setProducts(response.data.data.data || []);
+      }
     } catch (error) {
       console.error("Error fetching products:", error);
       setError("Failed to load products. Please try again later.");
@@ -45,7 +55,7 @@ const Home = () => {
       setLoading(false);
     }
   };
-  // console.log(products.data[0].imageLinks.image1, "new arrivals data from API");
+  // console.log(products, "new arrivals data from API");
 
   const fetchHome = async () => {
     try {
@@ -204,7 +214,7 @@ const Home = () => {
             </div>
           ) : error ? (
             <div className="text-red-500">{error}</div>
-          ) : products.data.length > 0 ? (
+          ) : products.length > 0 ? (
             <div className="relative flex justify-center items-center">
               <Swiper
                 modules={[Navigation]}
@@ -239,10 +249,16 @@ const Home = () => {
                 }}
                 className="!p-[2px] flex justify-center items-center"
               >
-                {products.data.map((product) => {
+                {products.map((product) => {
                   const currencySymbol = getCurrencySymbol(selectedCountry);
                   const productPrice = getCountryPrice(product.price);
                   const displayPrice = productPrice ? `${currencySymbol} ${productPrice}` : '';
+
+                  const productDiscountPrice = getCountryPrice(product.discountPrice);
+                  const displayDiscountPrice = productDiscountPrice ? `${currencySymbol} ${productDiscountPrice}` : '';
+
+                  const productRating = getCountryPrice(product.ratings);
+                  const displayProductRatings = productRating ? `${productRating}` : '';
 
                   return (
                     <SwiperSlide key={product._id} className="flex justify-center">
@@ -256,6 +272,9 @@ const Home = () => {
                         icroundStar="/icroundstar-1.svg"
                         dialColor={product.watchDetails?.dialColor?.en || "Black"}
                         price={displayPrice}
+                        discountPrice={displayDiscountPrice}
+                        country={selectedCountry}
+                        rating={displayProductRatings}
                       />
                     </SwiperSlide>
                   );
@@ -263,7 +282,7 @@ const Home = () => {
               </Swiper>
             </div>
           ) : (
-            <div className="text-white">No Bestseller found</div>
+            <div className="text-black">No New Arrivals found</div>
           )}
         </div>
       </section>

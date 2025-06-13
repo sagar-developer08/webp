@@ -371,10 +371,10 @@ const Navbar = ({
             style={{ maxWidth: '800px' }}
           >
             <motion.div
-              className="flex flex-row items-center justify-center py-1.5 px-3 cursor-pointer hover:text-gray-300 transition-colors"
+              className="flex flex-row items-center justify-center py-1.5 px-3 transition-colors"
               variants={menuItemVariants}
-              whileHover={{ scale: 1.05 }}
-              whileTap={{ scale: 0.95 }}
+              // whileHover={{ scale: 1.05 }}
+              // whileTap={{ scale: 0.95 }}
             >
               <div className="relative leading-[150%] font-medium text-xs sm:text-sm">
                 Sale: 20% Off - Limited Time Only

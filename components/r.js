@@ -25,47 +25,89 @@ const R = ({ className = "", product, relatedProducts, selectedCountry }) => {
   const [notifySubmitted, setNotifySubmitted] = useState(false);
 
   useEffect(() => {
-    // Set the current product's color as selected
     if (product?.watchDetails?.dialColor?.en) {
       setSelectedColor(product.watchDetails.dialColor.en);
     }
-    // Reset addedToCart when product changes
     setAddedToCart(false);
   }, [product]);
 
-  // console.log("Product details:", product?.imageLinks?.image1);
+  const getCurrencySymbol = (selectedCountry) => {
+    if (!selectedCountry) return '$';
+    const countryUpper = selectedCountry.toUpperCase();
+    switch (countryUpper) {
+      case 'INDIA': return '₹';
+      case 'UAE': return 'AED';
+      case 'KSA': return 'SR';
+      case 'KUWAIT': return 'KD';
+      case 'QATAR': return 'QAR';
+      default: return '$';
+    }
+  };
+
+  const getCountryPrice = (priceObj) => {
+    if (!priceObj || typeof priceObj !== 'object') return '';
+    if (!selectedCountry) return Object.values(priceObj)[0] || '';
+    const countryKey = selectedCountry.toLowerCase();
+    return priceObj[countryKey] || Object.values(priceObj)[0] || '';
+  };
+
+  const getDiscountPrice = (priceObj) => {
+    if (!priceObj || typeof priceObj !== 'object') return null;
+    if (!selectedCountry) return Object.values(priceObj)[0] || null;
+    const countryKey = selectedCountry.toLowerCase();
+    return priceObj[countryKey] || Object.values(priceObj)[0] || null;
+  };
+
+  const formatPriceDisplay = (price, discountPrice, currencySymbol) => {
+    if (!discountPrice || discountPrice === "0" || discountPrice === 0) {
+      return <span className="text-5xl">{currencySymbol} {price}</span>;
+    }
+    return (
+      <div className="flex items-end gap-3">
+        <span className="text-5xl text-black">
+          {currencySymbol} {discountPrice}
+        </span>
+        <span className="text-[16px] line-through text-gray-500">
+          {currencySymbol} {price}
+        </span>
+      </div>
+    );
+  };
+
+  const productPrice = getCountryPrice(product?.price);
+  const discountPrice = getDiscountPrice(product?.discountPrice);
+  const currencySymbol = getCurrencySymbol(selectedCountry);
+  const displayPrice = productPrice ? formatPriceDisplay(productPrice, discountPrice, currencySymbol) : '';
 
   const handleAddToCart = () => {
     if (product) {
-      // Get country-specific price
       let countryPrice = product.price;
+      let countryDiscountPrice = product.discountPrice;
       if (product.price && typeof product.price === "object" && selectedCountry) {
         const countryKey = selectedCountry.toLowerCase();
         countryPrice = product.price[countryKey] || Object.values(product.price)[0] || "";
+        countryDiscountPrice = product.discountPrice?.[countryKey] || Object.values(product.discountPrice || {})[0] || "";
       }
 
-      // Cart item to be added
       const cartItem = {
         productId: product._id || product.id,
         name: product.name?.en || product.name || "",
         price: countryPrice,
+        discountPrice: countryDiscountPrice && countryDiscountPrice !== "0" ? countryDiscountPrice : null,
         images: product.imageLinks ? Object.values(product.imageLinks) : [product.imageLinks?.image1],
         image: product.imageLinks?.image1,
         quantity: quantity,
       };
 
-      // addToCart function in CartContext will handle login check
       addToCart(cartItem);
       toast.success("Added to cart successfully!");
-      setAddedToCart(true); // Mark as added
+      setAddedToCart(true);
     }
   };
 
   const handleBuyNow = () => {
     if (product) {
-      // Check if user is logged in
       if (!isLoggedIn) {
-        // Save product to local storage for adding after login
         if (typeof window !== "undefined") {
           localStorage.setItem(
             "pendingCartItem",
@@ -73,23 +115,30 @@ const R = ({ className = "", product, relatedProducts, selectedCountry }) => {
               productId: product._id || product.id,
               name: product?.name?.en || product.name,
               price: product.price,
+              discountPrice: product.discountPrice,
               images: product.images || [product.image],
               quantity: quantity,
             })
           );
         }
-
-        // Redirect to login page
         toast.error("Please login to proceed with checkout");
         router.push("/login");
         return;
       }
 
-      // If logged in, add to cart and navigate to cart page
+      let countryPrice = product.price;
+      let countryDiscountPrice = product.discountPrice;
+      if (product.price && typeof product.price === "object" && selectedCountry) {
+        const countryKey = selectedCountry.toLowerCase();
+        countryPrice = product.price[countryKey] || Object.values(product.price)[0] || "";
+        countryDiscountPrice = product.discountPrice?.[countryKey] || Object.values(product.discountPrice || {})[0] || "";
+      }
+
       addToCart({
         productId: product._id || product.id,
         name: product.name?.en || product.name || "",
-        price: product.price,
+        price: countryPrice,
+        discountPrice: countryDiscountPrice && countryDiscountPrice !== "0" ? countryDiscountPrice : null,
         images: product.imageLinks ? Object.values(product.imageLinks) : [product.imageLinks?.image1],
         image: product.imageLinks?.image1,
         quantity: quantity,
@@ -109,35 +158,8 @@ const R = ({ className = "", product, relatedProducts, selectedCountry }) => {
   };
 
   const handleColorSelect = (relatedProduct) => {
-    // Navigate to the related product's detail page
     router.push(`/products-details?productId=${relatedProduct._id}`);
   };
-
-  // console.log("Related products:", relatedProducts);
-  const getCurrencySymbol = (selectedCountry) => {
-    if (!selectedCountry) return '$';
-    const countryUpper = selectedCountry.toUpperCase();
-    switch (countryUpper) {
-      case 'INDIA': return '₹';
-      case 'UAE': return 'AED';
-      case 'KSA': return 'SR';
-      case 'KUWAIT': return 'KD';
-      case 'QATAR': return 'QAR';
-      default: return '$';
-    }
-  };
-
-  const getCountryPrice = (priceObj) => {
-    if (!priceObj || typeof priceObj !== 'object') return '';
-    if (!selectedCountry) return Object.values(priceObj)[0] || '';
-
-    const countryKey = selectedCountry.toLowerCase();
-    return priceObj[countryKey] || Object.values(priceObj)[0] || '';
-  };
-
-  const productPrice = getCountryPrice(product?.price);
-  const currencySymbol = getCurrencySymbol(selectedCountry);
-  const displayPrice = productPrice ? `${currencySymbol} ${productPrice}` : '';
 
   const handleWishlist = () => {
     if (!product) return;
@@ -147,6 +169,7 @@ const R = ({ className = "", product, relatedProducts, selectedCountry }) => {
       _id: prodId,
       name: product.name?.en || product.name || "",
       price: product.price,
+      discountPrice: product.discountPrice,
       imageLinks: product.imageLinks,
       watchDetails: product.watchDetails,
       classic: product.classic,
@@ -159,17 +182,24 @@ const R = ({ className = "", product, relatedProducts, selectedCountry }) => {
     }
   };
 
-  // Use product.stock or product.quantity for stock check
-  const stock =
-    typeof product?.stock === "number"
-      ? product.stock
-      : typeof product?.stock === "string"
-      ? parseInt(product.stock, 10)
-      : typeof product?.quantity === "number"
-      ? product.quantity
-      : typeof product?.quantity === "string"
-      ? parseInt(product.quantity, 10)
-      : undefined;
+  let stock;
+  if (product?.stock && typeof product.stock === "object" && selectedCountry) {
+    const countryKey = selectedCountry.toLowerCase();
+    stock = product.stock[countryKey];
+    if (typeof stock === "undefined") {
+      stock = Object.values(product.stock)[0];
+    }
+  } else if (typeof product?.stock === "number") {
+    stock = product.stock;
+  } else if (typeof product?.stock === "string") {
+    stock = parseInt(product.stock, 10);
+  } else if (typeof product?.quantity === "number") {
+    stock = product.quantity;
+  } else if (typeof product?.quantity === "string") {
+    stock = parseInt(product.quantity, 10);
+  } else {
+    stock = undefined;
+  }
 
   const isOutOfStock = !stock || stock <= 0;
 
@@ -201,7 +231,6 @@ const R = ({ className = "", product, relatedProducts, selectedCountry }) => {
       toast.error(err.message || "Something went wrong.");
     }
   };
-
   return (
     <div
       className={`self-stretch flex flex-col items-start justify-start gap-4 text-left text-base text-[#000] font-H5-24 ${className}`}

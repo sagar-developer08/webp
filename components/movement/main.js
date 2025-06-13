@@ -398,6 +398,12 @@ const Main = ({
                 const productPrice = getCountryPrice(product.price);
                 const displayPrice = productPrice ? `${currencySymbol} ${productPrice}` : '';
 
+                const productDiscountPrice = getCountryPrice(product.discountPrice);
+                const displayDiscountPrice = productDiscountPrice ? `${currencySymbol} ${productDiscountPrice}` : '';
+
+                const productRating = getCountryPrice(product.ratings);
+                const displayProductRatings = productRating ? `${productRating}` : '';
+
                 return (
                   <div key={product._id || index} className="w-[calc(25%-24px)] min-w-[260px] max-w-[320px] mq750:w-[48%] mq450:w-[48%] mq450:min-w-0 ">
                     <Card
@@ -410,6 +416,9 @@ const Main = ({
                       icroundStar="/icroundstar-1.svg"
                       dialColor={product?.watchDetails?.dialColor?.en}
                       price={displayPrice}
+                      discountPrice={displayDiscountPrice}
+                      country={country}
+                      rating={displayProductRatings}
                     />
                   </div>
                 );

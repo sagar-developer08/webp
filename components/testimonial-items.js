@@ -42,6 +42,7 @@ const TestimonialItems = ({
               height={20}
               alt="Star rating"
               src="/icroundstar-1.svg"
+              loading="lazy"
             />
           ))}
         </div>

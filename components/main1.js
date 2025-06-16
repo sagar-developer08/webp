@@ -28,16 +28,18 @@ const Main1 = ({
   handleContinueShopping,
   wishlistFromcart,
   handleCashfreePay,
-  isCashfreeAvailable
+  isCashfreeAvailable,
+  handleTapPay,
+  isTapPaymentLoading
 }) => {
   const [isCouponInputVisible, setIsCouponInputVisible] = useState(false);
-  const { getCartItemsByCurrency, getCurrentCurrencyTotal, getCurrency, currency } = useCart();
+  const { getCartItemsByCurrency, getCurrentCurrencyTotal, getCurrency, currency, user } = useCart();
   const { selectedCountry } = useCountry();
   const [filteredCart, setFilteredCart] = useState([]);
   const [filteredTotal, setFilteredTotal] = useState(0);
   const router = useRouter();
   const { addToWishlist, removeFromWishlist, isInWishlist } = useWishlist();
-
+console.log(cart, "cart")
   // Use memoized function to prevent excessive calculations
   const updateFilteredCart = useCallback(() => {
     const items = getCartItemsByCurrency();
@@ -98,6 +100,21 @@ const Main1 = ({
       return;
     }
     handleApplyCoupon();
+  };
+
+
+
+  // Helper function to get country code for phone
+  const getCountryCode = (country) => {
+    const countryCodes = {
+      'UAE': '971',
+      'KSA': '966', 
+      'KUWAIT': '965',
+      'QATAR': '974',
+      'USA': '1',
+      'UK': '44'
+    };
+    return countryCodes[country?.toUpperCase()] || '971';
   };
 
   // Calculate totals based on filtered items - memoize for performance
@@ -202,7 +219,7 @@ const Main1 = ({
                   key={itemKey}
                   className="rounded-2xl bg-[#f7f7f7] flex flex-col items-start justify-center max-w-full"
                 >
-                  <div className="self-stretch flex flex-row items-start justify-center py-0 pl-0 pr-6 box-border gap-6 max-w-full mq1050:flex-wrap">
+                  <div className="self-stretch flex flex-row items-start justify-center py-0 pl-0 pr-6 box-border gap-6 max-w-full mq1050:flex-wrap mq1050:px-2">
                     <Image
                       className="h-[188px] w-[188px] relative overflow-hidden shrink-0 object-contain bg-[#f7f7f7]"
                       loading="lazy"
@@ -319,7 +336,7 @@ const Main1 = ({
             })}
           </div>
 
-          <div className="w-[500px] rounded-2xl border-[rgba(0,0,0,0.16)] border-solid border-[1px] box-border flex flex-col items-end justify-start py-[20px] px-6 gap-4 max-w-full text-base mq750:pt-5 mq750:pb-5 mq750:box-border mq750:min-w-full mq750:mx-4  mq450:w-[300px] mq450:ml-[-17px] mq450:rounded-[0px] mq450:border-0"
+          <div className="w-[500px] rounded-2xl border-[rgba(0,0,0,0.16)] border-solid border-[1px] box-border flex flex-col items-end justify-start py-[20px] px-6 gap-4 max-w-full text-base mq1050:w-[800px] mq750:pt-5 mq750:pb-5 mq750:box-border mq750:min-w-full mq750:mx-4  mq450:w-[300px] mq450:ml-[-17px] mq450:rounded-[0px] mq450:border-0"
           >
             {/* Only show coupon input if logged in */}
             {useCart().isLoggedIn && (
@@ -406,10 +423,10 @@ const Main1 = ({
               </div>
             </div>
 
-            {/* Show Place Order button only if logged in */}
+            {/* Show payment buttons only if logged in */}
             {useCart().isLoggedIn && (
               <>
-                {/* Show only Cashfree if country is India/IND, else show Strabl and Cashfree (if available) */}
+                {/* Show only Cashfree if country is India/IND */}
                 {isCashfreeAvailable ? (
                   <button
                     className={`self-stretch rounded-[100px] bg-[#fff] text-[#000] border-[1px] border-solid border-[#000] h-[52px] flex flex-row items-center justify-center py-[13px] px-6 box-border ${isSubmitting ? 'opacity-70 cursor-not-allowed' : 'hover:bg-[#000] hover:text-[#fff]  cursor-pointer'} transition-colors`}
@@ -419,13 +436,25 @@ const Main1 = ({
                     {isSubmitting ? "Processing..." : "Pay with Cashfree"}
                   </button>
                 ) : (
-                  <button
-                    className={`self-stretch rounded-[100px] bg-[#fff] text-[#000] border-[1px] border-solid border-[#000] h-[52px] flex flex-row items-center justify-center py-[13px] px-6 box-border ${isSubmitting ? 'opacity-70 cursor-not-allowed' : 'hover:bg-[#000] hover:text-[#fff]  cursor-pointer'} transition-colors`}
-                    onClick={handlePlaceOrder}
-                    disabled={isSubmitting || filteredCart.length === 0}
-                  >
-                    {isSubmitting ? "Processing..." : "Place Order"}
-                  </button>
+                  <>
+                    {/* Show Tap Payment for all countries except India */}
+                    <button
+                      className={`self-stretch rounded-[100px] bg-[#fff] text-[#000] border-[1px] border-solid border-[#000] h-[52px] flex flex-row items-center justify-center py-[13px] px-6 box-border mb-3 ${isTapPaymentLoading || isSubmitting ? 'opacity-70 cursor-not-allowed' : 'hover:bg-[#000] hover:text-[#fff]  cursor-pointer'} transition-colors`}
+                      onClick={handleTapPay}
+                      disabled={isTapPaymentLoading || isSubmitting || filteredCart.length === 0}
+                    >
+                      {isTapPaymentLoading ? "Processing Tap Payment..." : "Pay with Tap"}
+                    </button>
+                    
+                    {/* Keep existing Place Order button as fallback */}
+                    <button
+                      className={`self-stretch rounded-[100px] bg-[#fff] text-[#000] border-[1px] border-solid border-[#000] h-[52px] flex flex-row items-center justify-center py-[13px] px-6 box-border ${isSubmitting ? 'opacity-70 cursor-not-allowed' : 'hover:bg-[#000] hover:text-[#fff]  cursor-pointer'} transition-colors`}
+                      onClick={handlePlaceOrder}
+                      disabled={isSubmitting || filteredCart.length === 0}
+                    >
+                      {isSubmitting ? "Processing..." : "Place Order"}
+                    </button>
+                  </>
                 )}
               </>
             )}
@@ -462,7 +491,9 @@ Main1.propTypes = {
   setPaymentMethod: PropTypes.func.isRequired,
   handleContinueShopping: PropTypes.func.isRequired,
   handleCashfreePay: PropTypes.func,
-  isCashfreeAvailable: PropTypes.bool
+  isCashfreeAvailable: PropTypes.bool,
+  handleTapPay: PropTypes.func,
+  isTapPaymentLoading: PropTypes.bool
 };
 
 export default Main1;

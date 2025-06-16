@@ -6,6 +6,16 @@ const nextConfig = {
 
   compress: true,
   
+  // API proxy to avoid CORS issues
+  async rewrites() {
+    return [
+      {
+        source: '/api/:path*',
+        destination: 'http://localhost:8080/api/:path*',
+      },
+    ];
+  },
+
   // Static file caching for fonts
   async headers() {
     return [
@@ -29,6 +39,11 @@ const nextConfig = {
       {
         protocol: 'https',
         hostname: 'torando-stagging.s3.amazonaws.com',
+        pathname: '**',
+      },
+      {
+        protocol: 'https',
+        hostname: 'torando-stagging.s3.amazonaws.com/products',
         pathname: '**',
       },
       {

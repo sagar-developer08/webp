@@ -20,7 +20,7 @@ const Testimonials = ({ Heading }) => {
         try {
             setLoading(true);
             setError(null);
-            const response = await axios.get(`https://0vm9jauvgc.execute-api.us-east-1.amazonaws.com/stag/api/testimonials/`);
+            const response = await axios.get(`http://localhost:8080/api/testimonials/`);
             console.log("Testimonials API response:", response.data);
 
             if (response.data && response.data.data && response.data.data[0]) {
@@ -80,7 +80,7 @@ const Testimonials = ({ Heading }) => {
     // If no testimonials are available for the selected country, show a message
     if (countryTestimonials.length === 0) {
         return (
-            <section className="self-stretch overflow-hidden flex flex-col items-center justify-start pt-[60px] px-[40px] gap-[60px] z-[8] text-center font-h5-24 mq450:pt-[40px] mq450:px-[4px] mq450:gap-[24px]">
+            <section className="self-stretch overflow-hidden flex flex-col items-center justify-start pt-[60px] px-[40px] gap-[60px] z-[8] text-center font-h5-24 mq1050:px-[8px] mq450:pt-[40px] mq450:px-[4px] mq450:gap-[24px]">
                 <div className="w-[1360px] max-w-full flex flex-row items-start justify-center">
                     <h1 className="m-0 relative text-[#000] text-[48px] mq450:text-center leading-[120%] mq450:text-left font-bold font-[inherit] mq750:text-[48px] mq750:leading-[58px] mq450:text-[24px] mq450:leading-[120%]">
                         {Heading?.testimonials_title || "Reviews"}
@@ -94,7 +94,7 @@ const Testimonials = ({ Heading }) => {
     }
 
     return (
-        <section className="self-stretch overflow-hidden flex flex-col items-center justify-start pt-[60px] px-[80px] gap-[60px] z-[8] text-center font-h5-24 mq450:pt-[40px] mq450:px-[8px] mq450:gap-[24px]">
+        <section className="self-stretch overflow-hidden flex flex-col items-center justify-start pt-[60px] px-[80px] gap-[60px] z-[8] text-center font-h5-24 mq1050:px-[8px] mq450:pt-[40px] mq450:px-[8px] mq450:gap-[24px]">
             <div className="w-[1360px] max-w-full flex flex-row items-start justify-center">
                 <h1 className="m-0 relative text-[#000] mq450:text-center text-[48px] leading-[120%] mq450:text-left font-bold font-[inherit] mq750:text-[48px] mq750:leading-[58px] mq450:text-[24px] mq450:leading-[120%]">
                     {Heading?.testimonials_title || "Reviews"}

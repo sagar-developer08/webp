@@ -212,7 +212,7 @@ const R = ({ className = "", product, relatedProducts, selectedCountry }) => {
         phone: notifyForm.phone,
         productId: product?._id || product?.id
       };
-      const res = await fetch("https://0vm9jauvgc.execute-api.us-east-1.amazonaws.com/stag/api/notify/notify-me", {
+      const res = await fetch("http://localhost:8080/api/notify/notify-me", {
         method: "POST",
         headers: { "Content-Type": "application/json" },
         body: JSON.stringify(payload),
@@ -307,6 +307,7 @@ const R = ({ className = "", product, relatedProducts, selectedCountry }) => {
                               src={colorImage}
                               alt={colorName}
                               className="w-full h-full object-contain"
+                              loading="lazy"
                               onError={(e) => {
                                 e.target.onerror = null;
                                 e.target.src = "/default-color.png";
@@ -343,6 +344,7 @@ const R = ({ className = "", product, relatedProducts, selectedCountry }) => {
                             src={colorImage}
                             alt={colorName}
                             className="w-full h-full object-contain"
+                            loading="lazy"
                             onError={(e) => {
                               e.target.onerror = null;
                               e.target.src = "/default-color.png";
@@ -388,6 +390,7 @@ const R = ({ className = "", product, relatedProducts, selectedCountry }) => {
                             src={colorImage}
                             alt={colorName}
                             className="w-full h-full object-contain"
+                            loading="lazy"
                             onError={(e) => {
                               e.target.onerror = null;
                               e.target.src = "/default-color.png";
@@ -412,6 +415,7 @@ const R = ({ className = "", product, relatedProducts, selectedCountry }) => {
                 src={product?.watchDetails?.dialColorImage || "/default-color.png"}
                 alt={product?.watchDetails?.dialColor?.en || "Default"}
                 className="w-full h-full object-cover"
+                loading="lazy"
                 onError={(e) => {
                   e.target.onerror = null;
                   e.target.src = "/default-color.png";

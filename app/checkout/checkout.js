@@ -35,6 +35,7 @@ const Cart = () => {
 
     const { selectedCountry } = useCountry();
     const { user, loading: userLoading } = useUser();
+    const router = useRouter();
     const [isSubmitting, setIsSubmitting] = useState(false);
     const [paymentMethod, setPaymentMethod] = useState("Strabl");
     const [couponCode, setCouponCode] = useState("");
@@ -141,7 +142,7 @@ const Cart = () => {
 
         try {
             const response = await axiosInstance.post(
-                "https://0vm9jauvgc.execute-api.us-east-1.amazonaws.com/stag/api/coupons/validate",
+                "/api/coupons/validate",
                 {
                     code: couponCode,
                     cartTotal: cartTotalForCoupon,
@@ -341,6 +342,10 @@ const Cart = () => {
         router.push(path);
     };
 
+    // Use guest cart if not logged in - initialize as empty to prevent hydration issues
+    const [guestCart, setGuestCart] = useState([]);
+    const [isClient, setIsClient] = useState(false);
+
     // Get cart items from localStorage for guest users
     const getGuestCart = () => {
         if (typeof window !== "undefined") {
@@ -353,16 +358,20 @@ const Cart = () => {
         return [];
     };
 
-    // Use guest cart if not logged in
-    const [guestCart, setGuestCart] = useState(getGuestCart());
-
-    // Sync guest cart on mount and when localStorage changes
+    // Handle client-side hydration
     useEffect(() => {
+        setIsClient(true);
+        setGuestCart(getGuestCart());
+    }, []);
+
+    // Sync guest cart when localStorage changes (only after hydration)
+    useEffect(() => {
+        if (!isClient) return;
+        
         const syncGuestCart = () => setGuestCart(getGuestCart());
-        syncGuestCart();
         window.addEventListener("storage", syncGuestCart);
         return () => window.removeEventListener("storage", syncGuestCart);
-    }, []);
+    }, [isClient]);
 
     // Use guestCart for summary if not logged in, else use filteredCart
     const cartItems = guestCart.length > 0 ? guestCart : filteredCart;
@@ -426,7 +435,7 @@ const Cart = () => {
                     phoneNumber: guestForm.phoneNumber,
                 },
             };
-            const res = await fetch("https://0vm9jauvgc.execute-api.us-east-1.amazonaws.com/stag/api/guest/register", {
+            const res = await fetch("/api/guest/register", {
                 method: "POST",
                 headers: { "Content-Type": "application/json" },
                 body: JSON.stringify(body),
@@ -439,11 +448,171 @@ const Cart = () => {
             }
             setGuestRegistered(true);
             toast.success("Guest registered successfully!");
+            
+            // Call guest cart API after successful registration
+            await handleGuestCartApi();
         } catch (err) {
             toast.error("Guest registration failed");
             setGuestRegistered(false);
         } finally {
             setGuestRegistering(false);
+        }
+    };
+
+    // Guest cart API call
+    const handleGuestCartApi = async () => {
+        try {
+            const sessionId = localStorage.getItem("x-session-id");
+            if (!sessionId) {
+                toast.error("Session ID not found");
+                return;
+            }
+
+            // Get all cart items and send them to the API
+            const cartPromises = cartItems.map(async (item) => {
+                const body = {
+                    productId: item.productId,
+                    quantity: item.quantity,
+                    currency: item.currency || currency || "UAE"
+                };
+                
+                const response = await fetch("/api/guest/cart", {
+                    method: "POST",
+                    headers: {
+                        "Content-Type": "application/json",
+                        "x-session-id": sessionId
+                    },
+                    body: JSON.stringify(body),
+                });
+                
+                if (!response.ok) {
+                    throw new Error(`Failed to add item ${item.productId} to guest cart`);
+                }
+                
+                return response.json();
+            });
+
+            await Promise.all(cartPromises);
+            toast.success("Cart items synchronized successfully!");
+        } catch (err) {
+            console.error("Guest cart API error:", err);
+            toast.error("Failed to sync cart items");
+        }
+    };
+
+    // Tap payment handler
+    const handleTapPay = async () => {
+        setSubmittingButton("tap");
+        setIsSubmitting(true);
+        try {
+            const sessionId = localStorage.getItem("x-session-id");
+            if (!sessionId) {
+                toast.error("Session ID not found. Please register again.");
+                setIsSubmitting(false);
+                setSubmittingButton(null);
+                return;
+            }
+
+            // Step 1: Call guest cart API for each cart item
+            const cartPromises = cartItems.map(async (item) => {
+                const body = {
+                    productId: item.productId,
+                    quantity: item.quantity,
+                    currency: item.currency || currency || "UAE"
+                };
+                
+                const response = await fetch("/api/guest/cart", {
+                    method: "POST",
+                    headers: {
+                        "Content-Type": "application/json",
+                        "x-sessionId": sessionId
+                    },
+                    body: JSON.stringify(body),
+                });
+                
+                if (!response.ok) {
+                    throw new Error(`Failed to add item ${item.productId} to guest cart`);
+                }
+                
+                return response.json();
+            });
+
+            const cartResponses = await Promise.all(cartPromises);
+            toast.success("Cart items synchronized!");
+
+            // Step 2: Get cart ID from the first response and call Tap charge API
+            if (cartResponses.length > 0 && cartResponses[0].success && cartResponses[0].data._id) {
+                const cartId = cartResponses[0].data._id;
+                
+                const tapChargeBody = {
+                    cartId: cartId,
+                    customer: {
+                        first_name: guestForm.firstName || "John",
+                        last_name: guestForm.lastName || "Guest",
+                        email: guestForm.email || "guest@example.com",
+                        phone: {
+                            country_code: "971", // Default UAE country code
+                            number: guestForm.phoneNumber || "501234567"
+                        }
+                    },
+                    source: {
+                        id: "src_card"
+                    },
+                    save_card: false,
+                    threeDSecure: true,
+                    shippingAddress: {
+                        address: guestForm.address || "123 Main Street",
+                        city: guestForm.city || "Dubai",
+                        postalCode: guestForm.pincode || "12345",
+                        country: guestForm.country || "UAE"
+                    },
+                    description: "Guest purchase - Tornado Watches",
+                    metadata: {
+                        guest_purchase: true,
+                        store_location: guestForm.country || "UAE"
+                    }
+                };
+
+                const tapResponse = await fetch("/api/tap/guest-charge", {
+                    method: "POST",
+                    headers: {
+                        "Content-Type": "application/json",
+                        "x-sessionId": sessionId
+                    },
+                    body: JSON.stringify(tapChargeBody),
+                });
+
+                if (tapResponse.ok) {
+                    const tapData = await tapResponse.json();
+                    console.log("Tap payment response:", tapData);
+                    
+                    if (tapData.success && tapData.data.transaction_url) {
+                        toast.success("Tap payment initiated successfully! Redirecting to payment...");
+                        // Redirect to Tap payment page in new tab
+                        window.open(tapData.data.transaction_url, "_blank");
+                        
+                        // Optionally clear cart and redirect to success page
+                        clearGuestCartAfterCheckout();
+                        setDiscount(0);
+                        setCouponDetails(null);
+                        setCouponCode("");
+                        // router.push("/order-success");
+                    } else {
+                        toast.error("Payment URL not found in response");
+                    }
+                } else {
+                    throw new Error("Tap payment API failed");
+                }
+            } else {
+                throw new Error("Failed to get cart ID from guest cart API");
+            }
+            
+        } catch (err) {
+            toast.error("Tap payment failed");
+            console.error("Tap payment error:", err);
+        } finally {
+            setIsSubmitting(false);
+            setSubmittingButton(null);
         }
     };
 
@@ -493,7 +662,7 @@ const Cart = () => {
                 discountAmount: Number(discount) || 0,
             };
 
-            const res = await fetch("https://0vm9jauvgc.execute-api.us-east-1.amazonaws.com/stag/api/guest/checkout", {
+            const res = await fetch("/api/guest/checkout", {
                 method: "POST",
                 headers: {
                     "Content-Type": "application/json",
@@ -529,57 +698,41 @@ const Cart = () => {
         }
     };
 
-    // Cashfree payment handler
-    const handleCashfreePay = async () => {
-        setSubmittingButton("cashfree");
-        setIsSubmitting(true);
-        try {
-            const order_id = `order_${Date.now()}`;
-            const customer_id = `cust_${Date.now()}`;
-            const order_amount = Number(guestTotals.total);
-            const order_currency = getDisplayCurrency(currency);
-
-            const requestBody = {
-                order_id,
-                order_amount,
-                // order_currency,
-                customer_details: {
-                    customer_id,
-                    customer_email: guestForm.email,
-                    customer_phone: guestForm.phoneNumber
-                }
-            };
-            const response = await axios.post(
-                "https://0vm9jauvgc.execute-api.us-east-1.amazonaws.com/stag/api/cashfree/create-order",
-                requestBody,
-                {
-                    headers: {
-                        'Content-Type': 'application/json'
-                    }
-                }
-            );
-            if (response.data.success && response.data.data?.payment_session_id) {
-                toast.success("Cashfree order created!");
-                // Use Cashfree JS SDK to open the checkout page with the session id in a new tab
-                const cashfree = await load({ mode: "sandbox" });
-                cashfree.checkout({
-                    paymentSessionId: response.data.data.payment_session_id,
-                    redirectTarget: "_blank" // open in new tab
-                });
-            } else {
-                toast.error(response.data.message || "Cashfree payment failed");
-            }
-        } catch (err) {
-            toast.error(err.response?.data?.message || "Cashfree payment failed");
-            console.error("Payment error:", err);
-        } finally {
-            setIsSubmitting(false);
-            setSubmittingButton(null);
-        }
-    };
-
     // Only show Cashfree for India
     const isCashfreeAvailable = (selectedCountry && selectedCountry.toLowerCase() === "india");
+    
+    // Only show Tap for non-India countries
+    const isTapAvailable = !(selectedCountry && selectedCountry.toLowerCase() === "india");
+
+    // Show loading during hydration to prevent mismatch
+    if (!isClient) {
+        return (
+            <div className="w-full relative bg-[#fff] overflow-hidden flex flex-col items-center justify-center min-h-screen leading-[normal] tracking-[normal]">
+                <Navbar
+                    logoSrc="/1623314804-bd8bf9c117ab50f7f842-1@2x.webp"
+                    search="/search1.svg"
+                    account="/account1.svg"
+                    sVG="/svg1.svg"
+                    navbarBackgroundColor={"transparent"}
+                />
+                <div className="flex-1 w-full flex flex-col items-center justify-center">
+                    <PageBanner title="Checkout" breadcrumb="Home > Checkout" />
+                    <div className="flex items-center justify-center py-20">
+                        <div className="text-lg">Loading...</div>
+                    </div>
+                </div>
+                <Footer
+                    footerAlignSelf="stretch"
+                    footerWidth="unset"
+                    maskGroup="/mask-group@2x.webp"
+                    iconYoutube="/icon--youtube3.svg"
+                    itemImg="/item--img4.svg"
+                    itemImg1="/item--img-14.svg"
+                    itemImg2="/item--img-24.svg"
+                />
+            </div>
+        );
+    }
 
     return (
         <div className="w-full relative bg-[#fff] overflow-hidden flex flex-col items-center justify-center min-h-screen leading-[normal] tracking-[normal]">
@@ -593,12 +746,12 @@ const Cart = () => {
             <div className="flex-1 w-full flex flex-col items-center justify-center">
                 <PageBanner title="Checkout" breadcrumb="Home > Checkout" />
             </div>
-            <div className="w-full flex flex-col items-center justify-center py-[60px] mq450:py-[0px]">
-                <div className="max-w-[1360px] w-full flex flex-col items-center justify-center px-2 py-8 mq450:py-[0px]">
+            <div className="w-full flex flex-row items-center justify-center py-[60px] mq450:py-[0px]">
+                <div className="max-w-[1360px] w-full flex flex-row items-center justify-center px-2 py-8 mq450:py-[0px]">
                     <div
                         className="
-                            flex flex-row lg:flex-row gap-12 items-start justify-center w-full
-                            mq450:flex-col-reverse mq450:items-center mq450:gap-6
+                            flex flex-row mq1050flex-col-reverse gap-12 items-start justify-center w-full
+                            mq450:flex-col-reverse mq450:items-center mq1050:items-center mq450:gap-6
                         "
                     >
                         {/* --- Delivery Address (Form) --- */}
@@ -738,7 +891,7 @@ const Cart = () => {
                                 w-[500px] rounded-2xl border-[rgba(0,0,0,0.16)] border-solid border-[1px] box-border flex flex-col items-end justify-start py-[20px] px-6 gap-4 max-w-full text-base
                                 mq750:pt-5 mq750:pb-5 mq750:box-border mq750:min-w-full mq750:mx-4
                                 mq450:w-full mq450:max-w-[410px] mq450:ml-0 mq450:rounded-[12px] mq450:border-none
-                                mq450:px-[24px] mq450:mx-auto
+                                mq450:px-[24px] mq450:mx-auto mq1050:w-[800px]
                             "
                         >
                             {/* Cart Items List */}
@@ -758,6 +911,7 @@ const Cart = () => {
                                                 }
                                                 alt={item.name}
                                                 className="object-contain w-full h-full"
+                                                loading="lazy"
                                             />
                                         </div>
                                         <div className="flex-1">
@@ -870,7 +1024,7 @@ const Cart = () => {
                             {/* Payment button only if guest is registered or user is logged in */}
                             {(user || guestRegistered) && (
                                 <>
-                                    {/* Show only Cashfree if country is India/IND, else show Strabl and Cashfree (if available) */}
+                                    {/* Show only Cashfree if country is India/IND */}
                                     {isCashfreeAvailable ? (
                                         <button
                                             className={`self-stretch rounded-[100px] bg-[#fff] text-[#000] border-[1px] border-solid border-[#000] h-[52px] flex flex-row items-center justify-center py-[13px] px-6 box-border ${isSubmitting ? 'opacity-70 cursor-not-allowed' : 'hover:bg-[#000] hover:text-[#fff]  cursor-pointer'} transition-colors`}
@@ -880,13 +1034,27 @@ const Cart = () => {
                                             {(isSubmitting && submittingButton === "cashfree") ? "Processing..." : "Pay with Cashfree"}
                                         </button>
                                     ) : (
-                                        <button
-                                            className="w-full mt-6 rounded-[100px] bg-black text-white py-4 font-semibold text-lg hover:bg-[#000] hover:text-[#fff] transition-colors"
-                                            onClick={user ? handlePlaceOrder : handleGuestCheckout}
-                                            disabled={isSubmitting && submittingButton !== "strabl"}
-                                        >
-                                            {(isSubmitting && submittingButton === "strabl") ? "Processing..." : "Proceed to Payment"}
-                                        </button>
+                                        <div className="w-full mt-6 space-y-3">
+                                            {/* Strabl Payment Button */}
+                                            <button
+                                                className="w-full rounded-[100px] bg-black text-white py-4 font-semibold text-lg hover:bg-[#333] transition-colors"
+                                                onClick={user ? handlePlaceOrder : handleGuestCheckout}
+                                                disabled={isSubmitting && submittingButton !== "strabl"}
+                                            >
+                                                {(isSubmitting && submittingButton === "strabl") ? "Processing..." : "Pay with Strabl"}
+                                            </button>
+                                            
+                                            {/* Tap Payment Button - Only show for non-India countries */}
+                                            {isTapAvailable && (
+                                                <button
+                                                    className="w-full rounded-[100px] bg-blue-600 text-white py-4 font-semibold text-lg hover:bg-blue-700 transition-colors"
+                                                    onClick={handleTapPay}
+                                                    disabled={isSubmitting && submittingButton !== "tap"}
+                                                >
+                                                    {(isSubmitting && submittingButton === "tap") ? "Processing..." : "Pay with Tap"}
+                                                </button>
+                                            )}
+                                        </div>
                                     )}
                                 </>
                             )}

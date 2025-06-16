@@ -26,6 +26,7 @@ const R1 = ({ className = "", product }) => {
           height={18}
           alt=""
           src="/materialsymbolsinfooutlinerounded.svg"
+          loading="lazy"
         />
         <div className="relative leading-[150%] font-medium mq450:text-[16px] mq450:leading-[16px]">
           Ask a question
@@ -40,6 +41,7 @@ const R1 = ({ className = "", product }) => {
           height={18}
           alt=""
           src="/solarboxlinear.svg"
+          loading="lazy"
         />
         <div className="relative leading-[150%] font-medium mq450:text-[16px] mq450:leading-[16px]">
           Delivery Return
@@ -52,6 +54,7 @@ const R1 = ({ className = "", product }) => {
           height={18}
           alt=""
           src="/hugeiconstick02.svg"
+          loading="lazy"
         />
         <div className="relative leading-[150%] font-medium mq450:text-[16px] mq450:leading-[16px]">
           3 Year Warranty
@@ -66,6 +69,7 @@ const R1 = ({ className = "", product }) => {
             height={18}
             alt=""
             src="/symbolpng@2x.webp"
+            loading="lazy"
             onClick={() =>
               handleSocialIcons(
                 "https://www.instagram.com/tornado.watches/"
@@ -78,6 +82,7 @@ const R1 = ({ className = "", product }) => {
             height={18}
             alt=""
             src="/symbolpng-1@2x.webp"
+            loading="lazy"
             onClick={() =>
               handleSocialIcons(
                 "https://www.facebook.com/people/Tornado-World/61556313113779/"
@@ -90,6 +95,7 @@ const R1 = ({ className = "", product }) => {
             height={18}
             alt=""
             src="/x-logopng@2x.webp"
+            loading="lazy"
             onClick={() =>
               handleSocialIcons(
                 "https://x.com/tornadowatches"
@@ -102,6 +108,7 @@ const R1 = ({ className = "", product }) => {
             height={18}
             alt=""
             src="/symbolpng-2@2x.webp"
+            loading="lazy"
             onClick={() => handleSocialIcons("https://api.whatsapp.com/send/?phone=971505057445&text=Hi&type=phone_number&app_absent=0")}
           />
         </div>

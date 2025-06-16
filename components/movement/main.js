@@ -73,7 +73,7 @@ const Main = ({
         params.append('page', page || 1);
         params.append('limit', 12);
 
-        const url = `https://0vm9jauvgc.execute-api.us-east-1.amazonaws.com/stag/api/products/filters/search?${params.toString()}`;
+        const url = `http://localhost:8080/api/products/filters/search?${params.toString()}`;
         // console.log("API URL with params:", url);
 
         const response = await axios.get(url);
@@ -384,7 +384,7 @@ const Main = ({
             </div>
           </div>
 
-          <div className="skeleton-grid flex flex-row items-start justify-start flex-wrap gap-8 mq750:gap-4 mq450:gap-2 mq450:justify-between w-full">
+          <div className="skeleton-grid flex flex-row items-start justify-start flex-wrap gap-8 mq750:gap-4 mq450:gap-2 mq450:justify-between w-full mq1050:justify-center">
             {fetchLoading ? (
               // Show skeleton loaders during loading
               Array.from({ length: 8 }, (_, index) => (

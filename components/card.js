@@ -25,7 +25,6 @@ const Card = ({
   discountPrice,
   rating,
 }) => {
-  // console.log(rating, "rating in card");
   const router = useRouter();
   const { addToCart } = useCart();
   const { user } = useUser();
@@ -33,18 +32,25 @@ const Card = ({
   const [showActions, setShowActions] = useState(false);
   const [imageLoaded, setImageLoaded] = useState(false);
   const [imageError, setImageError] = useState(false);
-  const [isMobile, setIsMobile] = useState(false);
+  const [deviceType, setDeviceType] = useState("desktop"); // 'desktop', 'tablet', or 'mobile'
 
-  // Check if device is mobile
+  // Check device type
   useEffect(() => {
-    const checkMobile = () => {
-      setIsMobile(window.innerWidth <= 1050);
+    const checkDeviceType = () => {
+      const width = window.innerWidth;
+      if (width <= 768) {
+        setDeviceType("mobile");
+      } else if (width <= 1050) {
+        setDeviceType("tablet");
+      } else {
+        setDeviceType("desktop");
+      }
     };
 
-    checkMobile();
-    window.addEventListener('resize', checkMobile);
+    checkDeviceType();
+    window.addEventListener('resize', checkDeviceType);
 
-    return () => window.removeEventListener('resize', checkMobile);
+    return () => window.removeEventListener('resize', checkDeviceType);
   }, []);
 
   const handleAddToCart = (e) => {
@@ -62,10 +68,8 @@ const Card = ({
   const handleWishlist = (e) => {
     e.stopPropagation();
 
-    // If the original product object is available, use its price object
     let priceObj = price;
     if (typeof price === "string" || typeof price === "number") {
-      // Try to get the full price object from props if available
       if (typeof _id === "string" && window && window.__ALL_PRODUCTS__) {
         // Optional: If you have a global product list, you could fetch the full object here
       }
@@ -74,7 +78,7 @@ const Card = ({
     const product = {
       _id: _id || productId,
       name: name?.en || name || "",
-      price: priceObj, // Store as object if possible
+      price: priceObj,
       imageLinks: { image1: images },
       watchDetails: { watchType: { en: classic } },
       classic,
@@ -92,26 +96,39 @@ const Card = ({
     router.push(`/products-details?productId=${_id || productId}`);
   };
 
-  // For mobile, always show actions. For desktop, show on hover
-  const shouldShowActions = isMobile || showActions;
+  // Show actions based on device type and hover state
+  const shouldShowActions = 
+    deviceType === "mobile" || 
+    (deviceType === "tablet" && showActions) || 
+    (deviceType === "desktop" && showActions);
 
-  // Check for stock (assume 0 means out of stock)
+  // Check for stock
   const countryKey = country.toLowerCase();
-  stock = stock[countryKey];
-  // fallback to first available stock if not found
-  if (typeof stock === "undefined") {
-    stock = Object.values(stock)[0];
-  } else if (typeof stock === "number") {
-  } else if (typeof stock === "string") {
+  
+  // Add null/undefined check for stock object
+  if (stock && typeof stock === "object" && countryKey) {
+    const originalStock = stock; // Keep reference to original stock object
+    stock = stock[countryKey];
+    
+    // fallback to first available stock if not found
+    if (typeof stock === "undefined" && Object.keys(originalStock).length > 0) {
+      stock = Object.values(originalStock)[0];
+    }
+  }
+  
+  // Convert stock to number if it's a string
+  if (typeof stock === "string") {
     stock = parseInt(stock, 10);
-  } else {
-    stock = undefined;
+  }
+  
+  // Default to 0 if stock is still null/undefined
+  if (stock === null || stock === undefined) {
+    stock = 0;
   }
 
   const isOutOfStock = !stock || stock <= 0;
 
   const formatPriceDisplay = (price, discountPrice, country) => {
-
     if (!discountPrice || discountPrice === "0" || discountPrice === 0) {
       return <span className="text-[15px]"> {price}</span>;
     }
@@ -128,14 +145,13 @@ const Card = ({
     );
   };
 
-
   return (
     <div
       onClick={handleProductClick}
       className={`card-container w-full rounded-lg bg-gray-100 shadow-md overflow-hidden flex flex-col items-center justify-start text-center text-xs font-h5-24 relative cursor-pointer shadow-sm hover:shadow-md transition-shadow duration-300 focus:outline-none ${className}`}
-      onMouseEnter={() => !isMobile && setShowActions(true)}
-      onMouseLeave={() => !isMobile && setShowActions(false)}
-      onTouchStart={() => isMobile && setShowActions(true)}
+      onMouseEnter={() => setShowActions(true)}
+      onMouseLeave={() => setShowActions(false)}
+      onTouchStart={() => deviceType !== "desktop" && setShowActions(true)}
       tabIndex={0}
       style={{
         minHeight: '18rem',
@@ -143,12 +159,8 @@ const Card = ({
         contain: 'layout style paint'
       }}
     >
-      <div className="self-stretch relative h-[290px] mq750:h-[200px] mq450:h-[140px] overflow-hidden shrink-0">
+      <div className="self-stretch relative h-[290px] mq1050:h-[220px] mq750:h-[200px] mq450:h-[140px] overflow-hidden shrink-0">
         <div className="w-full h-full relative flex flex-col pt-[12px] pb-[12px]">
-          {/* {!imageLoaded && !imageError && (
-      <div className="absolute inset-0 bg-gray-200 animate-pulse"></div>
-    )} */}
-
           <Image
             className={`relative h-[calc(100%-20px)] w-full max-w-full overflow-hidden max-h-full object-contain transition-opacity duration-300 ${imageLoaded ? 'opacity-100' : 'opacity-0'
               }`}
@@ -163,7 +175,6 @@ const Card = ({
               setImageError(true);
               setImageLoaded(true);
             }}
-          // sizes="(max-width: 450px) 140px, (max-width: 750px) 200px, 280px"
           />
         </div>
 
@@ -182,9 +193,7 @@ const Card = ({
         )}
       </div>
 
-      {/* <div className="w-full h-4 "></div> */}
-
-      <div className="self-stretch flex h-[130px] mq750:h-[110px] mq450:h-[100px] flex-col items-center justify-center py-[24px] px-[16px] gap-[8px] mq450:p-2 text-left">
+      <div className="self-stretch flex h-[130px] mq1050:h-[130px] mq750:h-[130px] mq450:h-[100px] flex-col items-center justify-center py-[24px] px-[16px] gap-[8px] mq450:p-2 text-left">
         <div className="self-stretch relative leading-[150%] font-medium text-gray-500 text-sm">
           {classic}
         </div>
@@ -206,61 +215,66 @@ const Card = ({
           <span className="text-[15px] mq750:text-sm mq450:text-xs text-black leading-[150%] font-500">
             {formatPriceDisplay(price, discountPrice, country)}
           </span>
-          {isMobile && !isOutOfStock && (
+          
+          {/* Show actions on mobile and tablet (price and buttons in same row) */}
+          {(deviceType === "mobile" || deviceType === "tablet") && (
             <div className="flex items-center gap-0">
-              <button
-                onClick={handleAddToCart}
-                className="p-2 rounded-full text-black hover:text-gray-800 transition-colors flex items-center justify-center"
-                style={{ background: "none" }}
-              >
-                <svg
-                  xmlns="http://www.w3.org/2000/svg"
-                  className="h-5 w-5"
-                  fill="none"
-                  viewBox="0 0 24 24"
-                  stroke="currentColor"
-                >
-                  <path
-                    strokeLinecap="round"
-                    strokeLinejoin="round"
-                    strokeWidth={2}
-                    d="M3 3h2l.4 2M7 13h10l4-8H5.4M7 13L5.4 5M7 13l-2.293 2.293c-.63.63-.184 1.707.707 1.707H17m0 0a2 2 0 100 4 2 2 0 000-4zm-8 2a2 2 0 11-4 0 2 2 0 014 0z"
-                  />
-                </svg>
-              </button>
-              <button
-                onClick={handleWishlist}
-                className={`p-2 rounded-full transition-colors bg-white flex items-center justify-center ${isInWishlist(_id || productId)
-                  ? 'text-red-500 hover:text-red-600'
-                  : 'text-black hover:text-gray-900'}`}
-                style={{ background: "none" }}
-              >
-                <svg
-                  xmlns="http://www.w3.org/2000/svg"
-                  className="h-5 w-5"
-                  fill={isInWishlist(_id || productId) ? "currentColor" : "none"}
-                  viewBox="0 0 24 24"
-                  stroke="currentColor"
-                  strokeWidth={2}
-                >
-                  <path
-                    strokeLinecap="round"
-                    strokeLinejoin="round"
-                    strokeWidth={2}
-                    d="M4.318 6.318a4.5 4.5 0 016.364 0L12 7.636l1.318-1.318a4.5 4.5 0 116.364 6.364L12 21.364l-7.682-7.682a4.5 4.5 0 010-6.364z"
-                  />
-                </svg>
-              </button>
+              {!isOutOfStock ? (
+                <>
+                  <button
+                    onClick={handleAddToCart}
+                    className="p-2 rounded-full text-black hover:text-gray-800 transition-colors flex items-center justify-center"
+                    style={{ background: "none" }}
+                  >
+                    <svg
+                      xmlns="http://www.w3.org/2000/svg"
+                      className="h-5 w-5"
+                      fill="none"
+                      viewBox="0 0 24 24"
+                      stroke="currentColor"
+                    >
+                      <path
+                        strokeLinecap="round"
+                        strokeLinejoin="round"
+                        strokeWidth={2}
+                        d="M3 3h2l.4 2M7 13h10l4-8H5.4M7 13L5.4 5M7 13l-2.293 2.293c-.63.63-.184 1.707.707 1.707H17m0 0a2 2 0 100 4 2 2 0 000-4zm-8 2a2 2 0 11-4 0 2 2 0 014 0z"
+                      />
+                    </svg>
+                  </button>
+                  <button
+                    onClick={handleWishlist}
+                    className={`p-2 rounded-full transition-colors bg-white flex items-center justify-center ${isInWishlist(_id || productId)
+                      ? 'text-red-500 hover:text-red-600'
+                      : 'text-black hover:text-gray-900'}`}
+                    style={{ background: "none" }}
+                  >
+                    <svg
+                      xmlns="http://www.w3.org/2000/svg"
+                      className="h-5 w-5"
+                      fill={isInWishlist(_id || productId) ? "currentColor" : "none"}
+                      viewBox="0 0 24 24"
+                      stroke="currentColor"
+                      strokeWidth={2}
+                    >
+                      <path
+                        strokeLinecap="round"
+                        strokeLinejoin="round"
+                        strokeWidth={2}
+                        d="M4.318 6.318a4.5 4.5 0 016.364 0L12 7.636l1.318-1.318a4.5 4.5 0 116.364 6.364L12 21.364l-7.682-7.682a4.5 4.5 0 010-6.364z"
+                      />
+                    </svg>
+                  </button>
+                </>
+              ) : (
+                <span className="text-red-500 text-sm font-semibold ml-2">Out of Stock</span>
+              )}
             </div>
-          )}
-          {isMobile && isOutOfStock && (
-            <span className="text-red-500 font-semibold ml-2">Out of Stock</span>
           )}
         </div>
       </div>
 
-      {/* Desktop hover actions */}
-      {!isMobile && shouldShowActions && (
+      {/* Desktop hover actions - also shown on tablet when hovered */}
+      {deviceType !== "mobile" && shouldShowActions && (
         <div className="absolute inset-0 flex items-center justify-center gap-4 mq450:gap-1 mq450:flex-col">
           {isOutOfStock ? (
             <div className="bg-gray-300 text-red-600 py-2 px-6 rounded-full font-medium text-sm cursor-not-allowed select-none">

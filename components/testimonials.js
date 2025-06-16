@@ -20,7 +20,7 @@ const Testimonials = ({ Heading }) => {
         try {
             setLoading(true);
             setError(null);
-            const response = await axios.get(`https://0vm9jauvgc.execute-api.us-east-1.amazonaws.com/stag/api/testimonials/`);
+            const response = await axios.get(`http://localhost:8080/api/testimonials/`);
             console.log("Testimonials API response:", response.data);
             
             if (response.data && response.data.data && response.data.data[0]) {
@@ -149,6 +149,7 @@ const Testimonials = ({ Heading }) => {
                         height={44}
                         alt="Previous"
                         src="/solararrowuplinear-5@1x.webp"
+                        loading="lazy"
                     />
                 </button>
                 <button className="swiper-button-next-testimonial focus:outline-none bg-transparent">
@@ -158,6 +159,7 @@ const Testimonials = ({ Heading }) => {
                         height={44}
                         alt="Next"
                         src="/solararrowuplinear-5@2x.webp"
+                        loading="lazy"
                     />
                 </button>
             </div>

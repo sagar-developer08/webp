@@ -120,6 +120,7 @@ const Reason = ({ className = "", country }) => {
                     height={36}
                     alt="Previous"
                     src="/solararrowuplinear-5@1x.webp"
+                    loading="lazy"
                   />
                 </button>
                 <button className="swiper-next-reason bg-black/50 rounded-full p-2 border-0 cursor-pointer focus:outline-none">
@@ -129,6 +130,7 @@ const Reason = ({ className = "", country }) => {
                     height={36}
                     alt="Next"
                     src="/solararrowuplinear-5@2x.webp"
+                    loading="lazy"
                   />
                 </button>
               </div>

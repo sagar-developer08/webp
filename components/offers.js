@@ -18,7 +18,7 @@ const Offers = ({ className = "", country, selectedCountry }) => {
     try {
       setLoading(true);
       setError(null);
-      const response = await axios.get(`https://0vm9jauvgc.execute-api.us-east-1.amazonaws.com/stag/api/products/featured`);
+      const response = await axios.get(`http://localhost:8080/api/products/featured`);
 
       // Debugging: Log the full response
       console.log("Full API response:", response);
@@ -95,12 +95,22 @@ const Offers = ({ className = "", country, selectedCountry }) => {
     const overlapOffset = 25;
     const visibleCount = 3;
 
+    // Tablet-specific adjustments
+    const isTablet = typeof window !== 'undefined' && window.innerWidth <= 1050 && window.innerWidth > 450;
+    const tabletCardWidth = isTablet ? 280 : cardWidth;
+    const tabletCardHeight = isTablet ? 400 : cardHeight;
+    const tabletOverlapOffset = isTablet ? 20 : overlapOffset;
+
+    const finalCardWidth = tabletCardWidth;
+    const finalCardHeight = tabletCardHeight;
+    const finalOverlapOffset = tabletOverlapOffset;
+
     return (
       <div
         className="relative"
         style={{
-          width: `${cardWidth + overlapOffset * (visibleCount - 1)}px`,
-          height: `${cardHeight + 72}px`,
+          width: `${finalCardWidth + finalOverlapOffset * (visibleCount - 1)}px`,
+          height: `${finalCardHeight + 72}px`,
           margin: "0 auto",
           display: "flex",
           alignItems: "flex-end",
@@ -111,7 +121,7 @@ const Offers = ({ className = "", country, selectedCountry }) => {
         <div
           style={{
             width: "100%",
-            height: `${cardHeight}px`,
+            height: `${finalCardHeight}px`,
             position: "relative",
           }}
         >
@@ -121,10 +131,10 @@ const Offers = ({ className = "", country, selectedCountry }) => {
 
             const style = {
               position: "absolute",
-              left: `${rel * overlapOffset}px`,
+              left: `${rel * finalOverlapOffset}px`,
               bottom: 0,
-              width: `${cardWidth}px`,
-              height: `${cardHeight}px`,
+              width: `${finalCardWidth}px`,
+              height: `${finalCardHeight}px`,
               borderRadius: "18px",
               background: "transparent",
               transition: "left 0.5s cubic-bezier(.47,1.64,.41,.8), opacity 0.45s, transform 0.45s",
@@ -184,19 +194,20 @@ const Offers = ({ className = "", country, selectedCountry }) => {
                 display: "flex",
                 alignItems: "center",
                 justifyContent: "center",
-                width: 40,
-                height: 40,
+                width: isTablet ? 36 : 40,
+                height: isTablet ? 36 : 40,
                 position: "relative",
                 zIndex: 30,
                 padding: 0,
               }}
             >
               <Image
-                width={24}
-                height={24}
+                width={isTablet ? 20 : 24}
+                height={isTablet ? 20 : 24}
                 src="/solararrowuplinear-5@1x.webp"
                 alt="Previous"
-                className="h-6 w-6 object-contain"
+                className="object-contain"
+                style={{ width: isTablet ? '20px' : '24px', height: isTablet ? '20px' : '24px' }}
               />
             </button>
             <button
@@ -211,19 +222,20 @@ const Offers = ({ className = "", country, selectedCountry }) => {
                 display: "flex",
                 alignItems: "center",
                 justifyContent: "center",
-                width: 40,
-                height: 40,
+                width: isTablet ? 36 : 40,
+                height: isTablet ? 36 : 40,
                 position: "relative",
                 zIndex: 30,
                 padding: 0,
               }}
             >
               <Image
-                width={24}
-                height={24}
+                width={isTablet ? 20 : 24}
+                height={isTablet ? 20 : 24}
                 src="/solararrowuplinear-5@2x.webp"
                 alt="Next"
-                className="h-6 w-6 object-contain"
+                className="object-contain"
+                style={{ width: isTablet ? '20px' : '24px', height: isTablet ? '20px' : '24px' }}
               />
             </button>
           </div>
@@ -234,14 +246,14 @@ const Offers = ({ className = "", country, selectedCountry }) => {
 
   return (
     <section
-      className={`self-stretch overflow-hidden flex flex-col items-center justify-center pb-[30px] pt-[60px] px-[40px] gap-[40px] z-[7] text-left text-29xl text-white font-h5-24 mq1050:gap-[30px] ${className} mq450:px-[24px] mq450:py-[40px] mq450:gap-[24px]`}
+      className={`self-stretch overflow-hidden flex flex-col items-center justify-center pb-[30px] pt-[60px] px-[40px] gap-[40px] z-[7] text-left text-29xl text-white font-h5-24 mq1050:gap-[30px] ${className} mq450:px-[24px] mq450:py-[40px] mq450:gap-[24px] mq750:px-[32px] mq750:py-[50px]`}
     >
-      <div className="w-[1360px] rounded-3xl flex flex-row items-end justify-end py-20 px-10 box-border gap-[60px] bg-[url('/exclusive_offers_just_a_tick_away.webp')] bg-cover bg-no-repeat bg-[top] mq450:w-full mq450:gap-[20px] mq450:p-4 mq1050:pt-[52px] mq1050:pb-[52px] mq1050:box-border relative">
-        <div className="flex-1 flex flex-col items-start justify-start gap-6 mq450:items-center mq450:text-center mq450:gap-4">
-          <h1 className="m-0 w-[543px] relative text-[48px] leading-[120%] font-medium font-[inherit] flex items-center mq750:text-[29px] mq750:leading-[35px] mq1050:text-[38px] mq1050:leading-[46px] mq450:text-[24px] mq450:leading-[120%] mq450:w-auto">
+      <div className="w-[1360px] rounded-3xl flex flex-row items-end justify-end  py-20 px-10 box-border gap-[60px] bg-[url('/exclusive_offers_just_a_tick_away.webp')] bg-cover bg-no-repeat bg-[top] mq450:w-full mq450:gap-[20px] mq450:p-4 mq450:flex-col mq450:items-center mq750:w-full mq750:gap-[40px] mq750:px-6 mq750:py-16 mq750:flex-col mq750:items-center mq1050:w-full mq1050:gap-[30px] mq1050:px-4 mq1050:pt-[52px] mq1050:pb-[52px] mq1050:box-border relative">
+        <div className="flex-1 flex flex-col items-start justify-start gap-6 mq450:items-center mq450:text-center mq450:gap-4 mq750:items-center mq750:text-center mq750:gap-5 mq750:flex-none mq750:w-full">
+          <h1 className="m-0 w-[543px] relative text-[48px] leading-[120%]  font-medium font-[inherit] flex items-center mq750:text-[32px] mq750:leading-[120%] mq750:w-full mq750:max-w-[600px] mq1050:w-full mq1050:text-[38px] mq1050:leading-[46px] mq450:text-[24px] mq450:leading-[120%] mq450:w-auto">
             Exclusive Offers Just a Tick Away
           </h1>
-          <div className="w-[543px] relative text-base leading-[150%] font-medium text-white/80 flex items-center mq450:w-auto">
+          <div className="w-[543px] relative text-base leading-[150%] font-medium text-white/80 flex items-center mq450:w-auto mq750:w-full mq750:max-w-[600px] mq750:text-center">
             {country?.Exclusive_Offers_Just_a_Tick_Away}
           </div>
           <BtnShop
@@ -250,7 +262,7 @@ const Offers = ({ className = "", country, selectedCountry }) => {
           />
         </div>
 
-        <div className="h-[541px] w-[520px] relative text-center text-[10.8px] text-black mq450:hidden">
+        <div className="h-[541px] w-[520px] relative text-center text-[10.8px] text-black mq450:hidden mq750:w-full mq1050:h-[450px] mq1050:w-full mq1050:max-w-[500px] mq750:mt-8">
           {loading ? (
             <div className="flex items-center justify-center h-full text-white">
               Loading featured products...

@@ -238,6 +238,7 @@ function CartProvider({ children }) {
     isRefreshing.current = true;
     try {
       const response = await axiosInstance.get(`/cart`);
+      console.log(response.data.data, "response")
 
       if (response.data?.success) {
         const apiCart = response.data.data;

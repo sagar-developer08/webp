@@ -30,7 +30,7 @@ const AuthCallback = () => {
           localStorage.setItem('token', token);
           
           // Fetch user profile with the new token
-          const response = await fetch('https://0vm9jauvgc.execute-api.us-east-1.amazonaws.com/stag/api/users/me', {
+          const response = await fetch('http://localhost:8080/api/users/me', {
             headers: {
               'Authorization': `Bearer ${token}`
             }
@@ -53,7 +53,7 @@ const AuthCallback = () => {
               
               const selectedCountry = localStorage.getItem('selectedCountry') || 'uae';
               
-              await fetch('https://0vm9jauvgc.execute-api.us-east-1.amazonaws.com/stag/api/cart', {
+              await fetch('http://localhost:8080/api/cart', {
                 method: 'POST',
                 headers: {
                   'Content-Type': 'application/json',
@@ -79,7 +79,7 @@ const AuthCallback = () => {
             
             if (guestWishlist.length > 0) {
               const migrationPromises = guestWishlist.map(item =>
-                fetch(`https://0vm9jauvgc.execute-api.us-east-1.amazonaws.com/stag/api/wishlist/${item._id || item.productId}`, {
+                fetch(`http://localhost:8080/api/wishlist/${item._id || item.productId}`, {
                   method: 'POST',
                   headers: {
                     'Authorization': `Bearer ${token}`

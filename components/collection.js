@@ -47,7 +47,7 @@ const Collection = ({ className = "", property1 = "Default", limit = 10, country
           setCategories(countrySpecificCategories);
         } else {
           // Fallback to direct API call if needed
-          const response = await fetch("https://0vm9jauvgc.execute-api.us-east-1.amazonaws.com/stag/api/categories/all");
+          const response = await fetch("http://localhost:8080/api/categories/all");
           const apiData = await response.json();
 
           if (apiData.success) {

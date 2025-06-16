@@ -16,6 +16,7 @@ const nextConfig = {
     ];
   },
 
+  
   // Static file caching for fonts
   async headers() {
     return [

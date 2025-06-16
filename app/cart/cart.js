@@ -18,6 +18,7 @@ const Cart = () => {
   const router = useRouter();
   const {
     cart,
+    cartIdData,
     removeFromCart,
     updateQuantity,
     cartTotal,
@@ -317,42 +318,19 @@ const Cart = () => {
       return;
     }
 
+    // Validate user and cart data
+    if (!user) {
+      toast.error("Please login to proceed with payment");
+      return;
+    }
+
+    if (!cartIdData) {
+      toast.error("Cart ID not found. Please refresh and try again.");
+      return;
+    }
+
     setIsTapPaymentLoading(true);
     try {
-      // Get actual cart ID from the first cart item or create one if needed
-      let cartId = cart
-      console.log(cartId, "cartId")
-      
-      // If no cart ID exists, create cart by adding first item
-      if (!cartId && filteredCart.length > 0) {
-        const firstItem = filteredCart[0];
-        const cartResponse = await fetch('http://localhost:8080/api/guest/cart', {
-          method: 'POST',
-          headers: {
-            'Content-Type': 'application/json',
-          },
-          body: JSON.stringify({
-            productId: firstItem._id || firstItem.productId,
-            quantity: firstItem.quantity,
-            currency: currency || "UAE"
-          })
-        });
-
-        if (cartResponse.ok) {
-          const cartResult = await cartResponse.json();
-          cartId = cartResult.cartId || cartResult.data?._id || cartResult.data?.cartId;
-        }
-      }
-
-      // If still no cart ID, throw error
-      if (!cartId) {
-        throw new Error('Unable to get or create cart ID');
-      }
-
-      // Generate unique transaction reference
-      const transactionRef = `txn_${Date.now()}_${Math.random().toString(36).substr(2, 9)}`;
-      const orderRef = `ORD-${new Date().getFullYear()}-${Date.now()}`;
-
       // Helper function to get country code for phone
       const getCountryCode = (country) => {
         const countryCodes = {
@@ -381,12 +359,15 @@ const Cart = () => {
         return "AED";
       };
 
+      // Generate unique references
+      const transactionRef = `txn_${Date.now()}_${Math.random().toString(36).substr(2, 9)}`;
+      const orderRef = `ORD-${new Date().getFullYear()}-${Date.now()}`;
+
+      // Prepare the payload with all required fields properly formatted
       const tapPayload = {
-        amount: parseFloat(totals.total),
-        currency: getDisplayCurrency(currency),
-        cartId: cartId,
+        cartId: cartIdData,
         customerId: user?.id || user?._id || `customer_${Date.now()}`,
-        description: "Payment for Tornado Watch Order",
+        description: `Payment for Tornado Watch Order #${orderRef}`,
         customer: {
           first_name: user?.firstName || user?.name?.split(' ')[0] || "Customer",
           last_name: user?.lastName || user?.name?.split(' ').slice(1).join(' ') || "User",
@@ -397,31 +378,41 @@ const Cart = () => {
           }
         },
         source: {
-          id: "src_all"
+          id: "src_card"  // Changed from "src_all" to "src_card" for better compatibility
         },
         save_card: false,
         threeDSecure: true,
-        receipt: {
-          email: true,
-          sms: false
-        },
         metadata: {
           product_type: "watch",
           order_number: orderRef,
-          cart_items: filteredCart.map(item => ({
-            id: item._id || item.productId,
-            name: item.name,
-            quantity: item.quantity,
-            price: typeof item.price === 'string' ? 
-              parseFloat(item.price.match(/([\d,.]+)/)?.[1]?.replace(/,/g, '') || '0') : 
-              item.price
-          }))
+          customer_id: user?.id || user?._id,
+          cart_items_count: filteredCart.length,
+          store_location: selectedCountry || "UAE"
         },
         reference: {
           transaction: transactionRef,
           order: orderRef
+        },
+        receipt: {
+          email: true,
+          sms: false
+        },
+        shippingAddress: {
+          address: user?.shippingAddress?.address || "123 Main Street",
+          city: user?.shippingAddress?.city || selectedCountry === 'UAE' ? "Dubai" : "City",
+          country: selectedCountry || "UAE",
+          postal_code: user?.shippingAddress?.postalCode || "12345"
         }
       };
+
+      // Validate required fields before sending
+      if (!tapPayload.cartId || tapPayload.cartId === null) {
+        throw new Error('Cart ID is required');
+      }
+      
+      if (!tapPayload.customer.email || !tapPayload.customer.first_name) {
+        throw new Error('Customer email and name are required');
+      }
 
       console.log('Tap Payment Payload:', tapPayload);
 
@@ -438,9 +429,10 @@ const Cart = () => {
 
       if (response.ok && result.success) {
         // Handle successful payment initiation
-        if (result.redirect_url || result.transaction_url) {
-          const paymentUrl = result.redirect_url || result.transaction_url;
+        if (result.data?.transaction_url || result.data?.redirect_url) {
+          const paymentUrl = result.data.transaction_url || result.data.redirect_url;
           toast.success("Tap payment initiated successfully! Redirecting to payment...");
+          
           // Redirect to payment page
           window.open(paymentUrl, "_blank");
           
@@ -448,15 +440,24 @@ const Cart = () => {
           setDiscount(0);
           setCouponDetails(null);
           setCouponCode("");
+          
+          // If order was created (payment captured), redirect to success page
+          if (result.data?.order_id) {
+            setTimeout(() => {
+              router.push("/order-success");
+            }, 2000);
+          }
         } else {
           toast.success("Payment initiated successfully");
+          console.log("Payment response:", result.data);
         }
       } else {
-        toast.error(result.message || "Payment initiation failed");
+        console.error('Tap payment error response:', result);
+        toast.error(result.message || result.errors?.[0]?.description || "Payment initiation failed");
       }
     } catch (error) {
       console.error('Tap payment error:', error);
-      toast.error("Payment service unavailable. Please try again.");
+      toast.error(error.message || "Payment service unavailable. Please try again.");
     } finally {
       setIsTapPaymentLoading(false);
     }

@@ -48,6 +48,7 @@ function CartProvider({ children }) {
   const [isLoggedIn, setIsLoggedIn] = useState(false);
   const [orderProcessing, setOrderProcessing] = useState(false);
   const [forceRefresh, setForceRefresh] = useState(0);
+  const [cartIdData, setCartIdData] = useState(null);
   
   // Use refs to prevent excessive API calls
   const isRefreshing = useRef(false);
@@ -251,12 +252,13 @@ function CartProvider({ children }) {
           image: item.image,
           currency: item.currency, // Make sure currency is included
         }));
-
+        setCartIdData(apiCart._id);
         setCart(mappedItems);
         setItemCount(mappedItems.reduce((sum, item) => sum + item.quantity, 0));
         setCartTotal(apiCart.totalPrice || 0);
       } else {
         setCart([]);
+        setCartIdData(null);
         setItemCount(0);
         setCartTotal(0);
       }
@@ -281,16 +283,51 @@ function CartProvider({ children }) {
       const authResponse = await axiosInstance.get(`/users/profile`);
       if (authResponse.data?.success) {
         setIsLoggedIn(true);
-        await fetchAndProcessCart();
+        // Directly fetch logged-in user's cart here instead of relying on fetchAndProcessCart
+        // This ensures we fetch the user's cart immediately after confirming authentication
+        try {
+          const cartResponse = await axiosInstance.get(`/cart`);
+          console.log(cartResponse.data.data, "logged-in user cart response");
+
+          if (cartResponse.data?.success) {
+            const apiCart = cartResponse.data.data;
+            const mappedItems = apiCart.items.map(item => ({
+              _id: item._id, // Map the cart item ID
+              productId: item.product._id,
+              name: item.product.name.en,
+              price: item.price,
+              quantity: item.quantity,
+              image: item.image,
+              currency: item.currency, // Make sure currency is included
+            }));
+
+            setCartIdData(apiCart._id);
+            setCart(mappedItems);
+            setItemCount(mappedItems.reduce((sum, item) => sum + item.quantity, 0));
+            setCartTotal(apiCart.totalPrice || 0);
+            console.log('Logged-in user cart loaded successfully:', { items: mappedItems.length, total: apiCart.totalPrice });
+          } else {
+            setCart([]);
+            setCartIdData(null);
+            setItemCount(0);
+            setCartTotal(0);
+          }
+        } catch (cartError) {
+          console.error('Failed to fetch logged-in user cart:', cartError);
+          setCart([]);
+          setCartIdData(null);
+          setItemCount(0);
+          setCartTotal(0);
+        }
       } else {
         setIsLoggedIn(false);
-        // For guest users, load cart from localStorage instead of clearing
+        // For guest users, load cart from localStorage
         await fetchAndProcessCart();
       }
     } catch (error) {
       console.error('Authentication error:', error);
       setIsLoggedIn(false);
-      // For guest users, load cart from localStorage instead of clearing
+      // For guest users, load cart from localStorage
       await fetchAndProcessCart();
     } finally {
       setLoading(false);
@@ -317,6 +354,48 @@ function CartProvider({ children }) {
       }
     }
   }, [isLoggedIn, cart.length, loading, fetchAndProcessCart]);
+
+  // Additional effect to handle logged-in user cart loading when isLoggedIn state changes
+  useEffect(() => {
+    // If user just logged in and cart is empty, fetch their cart from server
+    if (isLoggedIn && cart.length === 0 && !loading && !isRefreshing.current) {
+      console.log('User logged in with empty cart, fetching from server...');
+      const fetchUserCart = async () => {
+        if (isRefreshing.current) return;
+        
+        isRefreshing.current = true;
+        try {
+          const response = await axiosInstance.get(`/cart`);
+          console.log(response.data.data, "user cart after login");
+
+          if (response.data?.success) {
+            const apiCart = response.data.data;
+            const mappedItems = apiCart.items.map(item => ({
+              _id: item._id,
+              productId: item.product._id,
+              name: item.product.name.en,
+              price: item.price,
+              quantity: item.quantity,
+              image: item.image,
+              currency: item.currency,
+            }));
+
+            setCartIdData(apiCart._id);
+            setCart(mappedItems);
+            setItemCount(mappedItems.reduce((sum, item) => sum + item.quantity, 0));
+            setCartTotal(apiCart.totalPrice || 0);
+            console.log('User cart loaded after login:', { items: mappedItems.length, total: apiCart.totalPrice });
+          }
+        } catch (error) {
+          console.error('Failed to fetch user cart after login:', error);
+        } finally {
+          isRefreshing.current = false;
+        }
+      };
+      
+      fetchUserCart();
+    }
+  }, [isLoggedIn, cart.length, loading]);
 
   // Add to cart
   const addToCart = async (product) => {
@@ -468,6 +547,7 @@ function CartProvider({ children }) {
         Cookies.remove("guestCart");
       }
       setCart([]);
+      setCartIdData(null);
       setItemCount(0);
       setCartTotal(0);
       toast.success('Cart cleared successfully');
@@ -480,6 +560,7 @@ function CartProvider({ children }) {
 
       if (response.data?.success) {
         setCart([]);
+        setCartIdData(null);
         setItemCount(0);
         setCartTotal(0);
         toast.success('Cart cleared successfully');
@@ -617,7 +698,8 @@ function CartProvider({ children }) {
       getCartItemsByCurrency,
       getCurrentCurrencyTotal,
       refreshCart,
-      currency
+      cartIdData,
+      currency,
     }}>
       {children}
     </CartContext.Provider>

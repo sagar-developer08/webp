@@ -35,7 +35,7 @@ const Blog = () => {
   const fetchBlogs = async () => {
     try {
       setLoading(true);
-      const response = await axios.get("https://0vm9jauvgc.execute-api.us-east-1.amazonaws.com/stag/api/blogs/");
+      const response = await axios.get("http://localhost:8080/api/blogs/");
       setBlogs(response.data.data);
     } catch (err) {
       setError(err.message);

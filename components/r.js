@@ -212,7 +212,7 @@ const R = ({ className = "", product, relatedProducts, selectedCountry }) => {
         phone: notifyForm.phone,
         productId: product?._id || product?.id
       };
-      const res = await fetch("https://0vm9jauvgc.execute-api.us-east-1.amazonaws.com/stag/api/notify/notify-me", {
+      const res = await fetch("http://localhost:8080/api/notify/notify-me", {
         method: "POST",
         headers: { "Content-Type": "application/json" },
         body: JSON.stringify(payload),

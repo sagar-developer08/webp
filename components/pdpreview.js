@@ -20,7 +20,7 @@ const Testimonials = ({ Heading }) => {
         try {
             setLoading(true);
             setError(null);
-            const response = await axios.get(`https://0vm9jauvgc.execute-api.us-east-1.amazonaws.com/stag/api/testimonials/`);
+            const response = await axios.get(`http://localhost:8080/api/testimonials/`);
             console.log("Testimonials API response:", response.data);
 
             if (response.data && response.data.data && response.data.data[0]) {

@@ -42,6 +42,7 @@ const Cart = () => {
   const [couponDetails, setCouponDetails] = useState(null);
   const [filteredCart, setFilteredCart] = useState([]);
   const [filteredTotal, setFilteredTotal] = useState(0);
+  const [isTapPaymentLoading, setIsTapPaymentLoading] = useState(false);
 
   // Function to update filtered cart data - memoized to prevent rerenders
   const updateFilteredCart = useCallback(() => {
@@ -158,7 +159,7 @@ const Cart = () => {
 
     try {
       const response = await axiosInstance.post(
-        "https://0vm9jauvgc.execute-api.us-east-1.amazonaws.com/stag/api/coupons/validate",
+        "http://localhost:8080/api/coupons/validate",
         {
           code: couponCode,
           cartTotal: filteredTotal,
@@ -284,7 +285,7 @@ const Cart = () => {
           customer_phone: user?.phoneNumber || "8689912326"
         }
       };
-      const response = await fetch("https://0vm9jauvgc.execute-api.us-east-1.amazonaws.com/stag/api/cashfree/create-order", {
+      const response = await fetch("http://localhost:8080/api/cashfree/create-order", {
         method: "POST",
         headers: {
           'Content-Type': 'application/json'
@@ -307,6 +308,157 @@ const Cart = () => {
       console.error("Payment error:", err);
     } finally {
       setIsSubmitting(false);
+    }
+  };
+
+  const handleTapPay = async () => {
+    if (filteredCart.length === 0) {
+      toast.error("Your cart is empty");
+      return;
+    }
+
+    setIsTapPaymentLoading(true);
+    try {
+      // Get actual cart ID from the first cart item or create one if needed
+      let cartId = cart
+      console.log(cartId, "cartId")
+      
+      // If no cart ID exists, create cart by adding first item
+      if (!cartId && filteredCart.length > 0) {
+        const firstItem = filteredCart[0];
+        const cartResponse = await fetch('http://localhost:8080/api/guest/cart', {
+          method: 'POST',
+          headers: {
+            'Content-Type': 'application/json',
+          },
+          body: JSON.stringify({
+            productId: firstItem._id || firstItem.productId,
+            quantity: firstItem.quantity,
+            currency: currency || "UAE"
+          })
+        });
+
+        if (cartResponse.ok) {
+          const cartResult = await cartResponse.json();
+          cartId = cartResult.cartId || cartResult.data?._id || cartResult.data?.cartId;
+        }
+      }
+
+      // If still no cart ID, throw error
+      if (!cartId) {
+        throw new Error('Unable to get or create cart ID');
+      }
+
+      // Generate unique transaction reference
+      const transactionRef = `txn_${Date.now()}_${Math.random().toString(36).substr(2, 9)}`;
+      const orderRef = `ORD-${new Date().getFullYear()}-${Date.now()}`;
+
+      // Helper function to get country code for phone
+      const getCountryCode = (country) => {
+        const countryCodes = {
+          'UAE': '971',
+          'KSA': '966', 
+          'KUWAIT': '965',
+          'QATAR': '974',
+          'USA': '1',
+          'UK': '44'
+        };
+        return countryCodes[country?.toUpperCase()] || '971';
+      };
+
+      // Helper function to get display currency
+      const getDisplayCurrency = (currency) => {
+        if (!currency) return "AED";
+        const val = currency.toUpperCase();
+        if (val === "UAE") return "AED";
+        if (val === "INDIA") return "INR";
+        if (val === "KSA") return "SAR";
+        if (val === "KUWAIT") return "KWD";
+        if (val === "QATAR") return "QAR";
+        if (val === "INR" || val === "AED" || val === "SAR" || val === "KWD" || val === "QAR" || val === "USD" || val === "GBP") return val;
+        if (val === "USA") return "USD";
+        if (val === "UK") return "GBP";
+        return "AED";
+      };
+
+      const tapPayload = {
+        amount: parseFloat(totals.total),
+        currency: getDisplayCurrency(currency),
+        cartId: cartId,
+        customerId: user?.id || user?._id || `customer_${Date.now()}`,
+        description: "Payment for Tornado Watch Order",
+        customer: {
+          first_name: user?.firstName || user?.name?.split(' ')[0] || "Customer",
+          last_name: user?.lastName || user?.name?.split(' ').slice(1).join(' ') || "User",
+          email: user?.email || "customer@example.com",
+          phone: {
+            country_code: getCountryCode(selectedCountry),
+            number: user?.phone || user?.phoneNumber || "501234567"
+          }
+        },
+        source: {
+          id: "src_all"
+        },
+        save_card: false,
+        threeDSecure: true,
+        receipt: {
+          email: true,
+          sms: false
+        },
+        metadata: {
+          product_type: "watch",
+          order_number: orderRef,
+          cart_items: filteredCart.map(item => ({
+            id: item._id || item.productId,
+            name: item.name,
+            quantity: item.quantity,
+            price: typeof item.price === 'string' ? 
+              parseFloat(item.price.match(/([\d,.]+)/)?.[1]?.replace(/,/g, '') || '0') : 
+              item.price
+          }))
+        },
+        reference: {
+          transaction: transactionRef,
+          order: orderRef
+        }
+      };
+
+      console.log('Tap Payment Payload:', tapPayload);
+
+      const response = await fetch('http://localhost:8080/api/tap/charge', {
+        method: 'POST',
+        headers: {
+          'Content-Type': 'application/json',
+        },
+        body: JSON.stringify(tapPayload)
+      });
+
+      const result = await response.json();
+      console.log('Tap Payment Response:', result);
+
+      if (response.ok && result.success) {
+        // Handle successful payment initiation
+        if (result.redirect_url || result.transaction_url) {
+          const paymentUrl = result.redirect_url || result.transaction_url;
+          toast.success("Tap payment initiated successfully! Redirecting to payment...");
+          // Redirect to payment page
+          window.open(paymentUrl, "_blank");
+          
+          // Clear discount and coupon after successful payment initiation
+          setDiscount(0);
+          setCouponDetails(null);
+          setCouponCode("");
+        } else {
+          toast.success("Payment initiated successfully");
+        }
+      } else {
+        toast.error(result.message || "Payment initiation failed");
+      }
+    } catch (error) {
+      console.error('Tap payment error:', error);
+      toast.error("Payment service unavailable. Please try again.");
+    } finally {
+      setIsTapPaymentLoading(false);
     }
   };
 
@@ -343,6 +495,8 @@ const Cart = () => {
           setIsCouponInputVisible={setIsCouponInputVisible}
           handleCashfreePay={handleCashfreePay}
           isCashfreeAvailable={isCashfreeAvailable}
+          handleTapPay={handleTapPay}
+          isTapPaymentLoading={isTapPaymentLoading}
         />
       </section>
       <Footer

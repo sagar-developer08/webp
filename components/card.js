@@ -104,12 +104,26 @@ const Card = ({
 
   // Check for stock
   const countryKey = country.toLowerCase();
-  stock = stock[countryKey];
-  // fallback to first available stock if not found
-  if (typeof stock === "undefined") {
-    stock = Object.values(stock)[0];
-  } else if (typeof stock === "string") {
+  
+  // Add null/undefined check for stock object
+  if (stock && typeof stock === "object" && countryKey) {
+    const originalStock = stock; // Keep reference to original stock object
+    stock = stock[countryKey];
+    
+    // fallback to first available stock if not found
+    if (typeof stock === "undefined" && Object.keys(originalStock).length > 0) {
+      stock = Object.values(originalStock)[0];
+    }
+  }
+  
+  // Convert stock to number if it's a string
+  if (typeof stock === "string") {
     stock = parseInt(stock, 10);
+  }
+  
+  // Default to 0 if stock is still null/undefined
+  if (stock === null || stock === undefined) {
+    stock = 0;
   }
 
   const isOutOfStock = !stock || stock <= 0;

@@ -28,16 +28,18 @@ const Main1 = ({
   handleContinueShopping,
   wishlistFromcart,
   handleCashfreePay,
-  isCashfreeAvailable
+  isCashfreeAvailable,
+  handleTapPay,
+  isTapPaymentLoading
 }) => {
   const [isCouponInputVisible, setIsCouponInputVisible] = useState(false);
-  const { getCartItemsByCurrency, getCurrentCurrencyTotal, getCurrency, currency } = useCart();
+  const { getCartItemsByCurrency, getCurrentCurrencyTotal, getCurrency, currency, user } = useCart();
   const { selectedCountry } = useCountry();
   const [filteredCart, setFilteredCart] = useState([]);
   const [filteredTotal, setFilteredTotal] = useState(0);
   const router = useRouter();
   const { addToWishlist, removeFromWishlist, isInWishlist } = useWishlist();
-
+console.log(cart, "cart")
   // Use memoized function to prevent excessive calculations
   const updateFilteredCart = useCallback(() => {
     const items = getCartItemsByCurrency();
@@ -100,6 +102,21 @@ const Main1 = ({
     handleApplyCoupon();
   };
 
+
+
+  // Helper function to get country code for phone
+  const getCountryCode = (country) => {
+    const countryCodes = {
+      'UAE': '971',
+      'KSA': '966', 
+      'KUWAIT': '965',
+      'QATAR': '974',
+      'USA': '1',
+      'UK': '44'
+    };
+    return countryCodes[country?.toUpperCase()] || '971';
+  };
+
   // Calculate totals based on filtered items - memoize for performance
   const filteredTotals = useMemo(() => {
     // Calculate subtotal from filtered cart items
@@ -147,111 +164,6 @@ const Main1 = ({
 
   const handleNavigate = (path) => {
     router.push(path);
-  };
-
-  // Add new Tap payment handler
-  const handleTapPay = async () => {
-    if (filteredCart.length === 0) {
-      toast.error("Your cart is empty");
-      return;
-    }
-
-    const { selectedCountry } = useCountry();
-    const { user } = useCart();
-    
-    // Get customer data from user context or use default values
-    const customerData = {
-      first_name: user?.firstName || user?.name?.split(' ')[0] || "Customer",
-      last_name: user?.lastName || user?.name?.split(' ').slice(1).join(' ') || "",
-      email: user?.email || "customer@example.com",
-      phone: {
-        country_code: getCountryCode(selectedCountry),
-        number: user?.phone || "123456789"
-      }
-    };
-
-    // Generate unique transaction reference
-    const transactionRef = `txn_${Date.now()}_${Math.random().toString(36).substr(2, 9)}`;
-    const orderRef = `ORD-${new Date().getFullYear()}-${Date.now()}`;
-
-    const tapPayload = {
-      amount: filteredTotals.total,
-      currency: getDisplayCurrency(currency),
-      cartId: user?.cartId || "guest_cart",
-      customerId: user?.id || `guest_${Date.now()}`,
-      description: `Payment for Tornado Watch Order - ${orderRef}`,
-      customer: customerData,
-      source: {
-        id: "src_all"
-      },
-      save_card: false,
-      threeDSecure: true,
-      receipt: {
-        email: true,
-        sms: false
-      },
-      metadata: {
-        product_type: "watch",
-        order_number: orderRef,
-        cart_items: filteredCart.map(item => ({
-          id: item._id || item.productId,
-          name: item.name,
-          quantity: item.quantity,
-          price: typeof item.price === 'string' ? 
-            parseFloat(item.price.match(/([\d,.]+)/)?.[1]?.replace(/,/g, '') || '0') : 
-            item.price
-        }))
-      },
-      reference: {
-        transaction: transactionRef,
-        order: orderRef
-      }
-    };
-
-    try {
-      setIsSubmitting?.(true);
-      
-      const response = await fetch('http://localhost:8080/api/tap/charge', {
-        method: 'POST',
-        headers: {
-          'Content-Type': 'application/json',
-        },
-        body: JSON.stringify(tapPayload)
-      });
-
-      const result = await response.json();
-
-      if (response.ok && result.success) {
-        // Handle successful payment initiation
-        if (result.redirect_url) {
-          // Redirect to payment page
-          window.location.href = result.redirect_url;
-        } else {
-          toast.success("Payment initiated successfully");
-          // Handle any additional success logic
-        }
-      } else {
-        toast.error(result.message || "Payment initiation failed");
-      }
-    } catch (error) {
-      console.error('Tap payment error:', error);
-      toast.error("Payment service unavailable. Please try again.");
-    } finally {
-      setIsSubmitting?.(false);
-    }
-  };
-
-  // Helper function to get country code for phone
-  const getCountryCode = (country) => {
-    const countryCodes = {
-      'UAE': '971',
-      'KSA': '966', 
-      'KUWAIT': '965',
-      'QATAR': '974',
-      'USA': '1',
-      'UK': '44'
-    };
-    return countryCodes[country?.toUpperCase()] || '971';
   };
 
   return (
@@ -527,11 +439,11 @@ const Main1 = ({
                   <>
                     {/* Show Tap Payment for all countries except India */}
                     <button
-                      className={`self-stretch rounded-[100px] bg-[#fff] text-[#000] border-[1px] border-solid border-[#000] h-[52px] flex flex-row items-center justify-center py-[13px] px-6 box-border mb-3 ${isSubmitting ? 'opacity-70 cursor-not-allowed' : 'hover:bg-[#000] hover:text-[#fff]  cursor-pointer'} transition-colors`}
+                      className={`self-stretch rounded-[100px] bg-[#fff] text-[#000] border-[1px] border-solid border-[#000] h-[52px] flex flex-row items-center justify-center py-[13px] px-6 box-border mb-3 ${isTapPaymentLoading || isSubmitting ? 'opacity-70 cursor-not-allowed' : 'hover:bg-[#000] hover:text-[#fff]  cursor-pointer'} transition-colors`}
                       onClick={handleTapPay}
-                      disabled={isSubmitting || filteredCart.length === 0}
+                      disabled={isTapPaymentLoading || isSubmitting || filteredCart.length === 0}
                     >
-                      {isSubmitting ? "Processing..." : "Pay by Tap"}
+                      {isTapPaymentLoading ? "Processing Tap Payment..." : "Pay with Tap"}
                     </button>
                     
                     {/* Keep existing Place Order button as fallback */}
@@ -575,12 +487,13 @@ Main1.propTypes = {
   totals: PropTypes.object.isRequired,
   handlePlaceOrder: PropTypes.func.isRequired,
   isSubmitting: PropTypes.bool.isRequired,
-  setIsSubmitting: PropTypes.func,
   paymentMethod: PropTypes.string.isRequired,
   setPaymentMethod: PropTypes.func.isRequired,
   handleContinueShopping: PropTypes.func.isRequired,
   handleCashfreePay: PropTypes.func,
-  isCashfreeAvailable: PropTypes.bool
+  isCashfreeAvailable: PropTypes.bool,
+  handleTapPay: PropTypes.func,
+  isTapPaymentLoading: PropTypes.bool
 };
 
 export default Main1;

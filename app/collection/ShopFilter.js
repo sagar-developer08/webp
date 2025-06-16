@@ -100,7 +100,7 @@ const ShopFilter = ({ onFilterChange, initialFilters, onReset, country = "india"
   React.useEffect(() => {
     const fetchFilterOptions = async () => {
       try {
-        const response = await fetch('https://0vm9jauvgc.execute-api.us-east-1.amazonaws.com/stag/api/products/filters/options');
+        const response = await fetch('http://localhost:8080/api/products/filters/options');
         const data = await response.json();
         
         // Set price range from API

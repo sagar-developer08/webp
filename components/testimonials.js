@@ -149,6 +149,7 @@ const Testimonials = ({ Heading }) => {
                         height={44}
                         alt="Previous"
                         src="/solararrowuplinear-5@1x.webp"
+                        loading="lazy"
                     />
                 </button>
                 <button className="swiper-button-next-testimonial focus:outline-none bg-transparent">
@@ -158,6 +159,7 @@ const Testimonials = ({ Heading }) => {
                         height={44}
                         alt="Next"
                         src="/solararrowuplinear-5@2x.webp"
+                        loading="lazy"
                     />
                 </button>
             </div>

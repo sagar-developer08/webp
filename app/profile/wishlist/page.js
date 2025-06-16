@@ -174,6 +174,7 @@ const WishlistPage = () => {
                                 }
                                 alt={product.name?.en || product.name || "Watch"}
                                 className="h-full w-full object-contain"
+                                loading="lazy"
                                 onError={(e) => {
                                   e.target.src = "/default-watch.jpg";
                                 }}

@@ -307,6 +307,7 @@ const R = ({ className = "", product, relatedProducts, selectedCountry }) => {
                               src={colorImage}
                               alt={colorName}
                               className="w-full h-full object-contain"
+                              loading="lazy"
                               onError={(e) => {
                                 e.target.onerror = null;
                                 e.target.src = "/default-color.png";
@@ -343,6 +344,7 @@ const R = ({ className = "", product, relatedProducts, selectedCountry }) => {
                             src={colorImage}
                             alt={colorName}
                             className="w-full h-full object-contain"
+                            loading="lazy"
                             onError={(e) => {
                               e.target.onerror = null;
                               e.target.src = "/default-color.png";
@@ -388,6 +390,7 @@ const R = ({ className = "", product, relatedProducts, selectedCountry }) => {
                             src={colorImage}
                             alt={colorName}
                             className="w-full h-full object-contain"
+                            loading="lazy"
                             onError={(e) => {
                               e.target.onerror = null;
                               e.target.src = "/default-color.png";
@@ -412,6 +415,7 @@ const R = ({ className = "", product, relatedProducts, selectedCountry }) => {
                 src={product?.watchDetails?.dialColorImage || "/default-color.png"}
                 alt={product?.watchDetails?.dialColor?.en || "Default"}
                 className="w-full h-full object-cover"
+                loading="lazy"
                 onError={(e) => {
                   e.target.onerror = null;
                   e.target.src = "/default-color.png";

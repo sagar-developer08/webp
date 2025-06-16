@@ -70,7 +70,7 @@ const Footer = ({
   // Mobile check (simple, for demo; use a better hook in production)
   const [isMobile, setIsMobile] = useState(false);
   useEffect(() => {
-    const checkMobile = () => setIsMobile(window.innerWidth <= 750);
+    const checkMobile = () => setIsMobile(window.innerWidth <= 768);
     checkMobile();
     window.addEventListener("resize", checkMobile);
     return () => window.removeEventListener("resize", checkMobile);
@@ -589,6 +589,7 @@ const Footer = ({
                 height={24}
                 alt="Twitter/X"
                 src="/icon--x.svg"
+                loading="lazy"
               />
               <Image
                 onClick={() => handleSocialIcons("https://www.youtube.com/@tornadowatches")}

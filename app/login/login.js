@@ -310,7 +310,7 @@ const Login = () => {
           </div>
 
           {/* Right image section */}
-          <div className="hidden md:flex w-full md:w-1/2 items-center justify-center py-[60px] ">
+          <div className="hidden lg:hidden md:flex w-full md:w-1/2 items-center justify-center py-[60px] ">
             <div className="relative w-full max-w-[500px] h-[500px] lg:h-[600px]">
               <Image
                 src="/cat@3x.webp"

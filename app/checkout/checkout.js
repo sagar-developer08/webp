@@ -597,8 +597,8 @@ const Cart = () => {
                 <div className="max-w-[1360px] w-full flex flex-col items-center justify-center px-2 py-8 mq450:py-[0px]">
                     <div
                         className="
-                            flex flex-row lg:flex-row gap-12 items-start justify-center w-full
-                            mq450:flex-col-reverse mq450:items-center mq450:gap-6
+                            flex flex-row lg:flex-col gap-12 items-start justify-center w-full
+                            mq450:flex-col-reverse mq450:items-center mq1050:items-center mq450:gap-6
                         "
                     >
                         {/* --- Delivery Address (Form) --- */}
@@ -738,7 +738,7 @@ const Cart = () => {
                                 w-[500px] rounded-2xl border-[rgba(0,0,0,0.16)] border-solid border-[1px] box-border flex flex-col items-end justify-start py-[20px] px-6 gap-4 max-w-full text-base
                                 mq750:pt-5 mq750:pb-5 mq750:box-border mq750:min-w-full mq750:mx-4
                                 mq450:w-full mq450:max-w-[410px] mq450:ml-0 mq450:rounded-[12px] mq450:border-none
-                                mq450:px-[24px] mq450:mx-auto
+                                mq450:px-[24px] mq450:mx-auto mq1050:w-[800px]
                             "
                         >
                             {/* Cart Items List */}
@@ -758,6 +758,7 @@ const Cart = () => {
                                                 }
                                                 alt={item.name}
                                                 className="object-contain w-full h-full"
+                                                loading="lazy"
                                             />
                                         </div>
                                         <div className="flex-1">

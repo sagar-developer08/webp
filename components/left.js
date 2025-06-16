@@ -6,20 +6,29 @@ const Left = ({ className = "", product }) => {
   const [currentImageIndex, setCurrentImageIndex] = useState(0);
   const [thumbnailStartIndex, setThumbnailStartIndex] = useState(0);
 
-  // Get all image URLs from the product object
-  // Map images in order: image1, image2, image3, ...
+  // Function to decode URL
+  const decodeImageUrl = (url) => {
+    try {
+      return decodeURIComponent(url);
+    } catch (e) {
+      console.error("Error decoding URL:", e);
+      return url; // Return original if decoding fails
+    }
+  };
+
+  // Get all image URLs from the product object and decode them
   const imageLinks = product?.imageLinks
     ? Object.keys(product.imageLinks)
         .filter((key) => /^image\d+$/.test(key))
         .sort((a, b) => {
-          // Extract the number after "image" and sort numerically
           const numA = parseInt(a.replace("image", ""), 10);
           const numB = parseInt(b.replace("image", ""), 10);
           return numA - numB;
         })
-        .map((key) => product.imageLinks[key])
+        .map((key) => decodeImageUrl(product.imageLinks[key]))
         .filter(Boolean)
     : [];
+  
   const hasImages = imageLinks.length > 0;
   const visibleThumbnails = 4;
 
@@ -43,7 +52,6 @@ const Left = ({ className = "", product }) => {
     const nextIndex = (currentImageIndex + 1) % imageLinks.length;
     setCurrentImageIndex(nextIndex);
 
-    // Auto-scroll thumbnails if needed
     if (nextIndex >= (thumbnailStartIndex + visibleThumbnails) % imageLinks.length) {
       setThumbnailStartIndex((prev) => (prev + 1) % imageLinks.length);
     }
@@ -55,7 +63,6 @@ const Left = ({ className = "", product }) => {
     const prevIndex = (currentImageIndex - 1 + imageLinks.length) % imageLinks.length;
     setCurrentImageIndex(prevIndex);
 
-    // Auto-scroll thumbnails if needed
     if (
       prevIndex < thumbnailStartIndex ||
       (thumbnailStartIndex + visibleThumbnails) % imageLinks.length > thumbnailStartIndex &&
@@ -67,7 +74,6 @@ const Left = ({ className = "", product }) => {
 
   const handleThumbnailClick = (index) => {
     setCurrentImageIndex(index);
-    // Center the clicked thumbnail if possible
     if (imageLinks.length > visibleThumbnails) {
       setThumbnailStartIndex((index - Math.floor(visibleThumbnails / 2) + imageLinks.length) % imageLinks.length);
     }
@@ -99,7 +105,7 @@ const Left = ({ className = "", product }) => {
         )}
       </div>
 
-      {/* Thumbnail Navigation - Only show if we have images */}
+      {/* Thumbnail Navigation */}
       {hasImages && imageLinks.length > 1 && (
         <div className="mt-4 sm:mt-6 flex items-center justify-center gap-2 relative w-full max-w-[300px] sm:max-w-[500px]">
           <div className="flex gap-4 overflow-hidden px-2">
@@ -126,7 +132,7 @@ const Left = ({ className = "", product }) => {
         </div>
       )}
 
-      {/* Dots Indicator (Index) - Only show if we have images */}
+      {/* Dots Indicator */}
       {hasImages && imageLinks.length > 1 && (
         <div className="mt-2 sm:mt-4 flex justify-center">
           <div className="rounded-[50px] bg-[rgba(0,0,0,0.08)] overflow-hidden flex flex-col items-start justify-start py-2 px-3">
@@ -141,7 +147,6 @@ const Left = ({ className = "", product }) => {
                   }`}
                   onClick={() => {
                     setCurrentImageIndex(index);
-                    // Center the clicked dot if possible
                     if (imageLinks.length > visibleThumbnails) {
                       setThumbnailStartIndex(
                         (index - Math.floor(visibleThumbnails / 2) + imageLinks.length) % imageLinks.length
@@ -155,7 +160,7 @@ const Left = ({ className = "", product }) => {
         </div>
       )}
 
-      {/* Navigation Arrows - Only show if we have images */}
+      {/* Navigation Arrows */}
       {hasImages && imageLinks.length > 1 && (
         <>
           <div

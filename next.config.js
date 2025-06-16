@@ -33,6 +33,11 @@ const nextConfig = {
       },
       {
         protocol: 'https',
+        hostname: 'torando-stagging.s3.amazonaws.com/products',
+        pathname: '**',
+      },
+      {
+        protocol: 'https',
         hostname: 'd1ynvtqfnieipx.cloudfront.net',
         pathname: '**',
       },

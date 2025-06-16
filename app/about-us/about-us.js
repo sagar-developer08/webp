@@ -90,9 +90,9 @@ const AboutUs = () => {
       {/* <section className="self-stretch overflow-hidden flex flex-col items-center justify-start py-0 px-10 z-[3] mq1050:gap-[30px] mq450:px-4">
         <Reason country={countryData} />
       </section> */}
-      <section className="self-stretch overflow-hidden flex flex-row items-start justify-center p-10 z-[4] text-left text-base text-[rgba(255,255,255,0.8)] font-h5-24 mq450:px-[24px] mq450:py-[40px] mq450:gap-[24px] mq450:box-border mq1050:gap-5">
-        <div className="w-[1360px] max-w-full flex flex-row items-center justify-between gap-6 mq1050:flex-col mq1050:gap-8">
-          <div className="h-[420px] w-[660px] rounded-3xl flex flex-row items-end justify-start py-[60px] px-10 box-border bg-[url('/our_mission.jpg')] bg-cover bg-no-repeat bg-[top] mq1050:gap-[30px] mq1050:w-full mq750:py-[40px] mq750:px-6 mq450:h-[350px] mq450:py-[30px] mq450:px-4 relative">
+      <section className="self-stretch overflow-hidden flex flex-row mq1050:flex-row items-start justify-center p-10 z-[4] text-left text-base text-[rgba(255,255,255,0.8)] font-h5-24 mq450:px-[24px] mq450:py-[40px] mq450:gap-[24px] mq450:box-border mq1050:gap-5">
+        <div className="w-[1360px] max-w-full flex flex-row items-center justify-between gap-6 mq1050:flex-row mq1050:gap-8">
+          <div className="h-[420px] w-[660px] mq1050:h-[500px] mq1050:w-[450px] rounded-3xl flex flex-row items-end justify-start py-[60px] px-10 box-border bg-[url('/our_mission.jpg')] bg-cover bg-no-repeat bg-[top] mq1050:gap-[30px] mq1050:w-full mq750:py-[40px] mq750:px-6 mq450:h-[350px] mq450:py-[30px] mq450:px-4 relative">
             {/* Add overlay for better text readability */}
             <div className="absolute inset-0 bg-black/40 rounded-3xl"></div>
 
@@ -108,7 +108,7 @@ const AboutUs = () => {
               </div>
             </div>
           </div>
-          <div className="h-[420px] w-[660px] rounded-3xl flex flex-row items-end justify-start py-[60px] px-10 box-border bg-[url('/our_vision.jpg')] bg-cover bg-no-repeat bg-[top] mq1050:gap-[30px] mq1050:w-full mq750:py-[40px] mq750:px-6 mq450:h-[350px] mq450:py-[30px] mq450:px-4 relative">
+          <div className="h-[420px] w-[660px] mq1050:h-[500px] mq1050:w-[450px] rounded-3xl flex flex-row items-end justify-start py-[60px] px-10 box-border bg-[url('/our_vision.jpg')] bg-cover bg-no-repeat bg-[top] mq1050:gap-[30px] mq1050:w-full mq750:py-[40px] mq750:px-6 mq450:h-[350px] mq450:py-[30px] mq450:px-4 relative">
             {/* Add overlay for better text readability */}
             <div className="absolute inset-0 bg-black/40 rounded-3xl"></div>
 
@@ -126,16 +126,16 @@ const AboutUs = () => {
           </div>
         </div>
       </section>
-      <section className="w-full max-w-[1440px] overflow-hidden flex flex-row items-center justify-center p-10 box-border gap-[60px] z-[5] text-left text-37xl text-[#000] font-h5-24  mq450:px-[24px] mq450:py-[40px] mq450:gap-[24px] mq450:box-border mq1050:gap-[30px] mq1050:flex-col">
+      <section className="w-full max-w-[1440px] overflow-hidden flex flex-row items-center mq1050:flex-row justify-center p-10 box-border gap-[60px] z-[5] text-left text-37xl text-[#000] font-h5-24  mq450:px-[24px] mq450:py-[40px] mq450:gap-[24px] mq450:box-border mq1050:gap-[30px]">
         <Image
-          className="h-[500px] w-[500px] rounded-3xl object-cover mq1050:w-full mq1050:h-auto mq450:h-[300px]"
+          className="h-[500px] w-[500px] mq1050:h-[350px] mq1050:w-[350px] rounded-3xl object-cover mq1050:w-full mq1050:h-auto mq450:h-[300px]"
           loading="lazy"
           width={500}
           height={500}
           alt=""
           src="/sustanibility.jpg"
         />
-        <div className="flex-1 w-full flex flex-col items-start justify-start gap-6">
+        <div className="flex-1 w-full flex flex-col  items-start justify-start gap-6">
           <h2 className="m-0 self-stretch relative text-black text-[36px] mq450:text-center leading-[120%] font-bold font-[inherit] mq750:text-[34px] mq750:leading-[40px] mq450:text-[24px] mq450:leading-[34px]">
             Sustainability
           </h2>

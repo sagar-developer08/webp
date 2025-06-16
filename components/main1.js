@@ -149,6 +149,111 @@ const Main1 = ({
     router.push(path);
   };
 
+  // Add new Tap payment handler
+  const handleTapPay = async () => {
+    if (filteredCart.length === 0) {
+      toast.error("Your cart is empty");
+      return;
+    }
+
+    const { selectedCountry } = useCountry();
+    const { user } = useCart();
+    
+    // Get customer data from user context or use default values
+    const customerData = {
+      first_name: user?.firstName || user?.name?.split(' ')[0] || "Customer",
+      last_name: user?.lastName || user?.name?.split(' ').slice(1).join(' ') || "",
+      email: user?.email || "customer@example.com",
+      phone: {
+        country_code: getCountryCode(selectedCountry),
+        number: user?.phone || "123456789"
+      }
+    };
+
+    // Generate unique transaction reference
+    const transactionRef = `txn_${Date.now()}_${Math.random().toString(36).substr(2, 9)}`;
+    const orderRef = `ORD-${new Date().getFullYear()}-${Date.now()}`;
+
+    const tapPayload = {
+      amount: filteredTotals.total,
+      currency: getDisplayCurrency(currency),
+      cartId: user?.cartId || "guest_cart",
+      customerId: user?.id || `guest_${Date.now()}`,
+      description: `Payment for Tornado Watch Order - ${orderRef}`,
+      customer: customerData,
+      source: {
+        id: "src_all"
+      },
+      save_card: false,
+      threeDSecure: true,
+      receipt: {
+        email: true,
+        sms: false
+      },
+      metadata: {
+        product_type: "watch",
+        order_number: orderRef,
+        cart_items: filteredCart.map(item => ({
+          id: item._id || item.productId,
+          name: item.name,
+          quantity: item.quantity,
+          price: typeof item.price === 'string' ? 
+            parseFloat(item.price.match(/([\d,.]+)/)?.[1]?.replace(/,/g, '') || '0') : 
+            item.price
+        }))
+      },
+      reference: {
+        transaction: transactionRef,
+        order: orderRef
+      }
+    };
+
+    try {
+      setIsSubmitting?.(true);
+      
+      const response = await fetch('http://localhost:8080/api/tap/charge', {
+        method: 'POST',
+        headers: {
+          'Content-Type': 'application/json',
+        },
+        body: JSON.stringify(tapPayload)
+      });
+
+      const result = await response.json();
+
+      if (response.ok && result.success) {
+        // Handle successful payment initiation
+        if (result.redirect_url) {
+          // Redirect to payment page
+          window.location.href = result.redirect_url;
+        } else {
+          toast.success("Payment initiated successfully");
+          // Handle any additional success logic
+        }
+      } else {
+        toast.error(result.message || "Payment initiation failed");
+      }
+    } catch (error) {
+      console.error('Tap payment error:', error);
+      toast.error("Payment service unavailable. Please try again.");
+    } finally {
+      setIsSubmitting?.(false);
+    }
+  };
+
+  // Helper function to get country code for phone
+  const getCountryCode = (country) => {
+    const countryCodes = {
+      'UAE': '971',
+      'KSA': '966', 
+      'KUWAIT': '965',
+      'QATAR': '974',
+      'USA': '1',
+      'UK': '44'
+    };
+    return countryCodes[country?.toUpperCase()] || '971';
+  };
+
   return (
     <section
       className={`self-stretch overflow-hidden flex flex-col items-center justify-center py-[60px] px-0 box-border max-w-[1360px] z-[2] text-left text-sm text-[#000] font-h5-24 mq750:pt-[39px] mq750:pb-[39px] mq750:box-border ${className}`}
@@ -406,10 +511,10 @@ const Main1 = ({
               </div>
             </div>
 
-            {/* Show Place Order button only if logged in */}
+            {/* Show payment buttons only if logged in */}
             {useCart().isLoggedIn && (
               <>
-                {/* Show only Cashfree if country is India/IND, else show Strabl and Cashfree (if available) */}
+                {/* Show only Cashfree if country is India/IND */}
                 {isCashfreeAvailable ? (
                   <button
                     className={`self-stretch rounded-[100px] bg-[#fff] text-[#000] border-[1px] border-solid border-[#000] h-[52px] flex flex-row items-center justify-center py-[13px] px-6 box-border ${isSubmitting ? 'opacity-70 cursor-not-allowed' : 'hover:bg-[#000] hover:text-[#fff]  cursor-pointer'} transition-colors`}
@@ -419,13 +524,25 @@ const Main1 = ({
                     {isSubmitting ? "Processing..." : "Pay with Cashfree"}
                   </button>
                 ) : (
-                  <button
-                    className={`self-stretch rounded-[100px] bg-[#fff] text-[#000] border-[1px] border-solid border-[#000] h-[52px] flex flex-row items-center justify-center py-[13px] px-6 box-border ${isSubmitting ? 'opacity-70 cursor-not-allowed' : 'hover:bg-[#000] hover:text-[#fff]  cursor-pointer'} transition-colors`}
-                    onClick={handlePlaceOrder}
-                    disabled={isSubmitting || filteredCart.length === 0}
-                  >
-                    {isSubmitting ? "Processing..." : "Place Order"}
-                  </button>
+                  <>
+                    {/* Show Tap Payment for all countries except India */}
+                    <button
+                      className={`self-stretch rounded-[100px] bg-[#fff] text-[#000] border-[1px] border-solid border-[#000] h-[52px] flex flex-row items-center justify-center py-[13px] px-6 box-border mb-3 ${isSubmitting ? 'opacity-70 cursor-not-allowed' : 'hover:bg-[#000] hover:text-[#fff]  cursor-pointer'} transition-colors`}
+                      onClick={handleTapPay}
+                      disabled={isSubmitting || filteredCart.length === 0}
+                    >
+                      {isSubmitting ? "Processing..." : "Pay by Tap"}
+                    </button>
+                    
+                    {/* Keep existing Place Order button as fallback */}
+                    <button
+                      className={`self-stretch rounded-[100px] bg-[#fff] text-[#000] border-[1px] border-solid border-[#000] h-[52px] flex flex-row items-center justify-center py-[13px] px-6 box-border ${isSubmitting ? 'opacity-70 cursor-not-allowed' : 'hover:bg-[#000] hover:text-[#fff]  cursor-pointer'} transition-colors`}
+                      onClick={handlePlaceOrder}
+                      disabled={isSubmitting || filteredCart.length === 0}
+                    >
+                      {isSubmitting ? "Processing..." : "Place Order"}
+                    </button>
+                  </>
                 )}
               </>
             )}
@@ -458,6 +575,7 @@ Main1.propTypes = {
   totals: PropTypes.object.isRequired,
   handlePlaceOrder: PropTypes.func.isRequired,
   isSubmitting: PropTypes.bool.isRequired,
+  setIsSubmitting: PropTypes.func,
   paymentMethod: PropTypes.string.isRequired,
   setPaymentMethod: PropTypes.func.isRequired,
   handleContinueShopping: PropTypes.func.isRequired,

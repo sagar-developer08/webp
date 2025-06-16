@@ -75,7 +75,7 @@ const Login = () => {
       try {
         guestWishlist = JSON.parse(localStorage.getItem("guestWishlist") || "[]");
       } catch { guestWishlist = []; }
-      
+
       if (guestWishlist.length > 0) {
         const migrationResults = await Promise.allSettled(
           guestWishlist.map(item =>
@@ -124,13 +124,13 @@ const Login = () => {
     try {
       const appleAuthData = await initiateAppleLogin();
       const response = await handleAppleLogin(appleAuthData);
-      
+
       if (response.success) {
         localStorage.setItem("token", response.token);
         updateUser(response.user);
         await checkAuthAndFetchCart();
         toast.success("Successfully signed in with Apple!");
-        
+
         // Handle pending cart item and redirects (same logic as regular login)
         const pendingCartItem = localStorage.getItem("pendingCartItem");
         const redirectUrl = localStorage.getItem("redirectAfterLogin");
@@ -157,7 +157,7 @@ const Login = () => {
         try {
           guestWishlist = JSON.parse(localStorage.getItem("guestWishlist") || "[]");
         } catch { guestWishlist = []; }
-        
+
         if (guestWishlist.length > 0) {
           const migrationResults = await Promise.allSettled(
             guestWishlist.map(item =>
@@ -202,7 +202,7 @@ const Login = () => {
         navbarBackgroundColor={"rgba(0, 0, 0, 0.5)"}
       />
 
-      <main className="flex-grow flex items-center justify-center w-full">
+      <main className="flex-grow flex items-center justify-center w-full mt-10 mb-10 mq1050:mt-0 mq1050:mb-0">
         <div className="flex flex-col md:flex-row justify-center items-center w-full max-w-[1400px] px-[40px] py-[60px]">
           {/* Left form section */}
           <div className="w-full md:w-1/2 flex items-center justify-center bg-white mq450:px-[24px] mq450:py-[40px]">
@@ -275,8 +275,8 @@ const Login = () => {
                 </div>
 
                 <div className="flex space-x-4 justify-center">
-                  <button 
-                    type="button" 
+                  <button
+                    type="button"
                     onClick={handleGoogleLogin}
                     disabled={socialLoading.google}
                     className="p-2 md:p-3 bg-white text-black rounded-full border border-black hover:bg-gray-50 transition-colors disabled:opacity-50"
@@ -288,8 +288,8 @@ const Login = () => {
                       <Image src="/google_symbol.svg.webp" alt="Google" width={24} height={24} className="w-6 h-6 md:w-8 md:h-8 object-contain" />
                     )}
                   </button>
-                  <button 
-                    type="button" 
+                  <button
+                    type="button"
                     onClick={handleAppleLoginClick}
                     disabled={socialLoading.apple}
                     className="p-2 md:p-3 bg-white text-black rounded-full border border-black hover:bg-gray-50 transition-colors disabled:opacity-50"
@@ -310,15 +310,15 @@ const Login = () => {
           </div>
 
           {/* Right image section */}
-          <div className="hidden lg:hidden md:flex w-full md:w-1/2 items-center justify-center py-[60px] ">
-            <div className="relative w-full max-w-[500px] h-[500px] lg:h-[600px]">
+          <div className=" flex w-full w-1/2 items-center justify-center px-4 py-8 mq1050:hidden mq450:hidden">
+            <div className="relative h-[500px] w-[400px] ">
               <Image
                 src="/cat@3x.webp"
                 alt="Register"
                 layout="fill"
                 objectFit="cover"
-                priority
-                className="rounded-[25px] shadow-xl"
+                loading="lazy"
+                className="rounded-lg lg:rounded-[25px] shadow-xl"
               />
             </div>
           </div>

@@ -136,7 +136,7 @@ const Register = () => {
       y: 0, opacity: 1, transition: { duration: 0.5 },
     },
   };
-  
+
 
   return (
     <div className="w-full bg-white text-black overflow-hidden flex flex-col font-inter">
@@ -148,7 +148,7 @@ const Register = () => {
         navbarBackgroundColor={"rgba(0, 0, 0, 0.5)"}
       />
 
-      <div className="flex flex-col lg:flex-row w-full min-h-[calc(100vh-80px)] mt-20 mb-20 items-center justify-center ">
+      <div className="flex flex-col lg:flex-row w-full min-h-[calc(100vh-80px)] mt-20 mb-20 mq1050:mt-0 mq1050:mb-0 items-center justify-center ">
         {/* Left form section */}
         <div className="w-full lg:w-1/2 flex items-center justify-center py-8 bg-white">
           <motion.div
@@ -370,8 +370,9 @@ const Register = () => {
         </div>
 
         {/* Right image section */}
-        <div className="hidden lg:flex w-full lg:hidden items-center justify-center px-4 sm:px-8 py-8 lg:mt-20">
-          <div className="relative w-full h-[300px] sm:h-[400px] md:h-[500px] lg:w-[410px] lg:h-[510px]">
+        {/* Right image section - Hidden on screens smaller than lg (1024px) */}
+        <div className=" flex w-full w-1/2 items-center justify-center px-4 py-8 mq1050:hidden mq450:hidden">
+          <div className="relative h-[500px] w-[400px] ">
             <Image
               src="/cat@3x.webp"
               alt="Register"

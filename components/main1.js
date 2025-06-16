@@ -202,7 +202,7 @@ const Main1 = ({
                   key={itemKey}
                   className="rounded-2xl bg-[#f7f7f7] flex flex-col items-start justify-center max-w-full"
                 >
-                  <div className="self-stretch flex flex-row items-start justify-center py-0 pl-0 pr-6 box-border gap-6 max-w-full mq1050:flex-wrap">
+                  <div className="self-stretch flex flex-row items-start justify-center py-0 pl-0 pr-6 box-border gap-6 max-w-full mq1050:flex-wrap mq1050:px-2">
                     <Image
                       className="h-[188px] w-[188px] relative overflow-hidden shrink-0 object-contain bg-[#f7f7f7]"
                       loading="lazy"
@@ -319,7 +319,7 @@ const Main1 = ({
             })}
           </div>
 
-          <div className="w-[500px] rounded-2xl border-[rgba(0,0,0,0.16)] border-solid border-[1px] box-border flex flex-col items-end justify-start py-[20px] px-6 gap-4 max-w-full text-base mq750:pt-5 mq750:pb-5 mq750:box-border mq750:min-w-full mq750:mx-4  mq450:w-[300px] mq450:ml-[-17px] mq450:rounded-[0px] mq450:border-0"
+          <div className="w-[500px] rounded-2xl border-[rgba(0,0,0,0.16)] border-solid border-[1px] box-border flex flex-col items-end justify-start py-[20px] px-6 gap-4 max-w-full text-base mq1050:w-[800px] mq750:pt-5 mq750:pb-5 mq750:box-border mq750:min-w-full mq750:mx-4  mq450:w-[300px] mq450:ml-[-17px] mq450:rounded-[0px] mq450:border-0"
           >
             {/* Only show coupon input if logged in */}
             {useCart().isLoggedIn && (

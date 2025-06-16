@@ -32,6 +32,7 @@ const Review = ({
           height={24}
           alt=""
           src={icroundStar}
+          loading="lazy"
         />
         <Image
           className="h-6 w-6 relative overflow-hidden shrink-0"
@@ -39,6 +40,7 @@ const Review = ({
           height={24}
           alt=""
           src={icroundStar1}
+          loading="lazy"
         />
         <Image
           className="h-6 w-6 relative overflow-hidden shrink-0"
@@ -46,6 +48,7 @@ const Review = ({
           height={24}
           alt=""
           src={icroundStar2}
+          loading="lazy"
         />
         <Image
           className="h-6 w-6 relative overflow-hidden shrink-0"
@@ -53,6 +56,7 @@ const Review = ({
           height={24}
           alt=""
           src={icroundStar3}
+          loading="lazy"
         />
         <Image
           className="h-6 w-6 relative overflow-hidden shrink-0"
@@ -60,6 +64,7 @@ const Review = ({
           height={24}
           alt=""
           src={icroundStar4}
+          loading="lazy"
         />
       </div>
       <div className="w-[274px] relative leading-[150%] font-medium hidden">

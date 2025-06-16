@@ -8,11 +8,12 @@ const Specification = ({ className = "", product }) => {
     >
       <div className="pr-12 mq450:pr-0"> {/* Added padding-right container */}
         <Image
-          className="h-[500px] w-[500px] rounded-3xl object-cover max-w-full mq1125:flex-1 mq450:hidden"
+          className="h-[500px] w-[500px] mq1050:h-[350px] mq1050:w-[350px] rounded-3xl object-cover max-w-full mq1125:flex-1 mq450:hidden"
           width={500}
           height={500}
           alt=""
           src="/about_2.webp"
+          loading="lazy"
         />
       </div>
       <div className="flex-1 flex flex-col items-center justify-center gap-6 min-w-[520px] mq750:min-w-full">

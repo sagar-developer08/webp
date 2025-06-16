@@ -113,15 +113,18 @@ const Collection = () => {
         <div className="w-full relative bg-white text-white overflow-hidden flex flex-col items-center justify-start leading-[normal] tracking-[normal]">
             <PageBanner title="Category" breadcrumb="Home > Category" />
 
-            <section className="self-stretch overflow-hidden flex flex-col items-center justify-start py-[60px] px-10 gap-[60px] z-[2] text-left text-37xl text-black font-h5-24 lg:pt-[39px] lg:pb-[39px] lg:box-border mq450:gap-[30px] mq450:py-[40px] mq450:px-[24px] mq450:gap-[24px] mq450:box-border mq1050:pt-[25px] mq1050:pb-[25px] mq1050:box-border">
-                <div className="w-[1360px] flex flex-row items-start justify-between gap-[60px] px-0 mq450:w-full mq450:px-4 mq450:gap-[30px] mq450:flex-col mq1050:gap-[25px]">
-                    <h1 className="m-0 w-[45%] relative text-[48px] leading-[120%] font-bold font-[inherit] mq450:text-[24px] mq450:text-center  mq450:w-full mq750:text-[34px] mq750:leading-[40px] mq750:w-[50%] mq1050:text-[45px] mq1050:leading-[54px]">
+            <section className="self-stretch overflow-hidden flex flex-col items-center justify-start py-[60px] px-[40px] gap-[60px] z-[2] text-left text-37xl text-black font-h5-24 lg:pt-[39px] lg:pb-[39px] lg:box-border mq450:gap-[24px] mq450:py-[40px] mq450:px-[24px]  mq450:box-border mq1050:pt-[25px] mq1050:pb-[25px] mq1050:box-border">
+                <div className="w-[1360px] flex flex-row items-start justify-between px-0 mq450:w-full mq450:px-4 mq450:flex-col mq1050:gap-[25px] mq1050:w-full mq1050:flex-col">
+                    {/* Added mq1050:flex-col to stack on iPads */}
+                    <h1 className="m-0 w-[45%] relative text-[40px] leading-[120%] mq450:text-center font-bold font-[inherit] mq450:text-[24px] mq450:w-full mq750:text-[34px] mq750:leading-[40px] mq750:w-[50%] mq1050:text-[45px] mq1050:leading-[54px] mq1050:w-full">
+                        {/* Added mq1050:w-full for full width on iPad */}
                         {countryData?.title ||
                             products.data[0]?.movement?.information?.[selectedCountry]?.title ||
                             products.data[0]?.movement?.name ||
                             "Movement"}
                     </h1>
-                    <div className="w-[55%] relative text-base leading-[150%] font-medium text-black mq450:text-center mq450:w-full mq450:px-0 mq450:text-sm mq750:w-[50%]">
+                    <div className="w-[55%] relative text-base leading-[150%] mq450:text-center font-medium text-black mq450:w-full mq450:px-0 mq450:text-sm mq750:w-[50%] mq1050:w-full">
+                        {/* Added mq1050:w-full for full width on iPad */}
                         {countryData?.heading ||
                             products.data[0]?.movement?.information?.[selectedCountry]?.heading ||
                             "Tornado brings you a curated selection"}

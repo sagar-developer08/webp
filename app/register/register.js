@@ -104,7 +104,7 @@ const Register = () => {
     try {
       const appleAuthData = await initiateAppleLogin();
       const response = await handleAppleLogin(appleAuthData);
-      
+
       if (response.success) {
         localStorage.setItem("token", response.token);
         toast.success("Successfully signed in with Apple!");
@@ -136,6 +136,7 @@ const Register = () => {
       y: 0, opacity: 1, transition: { duration: 0.5 },
     },
   };
+  
 
   return (
     <div className="w-full bg-white text-black overflow-hidden flex flex-col font-inter">
@@ -332,36 +333,36 @@ const Register = () => {
                   <div className="flex-grow h-px bg-black"></div>
                 </div>
 
-                <div className="flex space-x-4 justify-center mq450:px-4">
-                  <button 
-                    type="button" 
+                <div className="flex space-x-4 justify-center">
+                  <button
+                    type="button"
                     onClick={handleGoogleLogin}
                     disabled={socialLoading.google}
-                    className="p-2 md:p-3 bg-white text-black rounded-full border border-gray-300 hover:bg-gray-50 transition-colors disabled:opacity-50"
-                    title="Sign up with Google"
+                    className="p-2 md:p-3 bg-white text-black rounded-full border border-black hover:bg-gray-50 transition-colors disabled:opacity-50"
+                    title="Sign in with Google"
                   >
                     {socialLoading.google ? (
-                      <div className="w-6 h-6 md:w-8 md:h-8 animate-spin rounded-full border-2 border-gray-300 border-t-black"></div>
+                      <div className="w-6 h-6 md:w-8 md:h-8 animate-spin rounded-full border-2 border-black border-t-black"></div>
                     ) : (
-                      <Image src="/google_symbol.svg.webp" alt="Google" width={24} height={24} className="w-6 h-6 md:w-8 md:h-8" />
+                      <Image src="/google_symbol.svg.webp" alt="Google" width={24} height={24} className="w-6 h-6 md:w-8 md:h-8 object-contain" loading="lazy" />
                     )}
                   </button>
-                  <button 
-                    type="button" 
+                  <button
+                    type="button"
                     onClick={handleAppleLoginClick}
                     disabled={socialLoading.apple}
-                    className="p-2 md:p-3 bg-white text-black rounded-full border border-gray-300 hover:bg-gray-50 transition-colors disabled:opacity-50"
-                    title="Sign up with Apple"
+                    className="p-2 md:p-3 bg-white text-black rounded-full border border-black hover:bg-gray-50 transition-colors disabled:opacity-50"
+                    title="Sign in with Apple"
                   >
                     {socialLoading.apple ? (
                       <div className="w-6 h-6 md:w-8 md:h-8 animate-spin rounded-full border-2 border-gray-300 border-t-black"></div>
                     ) : (
-                      <Image src="/linkedin_symbol.svg.webp" alt="Apple" width={24} height={24} className="w-6 h-6 md:w-8 md:h-8" />
+                      <Image src="/Apple-logo.png" alt="Apple" width={24} height={24} className="w-6 h-6 md:w-8 md:h-8 object-contain" loading="lazy" />
                     )}
                   </button>
-                  <button type="button" className="p-2 md:p-3 bg-white text-black rounded-full border border-gray-300 hover:bg-gray-50 transition-colors opacity-50 cursor-not-allowed" title="Coming Soon">
-                    <Image src="/Symbol.svg.webp" alt="Facebook" width={24} height={24} className="w-6 h-6 md:w-8 md:h-8" />
-                  </button>
+                  {/* <button type="button" className="p-2 md:p-3 bg-white text-black rounded-full border border-gray-300 hover:bg-gray-50 transition-colors opacity-50 cursor-not-allowed" title="Coming Soon">
+                    <Image src="/Symbol.svg.webp" alt="Facebook" width={24} height={24} className="w-6 h-6 md:w-8 md:h-8" loading="lazy" />
+                  </button> */}
                 </div>
               </motion.form>
             </AnimateOnScroll>
@@ -369,14 +370,14 @@ const Register = () => {
         </div>
 
         {/* Right image section */}
-        <div className="hidden lg:flex w-full lg:w-1/2 items-center justify-center px-4 sm:px-8 py-8 lg:mt-20">
-          <div className="relative w-full h-[300px] sm:h-[400px] md:h-[500px] lg:w-[610px] lg:h-[710px]">
+        <div className="hidden lg:flex w-full lg:hidden items-center justify-center px-4 sm:px-8 py-8 lg:mt-20">
+          <div className="relative w-full h-[300px] sm:h-[400px] md:h-[500px] lg:w-[410px] lg:h-[510px]">
             <Image
               src="/cat@3x.webp"
               alt="Register"
               layout="fill"
               objectFit="cover"
-              priority
+              loading="lazy"
               className="rounded-lg lg:rounded-[25px] shadow-xl"
             />
           </div>

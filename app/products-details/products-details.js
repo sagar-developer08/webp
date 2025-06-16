@@ -133,7 +133,7 @@ function ProductDetailsContent({ className = "", textStyle = {} }) {
       </div>
 
       {/* Product details section */}
-      <section className="w-[1360px] max-w-full bg-[#fff] overflow-hidden text-black overflow-hidden flex flex-col lg:flex-row items-center justify-center px-[8px] py-[60px] gap-[60px] mq450:gap-[24px] mq450:px-[8px] mq450:py-[16px] box-border  text-lg text-[#000] font-h5-24">
+      <section className="w-[1360px] max-w-full bg-[#fff] overflow-hidden text-black overflow-hidden flex flex-col lg:flex-col items-center justify-center px-[8px] py-[60px] gap-[60px] mq450:gap-[24px] mq450:px-[8px] mq450:py-[16px] box-border  text-lg text-[#000] font-h5-24">
         <Left product={product?.data?.product} />
         <div className="w-full lg:flex-1 flex flex-col items-center justify-center gap-6 min-w-0 lg:min-w-[455px]">
           <R product={product?.data?.product} relatedProducts={product?.data?.relatedProducts} selectedCountry={selectedCountry} />
@@ -143,7 +143,7 @@ function ProductDetailsContent({ className = "", textStyle = {} }) {
 
       {/* Description section */}
       <section
-        className={`self-stretch overflow-hidden flex flex-row mx-auto items-center justify-center box-border gap-[60px] max-w-[1360px] text-37xl text-[#000] font-h5-24 px-[8px] mq450:px-[8px] mq750:gap-[30px] mq750:pt-[26px] mq750:pb-[26px] mq750:box-border mq1125:flex-wrap ${className}`}
+        className={`self-stretch overflow-hidden flex flex-row mx-auto items-center justify-center box-border gap-[60px] max-w-[1360px] text-37xl text-[#000] font-h5-24 px-[8px] mq1050:flex-row mq450:px-[8px] mq750:gap-[30px] mq750:pt-[26px] mq750:pb-[26px] mq750:box-border ${className}`}
       >
         <AnimateOnScroll
           animation="slideRight"
@@ -171,7 +171,7 @@ function ProductDetailsContent({ className = "", textStyle = {} }) {
 
         <AnimateOnScroll animation="slideLeft">
           <Image
-            className="h-[500px] w-[500px] rounded-3xl object-cover max-w-full mq1125:flex-1 mq450:w-[400px] mq450:h-[300px]"
+            className="h-[500px] w-[500px] rounded-3xl object-cover max-w-full mq1050:w-[350px] mq1050:h-[350px] mq1125:flex-1 mq450:w-[400px] mq450:h-[300px]"
             loading="lazy"
             width={500}
             height={500}
@@ -191,7 +191,7 @@ function ProductDetailsContent({ className = "", textStyle = {} }) {
       <Testimonials Heading="Reviews" />
 
       {/* Related Products section */}
-      <section className="self-stretch overflow-hidden flex flex-col items-center justify-start pb-[60px] px-[80px] gap-[60px] z-[2] text-left text-37xl text-black font-h5-24 mq1050:gap-[30px] mq1050:pt-[39px] mq1050:pb-[39px] mq1050:box-border mq450:px-[8px] mq450:py-[0px] mq450:pb-[40px]">
+      <section className="self-stretch overflow-hidden flex flex-col items-center justify-start pb-[60px] px-[80px] gap-[60px] z-[2] text-left text-37xl text-black font-h5-24 mq1050:gap-[30px] mq1050:pt-[39px] mq1050:pb-[39px] mq1050:px-[8px]  mq1050:box-border mq450:px-[8px] mq450:py-[0px] mq450:pb-[40px]">
         <div className="w-full flex flex-row items-center justify-between gap-4 px-5 sm:px-0">
           <h1 className="m-0 w-full flex-1 relative text-black text-[28px] sm:text-[36px] md:text-[44px] leading-[120%] font-medium font-[inherit]">
             Related Products

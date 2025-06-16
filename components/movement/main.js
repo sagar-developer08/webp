@@ -73,7 +73,7 @@ const Main = ({
         params.append('page', page || 1);
         params.append('limit', 12);
 
-        const url = `http://localhost:8080/api/products/filters/search?${params.toString()}`;
+        const url = `https://0vm9jauvgc.execute-api.us-east-1.amazonaws.com/stag/api/products/filters/search?${params.toString()}`;
         // console.log("API URL with params:", url);
 
         const response = await axios.get(url);

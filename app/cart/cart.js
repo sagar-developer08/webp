@@ -160,7 +160,7 @@ const Cart = () => {
 
     try {
       const response = await axiosInstance.post(
-        "http://localhost:8080/api/coupons/validate",
+        "https://0vm9jauvgc.execute-api.us-east-1.amazonaws.com/stag/api/coupons/validate",
         {
           code: couponCode,
           cartTotal: filteredTotal,
@@ -286,7 +286,7 @@ const Cart = () => {
           customer_phone: user?.phoneNumber || "8689912326"
         }
       };
-      const response = await fetch("http://localhost:8080/api/cashfree/create-order", {
+      const response = await fetch("https://0vm9jauvgc.execute-api.us-east-1.amazonaws.com/stag/api/cashfree/create-order", {
         method: "POST",
         headers: {
           'Content-Type': 'application/json'
@@ -416,7 +416,7 @@ const Cart = () => {
 
       console.log('Tap Payment Payload:', tapPayload);
 
-      const response = await fetch('http://localhost:8080/api/tap/charge', {
+      const response = await fetch('https://0vm9jauvgc.execute-api.us-east-1.amazonaws.com/stag/api/tap/charge', {
         method: 'POST',
         headers: {
           'Content-Type': 'application/json',

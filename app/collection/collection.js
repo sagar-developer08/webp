@@ -35,7 +35,7 @@ const Collection = () => {
       loadMore ? setLoadingMore(true) : setLoading(true);
       setError(null);
 
-      const url = `http://localhost:8080/api/products/collection/${collectionId}?page=${pageNum}&limit=${PRODUCTS_PER_PAGE}`;
+      const url = `https://0vm9jauvgc.execute-api.us-east-1.amazonaws.com/stag/api/products/collection/${collectionId}?page=${pageNum}&limit=${PRODUCTS_PER_PAGE}`;
       console.log("Fetching from:", url);
 
       const response = await axios.get(url);

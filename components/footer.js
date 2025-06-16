@@ -109,7 +109,7 @@ const Footer = ({
     setNewsletterSuccess(false);
 
     try {
-      const res = await fetch("http://localhost:8080/api/notify/newsletter-signup", {
+      const res = await fetch("https://0vm9jauvgc.execute-api.us-east-1.amazonaws.com/stag/api/notify/newsletter-signup", {
         method: "POST",
         headers: { "Content-Type": "application/json" },
         body: JSON.stringify(newsletterForm),

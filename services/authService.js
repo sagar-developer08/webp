@@ -1,6 +1,6 @@
 import axiosInstance from './axios';
 
-const API_BASE_URL = process.env.NEXT_PUBLIC_API_URL || 'http://localhost:8080/api';
+const API_BASE_URL = process.env.NEXT_PUBLIC_API_URL || 'https://0vm9jauvgc.execute-api.us-east-1.amazonaws.com/stag/api';
 
 // Google OAuth integration
 export const initiateGoogleLogin = () => {

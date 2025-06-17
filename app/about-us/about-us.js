@@ -102,7 +102,7 @@ const AboutUs = ({ initialData }) => {
       </section> */}
       <section className="self-stretch overflow-hidden flex flex-row mq1050:flex-row items-start justify-center p-10 z-[4] text-left text-base text-[rgba(255,255,255,0.8)] font-h5-24 mq450:px-[24px] mq450:py-[40px] mq450:gap-[24px] mq450:box-border mq1050:gap-5">
         <div className="w-[1360px] max-w-full flex flex-row items-center justify-between gap-6 mq1050:flex-row mq1050:gap-8">
-          <div className="h-[420px] w-[660px] mq1050:h-[500px] mq1050:w-[450px] rounded-3xl flex flex-row items-end justify-start py-[60px] px-10 box-border bg-[url('/our_mission.jpg')] bg-cover bg-no-repeat bg-[top] mq1050:gap-[30px] mq1050:w-full mq750:py-[40px] mq750:px-6 mq450:h-[350px] mq450:py-[30px] mq450:px-4 relative">
+          <div className="h-[420px] w-[660px] mq1050:h-[500px] mq1050:w-[450px] mq750:h-[400px] mq750:w-[330px] rounded-3xl flex flex-row items-end justify-start py-[60px] px-10 box-border bg-[url('/our_mission.jpg')] bg-cover bg-no-repeat bg-[top] mq1050:gap-[30px] mq1050:w-full mq750:py-[40px]  mq750:px-6 mq450:h-[350px] mq450:py-[30px] mq450:px-4 relative">
             {/* Add overlay for better text readability */}
             <div className="absolute inset-0 bg-black/40 rounded-3xl"></div>
 
@@ -118,7 +118,7 @@ const AboutUs = ({ initialData }) => {
               </div>
             </div>
           </div>
-          <div className="h-[420px] w-[660px] mq1050:h-[500px] mq1050:w-[450px] rounded-3xl flex flex-row items-end justify-start py-[60px] px-10 box-border bg-[url('/our_vision.jpg')] bg-cover bg-no-repeat bg-[top] mq1050:gap-[30px] mq1050:w-full mq750:py-[40px] mq750:px-6 mq450:h-[350px] mq450:py-[30px] mq450:px-4 relative">
+          <div className="h-[420px] w-[660px] mq1050:h-[500px] mq1050:w-[450px] mq750:h-[400px] mq750:w-[330px] rounded-3xl flex flex-row items-end justify-start py-[60px] px-10 box-border bg-[url('/our_vision.jpg')] bg-cover bg-no-repeat bg-[top] mq1050:gap-[30px] mq1050:w-full mq750:py-[40px] mq750:px-6 mq450:h-[350px] mq450:py-[30px] mq450:px-4 relative">
             {/* Add overlay for better text readability */}
             <div className="absolute inset-0 bg-black/40 rounded-3xl"></div>
 
@@ -138,7 +138,7 @@ const AboutUs = ({ initialData }) => {
       </section>
       <section className="w-full max-w-[1440px] overflow-hidden flex flex-row items-center mq1050:flex-row justify-center p-10 box-border gap-[60px] z-[5] text-left text-37xl text-[#000] font-h5-24  mq450:px-[24px] mq450:py-[40px] mq450:gap-[24px] mq450:box-border mq1050:gap-[30px]">
         <Image
-          className="h-[500px] w-[500px] mq1050:h-[350px] mq1050:w-[350px] rounded-3xl object-cover mq1050:w-full mq1050:h-auto mq450:h-[300px]"
+          className="h-[500px] w-[500px] mq1050:h-[350px] mq1050:w-[350px] mq750:h-[300px] mq750:w-[300px] rounded-3xl object-cover mq1050:w-full mq1050:h-auto mq450:h-[300px]"
           loading="lazy"
           width={500}
           height={500}

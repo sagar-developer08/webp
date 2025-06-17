@@ -16,7 +16,7 @@ const Specification = ({ className = "", product }) => {
           loading="lazy"
         />
       </div>
-      <div className="flex-1 flex flex-col items-center justify-center gap-6 min-w-[520px] mq750:min-w-full">
+      <div className="flex-1 flex flex-col items-center justify-center gap-6 min-w-[520px] mq750:min-w-[400px]">
         <h1 className="m-0 self-stretch relative text-[56px] leading-[120%] font-bold font-[inherit] mq450:text-[34px] mq450:leading-[40px] mq1050:text-[45px] mq1050:leading-[54px]">
           Specifications
         </h1>

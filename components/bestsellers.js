@@ -109,6 +109,10 @@ const Bestsellers = ({ className = "", country, selectedCountry }) => {
                   slidesPerView: 2,
                   spaceBetween: 15,
                 },
+                768: {
+                  slidesPerView: 2.4,
+                  spaceBetween: 20
+                },
                 1024: {
                   slidesPerView: 3,
                   spaceBetween: 20,

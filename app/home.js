@@ -104,7 +104,7 @@ const Home = ({ initialData }) => {
       fetchHome();
     }
     if (!initialData?.countryProducts?.length) {
-    fetchProducts();
+      fetchProducts();
     }
   }, [initialData]);
 
@@ -249,6 +249,10 @@ const Home = ({ initialData }) => {
                     640: {
                       slidesPerView: 2,
                       spaceBetween: 15
+                    },
+                    768: {
+                      slidesPerView: 2.4,
+                      spaceBetween: 20
                     },
                     1024: {
                       slidesPerView: 3,

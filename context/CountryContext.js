@@ -3,12 +3,12 @@ import { createContext, useContext, useState, useEffect } from 'react';
 
 const CountryContext = createContext();
 
-export function CountryProvider({ children }) {
+export function CountryProvider({ children, initialCountry = 'uae' }) {
   const [selectedCountry, setSelectedCountry] = useState(() => {
     if (typeof window !== 'undefined') {
-      return localStorage.getItem('selectedCountry') || 'uae';
+      return localStorage.getItem('selectedCountry') || initialCountry;
     }
-    return 'uae';
+    return initialCountry;
   });
   
   const [countryData, setCountryData] = useState(null);

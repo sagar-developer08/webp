@@ -6,6 +6,11 @@ const nextConfig = {
 
   compress: true,
   
+  // Enable experimental features for better SSR
+  experimental: {
+    optimizePackageImports: ['framer-motion', 'swiper'],
+  },
+  
   // API proxy to avoid CORS issues
   async rewrites() {
     return [
@@ -26,6 +31,24 @@ const nextConfig = {
           {
             key: 'Cache-Control',
             value: 'public, max-age=31536000, immutable',
+          },
+        ],
+      },
+      // Add headers for better SSR performance
+      {
+        source: '/(.*)',
+        headers: [
+          {
+            key: 'X-Content-Type-Options',
+            value: 'nosniff',
+          },
+          {
+            key: 'X-Frame-Options',
+            value: 'DENY',
+          },
+          {
+            key: 'X-XSS-Protection',
+            value: '1; mode=block',
           },
         ],
       },

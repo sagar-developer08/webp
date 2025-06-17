@@ -1,13 +1,11 @@
-import Privacy from "./privacy";
 import { getCountryFromHeaders } from "../../services/serverApi";
-import { headers } from 'next/headers';
+import Privacy from "./privacy";
 
-// Server-side data fetching for privacy policy page
-async function getPrivacyPageData() {
+// Server-side data fetching
+async function getPrivacyPolicyPageData() {
   try {
-    // Get country from headers or default to UAE
-    const headersList = headers();
-    const detectedCountry = getCountryFromHeaders(headersList);
+    // Use default country for static generation
+    const detectedCountry = getCountryFromHeaders();
     
     return {
       detectedCountry,
@@ -21,7 +19,7 @@ async function getPrivacyPageData() {
 }
 
 export default async function Page() {
-    const pageData = await getPrivacyPageData();
-    
-    return <Privacy initialData={pageData} />;
+  const pageData = await getPrivacyPolicyPageData();
+  
+  return <Privacy initialData={pageData} />;
 }

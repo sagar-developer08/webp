@@ -1,13 +1,11 @@
 import Home from "./home";
 import { getHomeData, getProductsData, getCountrySpecificData, getCountryFromHeaders } from "../services/serverApi";
-import { headers } from 'next/headers';
 
 // Server-side data fetching
 async function getPageData() {
   try {
-    // Get country from headers or default to UAE
-    const headersList = headers();
-    const detectedCountry = getCountryFromHeaders(headersList);
+    // Use default country for static generation
+    const detectedCountry = getCountryFromHeaders();
     
     // Fetch data in parallel
     const [homeData, productsData] = await Promise.all([

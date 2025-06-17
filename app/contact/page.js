@@ -1,13 +1,11 @@
-import Contact from "./contact";
 import { getCountryFromHeaders } from "../../services/serverApi";
-import { headers } from 'next/headers';
+import Contact from "./contact";
 
-// Server-side data fetching for contact page
+// Server-side data fetching
 async function getContactPageData() {
   try {
-    // Get country from headers or default to UAE
-    const headersList = headers();
-    const detectedCountry = getCountryFromHeaders(headersList);
+    // Use default country for static generation
+    const detectedCountry = getCountryFromHeaders();
     
     return {
       detectedCountry,

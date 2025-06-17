@@ -1,14 +1,12 @@
 import { Suspense } from 'react';
 import Movement from './movement';
 import { getCountryFromHeaders } from "../../services/serverApi";
-import { headers } from 'next/headers';
 
 // Server-side data fetching for movement page
 async function getMovementPageData() {
   try {
-    // Get country from headers or default to UAE
-    const headersList = headers();
-    const detectedCountry = getCountryFromHeaders(headersList);
+    // Use default country for static generation
+    const detectedCountry = getCountryFromHeaders();
     
     return {
       detectedCountry,

@@ -1,13 +1,11 @@
-import Shippinganddelivery from "./shippinganddelivery";
 import { getCountryFromHeaders } from "../../services/serverApi";
-import { headers } from 'next/headers';
+import ShippingAndDelivery from "./shippinganddelivery";
 
-// Server-side data fetching for shipping and delivery page
+// Server-side data fetching
 async function getShippingPageData() {
   try {
-    // Get country from headers or default to UAE
-    const headersList = headers();
-    const detectedCountry = getCountryFromHeaders(headersList);
+    // Use default country for static generation
+    const detectedCountry = getCountryFromHeaders();
     
     return {
       detectedCountry,
@@ -21,7 +19,7 @@ async function getShippingPageData() {
 }
 
 export default async function Page() {
-    const pageData = await getShippingPageData();
-    
-    return <Shippinganddelivery initialData={pageData} />;
+  const pageData = await getShippingPageData();
+  
+  return <ShippingAndDelivery initialData={pageData} />;
 }

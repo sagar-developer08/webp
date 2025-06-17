@@ -1,13 +1,11 @@
-import OrderSuccess from './order-success';
 import { getCountryFromHeaders } from "../../services/serverApi";
-import { headers } from 'next/headers';
+import OrderSuccess from "./order-success";
 
-// Server-side data fetching for order success page
+// Server-side data fetching
 async function getOrderSuccessPageData() {
   try {
-    // Get country from headers or default to UAE
-    const headersList = headers();
-    const detectedCountry = getCountryFromHeaders(headersList);
+    // Use default country for static generation
+    const detectedCountry = getCountryFromHeaders();
     
     return {
       detectedCountry,

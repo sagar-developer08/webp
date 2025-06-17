@@ -1,17 +1,15 @@
-import AboutUs from "./about-us";
 import { getAboutData, getCountrySpecificData, getCountryFromHeaders } from "../../services/serverApi";
-import { headers } from 'next/headers';
+import AboutUs from "./about-us";
 
 // Server-side data fetching
 async function getAboutPageData() {
   try {
-    // Get country from headers or default to UAE
-    const headersList = headers();
-    const detectedCountry = getCountryFromHeaders(headersList);
+    // Use default country for static generation
+    const detectedCountry = getCountryFromHeaders();
     
     // Fetch about data
     const aboutData = await getAboutData();
-    
+
     // Extract country-specific data
     const countrySpecificData = aboutData ? getCountrySpecificData(aboutData, detectedCountry) : null;
 

@@ -1,13 +1,11 @@
-import Login from "./login";
 import { getCountryFromHeaders } from "../../services/serverApi";
-import { headers } from 'next/headers';
+import Login from "./login";
 
-// Server-side data fetching for login page
+// Server-side data fetching
 async function getLoginPageData() {
   try {
-    // Get country from headers or default to UAE
-    const headersList = headers();
-    const detectedCountry = getCountryFromHeaders(headersList);
+    // Use default country for static generation
+    const detectedCountry = getCountryFromHeaders();
     
     return {
       detectedCountry,

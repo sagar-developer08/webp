@@ -149,7 +149,7 @@ function ProductDetailsContent({ className = "", textStyle = {} }) {
       >
         <AnimateOnScroll
           animation="slideRight"
-          className="flex-1 flex flex-col items-center justify-start gap-6 min-w-[520px] pt-0 mq750:min-w-full"
+          className="flex-1 flex flex-col items-center justify-start gap-6 min-w-[520px] pt-0 mq750:min-w-[350px]"
           style={textStyle}
         >
           <motion.h1
@@ -173,7 +173,7 @@ function ProductDetailsContent({ className = "", textStyle = {} }) {
 
         <AnimateOnScroll animation="slideLeft">
           <Image
-            className="h-[500px] w-[500px] rounded-3xl object-cover max-w-full mq1050:w-[350px] mq1050:h-[350px] mq1125:flex-1 mq450:w-[400px] mq450:h-[300px]"
+            className="h-[500px] w-[500px] rounded-3xl object-cover max-w-full mq1050:w-[350px] mq1050:h-[350px] mq750:h-[300px] mq750:w-[300px] mq1125:flex-1 mq450:w-[400px] mq450:h-[300px]"
             loading="lazy"
             width={500}
             height={500}
@@ -239,7 +239,7 @@ function ProductDetailsContent({ className = "", textStyle = {} }) {
                 spaceBetween: 15
               },
               768: {
-                slidesPerView: 3,
+                slidesPerView: 2.4,
                 spaceBetween: 20
               },
               1024: {

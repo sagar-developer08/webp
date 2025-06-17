@@ -28,15 +28,15 @@ const Description = ({
 
   return (
     <section
-      className={`self-stretch overflow-hidden flex flex-row items-center justify-center p-10 box-border gap-[60px] max-w-full text-left text-37xl text-[#000] font-h5-24 mq750:gap-[30px] mq750:pt-[26px] mq750:pb-[26px] mq750:box-border mq1050:flex-row mq450:px-[24px] mq450:py-[40px] mq450:gap-[24px] ${className}`}
+      className={`self-stretch overflow-hidden flex flex-row items-center justify-center p-10 box-border gap-[60px] max-w-full text-left text-37xl text-[#000] font-h5-24 mq750:flex-row mq750:gap-[30px] mq750:pt-[26px] mq750:pb-[26px] mq750:box-border mq1050:flex-row mq450:px-[24px] mq450:py-[40px] mq450:gap-[24px] ${className}`}
       style={descriptionStyle}
     >
       <AnimateOnScroll
         animation="slideRight"
-        className="flex-1 flex flex-col items-start justify-start gap-6 min-w-[520px] mq750:min-w-full mq1125:order-2"
+        className="flex-1 flex flex-col items-start justify-start gap-6 min-w-[520px] mq750:min-w-[350px] mq1125:order-2"
         style={textStyle}
       >
-        <h1 className="m-0 self-stretch relative text-black text-[44px] mq450:text-center leading-[120%] font-bold font-[inherit] mq750:text-[34px] mq750:leading-[40px] mq450:text-[24px] mq450:leading-[120%]">
+        <h1 className="m-0 self-stretch relative text-black text-[44px] mq450:text-center leading-[120%] font-bold font-[inherit] mq750:text-[28px] mq750:leading-[40px] mq450:text-[24px] mq450:leading-[120%]">
           {country?.our_story_title || "Description"}
         </h1>
         <div className="self-stretch relative text-black mq450:text-center text-base leading-[150%] font-medium mq450:text-[16px]">

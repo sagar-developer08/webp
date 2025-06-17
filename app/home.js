@@ -23,11 +23,11 @@ import SkeletonLoader from "../components/SkeletonLoader";
 import { useRouter } from "next/navigation";
 import Testimonials from "../components/testimonials";
 
-const Home = () => {
+const Home = ({ initialData }) => {
   const router = useRouter();
-  const [products, setProducts] = useState({ data: [] });
-  const [home, setHome] = useState({ data: [] });
-  const [loading, setLoading] = useState(true);
+  const [products, setProducts] = useState(initialData?.countryProducts || []);
+  const [home, setHome] = useState(initialData?.homeData || { data: [] });
+  const [loading, setLoading] = useState(false); // Start with false since we have initial data
   const [error, setError] = useState(null);
   const { selectedCountry, updateCountry, countryData, setCountryData } = useCountry();
 
@@ -72,6 +72,13 @@ const Home = () => {
     }
   };
 
+  // Initialize country data from SSR if available
+  useEffect(() => {
+    if (initialData?.countryData && !countryData) {
+      setCountryData(initialData.countryData);
+    }
+  }, [initialData?.countryData, countryData, setCountryData]);
+
   useEffect(() => {
     if (home && home[0]) {
       const countrySpecificData = home[0]?.[selectedCountry];
@@ -85,16 +92,21 @@ const Home = () => {
     } else {
       console.log('No home data available yet');
     }
-  }, [selectedCountry, home.data]);
+  }, [selectedCountry, home.data, setCountryData]);
 
   const handleCountrySelect = (country) => {
     updateCountry(country);
   };
 
   useEffect(() => {
-    fetchProducts();
-    fetchHome();
-  }, []);
+    // Only fetch if we don't have initial data from SSR
+    if (!initialData?.homeData?.data?.length) {
+      fetchHome();
+    }
+    if (!initialData?.countryProducts?.length) {
+      fetchProducts();
+    }
+  }, [initialData]);
 
   const handleProductClick = (collectionId) => {
     router.push(`/collection?id=${collectionId}`);
@@ -237,6 +249,10 @@ const Home = () => {
                     640: {
                       slidesPerView: 2,
                       spaceBetween: 15
+                    },
+                    768: {
+                      slidesPerView: 2.4,
+                      spaceBetween: 20
                     },
                     1024: {
                       slidesPerView: 3,

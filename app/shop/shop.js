@@ -9,11 +9,11 @@ import PageBanner from "../../components/page-banner";
 import axios from "axios";
 import { useCountry } from "../../context/CountryContext";
 
-const Shop = () => {
+const Shop = ({ initialData }) => {
   const router = useRouter();
   const { selectedCountry, updateCountry } = useCountry();
-  const [countryDescription, setCountryDescription] = useState("");
-  const [countryTitle, setCountryTitle] = useState("Shop Tornado Men's Watches");
+  const [countryDescription, setCountryDescription] = useState(initialData?.countryDescription || "");
+  const [countryTitle, setCountryTitle] = useState(initialData?.countryTitle || "Shop Tornado Men's Watches");
 
   // Define country-specific data
   const countryData = {

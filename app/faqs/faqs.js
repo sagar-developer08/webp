@@ -11,10 +11,10 @@ import { useCountry } from "../../context/CountryContext";
 
 const inter = Inter({ subsets: ['latin'] });
 
-const Faqs = () => {
+const Faqs = ({ initialData }) => {
     const [activeIndex, setActiveIndex] = useState(null);
-    const [faqData, setFaqData] = useState(null);
-    const [loading, setLoading] = useState(true);
+    const [faqData, setFaqData] = useState(initialData?.faqData || null);
+    const [loading, setLoading] = useState(!initialData?.faqData); // Start with false if we have initial data
     const [error, setError] = useState(null);
     const { selectedCountry } = useCountry();
 
@@ -33,8 +33,11 @@ const Faqs = () => {
             }
         };
 
+        // Only fetch if we don't have initial data from SSR
+        if (!initialData?.faqData) {
         fetchFaqData();
-    }, []);
+        }
+    }, [initialData]);
     console.log(faqData, "faqData");
 
     // Determine which country to use (default to 'india')

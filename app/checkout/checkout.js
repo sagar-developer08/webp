@@ -367,7 +367,7 @@ const Cart = () => {
     // Sync guest cart when localStorage changes (only after hydration)
     useEffect(() => {
         if (!isClient) return;
-        
+
         const syncGuestCart = () => setGuestCart(getGuestCart());
         window.addEventListener("storage", syncGuestCart);
         return () => window.removeEventListener("storage", syncGuestCart);
@@ -448,7 +448,7 @@ const Cart = () => {
             }
             setGuestRegistered(true);
             toast.success("Guest registered successfully!");
-            
+
             // Call guest cart API after successful registration
             await handleGuestCartApi();
         } catch (err) {
@@ -475,7 +475,7 @@ const Cart = () => {
                     quantity: item.quantity,
                     currency: item.currency || currency || "UAE"
                 };
-                
+
                 const response = await fetch("/api/guest/cart", {
                     method: "POST",
                     headers: {
@@ -484,11 +484,11 @@ const Cart = () => {
                     },
                     body: JSON.stringify(body),
                 });
-                
+
                 if (!response.ok) {
                     throw new Error(`Failed to add item ${item.productId} to guest cart`);
                 }
-                
+
                 return response.json();
             });
 
@@ -520,7 +520,7 @@ const Cart = () => {
                     quantity: item.quantity,
                     currency: item.currency || currency || "UAE"
                 };
-                
+
                 const response = await fetch("/api/guest/cart", {
                     method: "POST",
                     headers: {
@@ -529,11 +529,11 @@ const Cart = () => {
                     },
                     body: JSON.stringify(body),
                 });
-                
+
                 if (!response.ok) {
                     throw new Error(`Failed to add item ${item.productId} to guest cart`);
                 }
-                
+
                 return response.json();
             });
 
@@ -543,7 +543,7 @@ const Cart = () => {
             // Step 2: Get cart ID from the first response and call Tap charge API
             if (cartResponses.length > 0 && cartResponses[0].success && cartResponses[0].data._id) {
                 const cartId = cartResponses[0].data._id;
-                
+
                 const tapChargeBody = {
                     cartId: cartId,
                     customer: {
@@ -585,12 +585,12 @@ const Cart = () => {
                 if (tapResponse.ok) {
                     const tapData = await tapResponse.json();
                     console.log("Tap payment response:", tapData);
-                    
+
                     if (tapData.success && tapData.data.transaction_url) {
                         toast.success("Tap payment initiated successfully! Redirecting to payment...");
                         // Redirect to Tap payment page in new tab
                         window.open(tapData.data.transaction_url, "_blank");
-                        
+
                         // Optionally clear cart and redirect to success page
                         clearGuestCartAfterCheckout();
                         setDiscount(0);
@@ -606,7 +606,7 @@ const Cart = () => {
             } else {
                 throw new Error("Failed to get cart ID from guest cart API");
             }
-            
+
         } catch (err) {
             toast.error("Tap payment failed");
             console.error("Tap payment error:", err);
@@ -700,7 +700,7 @@ const Cart = () => {
 
     // Only show Cashfree for India
     const isCashfreeAvailable = (selectedCountry && selectedCountry.toLowerCase() === "india");
-    
+
     // Only show Tap for non-India countries
     const isTapAvailable = !(selectedCountry && selectedCountry.toLowerCase() === "india");
 
@@ -747,19 +747,19 @@ const Cart = () => {
                 <PageBanner title="Checkout" breadcrumb="Home > Checkout" />
             </div>
             <div className="w-full flex flex-row items-center justify-center py-[60px] mq450:py-[0px]">
-                <div className="max-w-[1360px] w-full flex flex-row items-center justify-center px-2 py-8 mq450:py-[0px]">
+                <div className="max-w-[1360px] w-full flex flex-row items-center justify-center px-2 py-8 mq450:py-[0px] mq750:w-full mq750:px-2">
                     <div
                         className="
-                            flex flex-row mq1050flex-col-reverse gap-12 items-start justify-center w-full
+                            flex flex-row mq1050:flex-col-reverse gap-12 mq750:flex-col-reverse items-start justify-center w-full
 
-                            flex flex-row lg:flex-col gap-12 items-start justify-center w-full
+                            flex flex-row gap-12 items-start justify-center w-full
                             mq450:flex-col-reverse mq450:items-center mq1050:items-center mq450:gap-6
                         "
                     >
                         {/* --- Delivery Address (Form) --- */}
                         <div
                             className="
-                                w-full max-w-[820px] bg-white rounded-lg relative
+                                w-full max-w-[820px] bg-white rounded-lg relative mq1050:w-full mq1050:max-w-[800px] mq750:w-full mq750:max-w-[650px]
                                 mq450:w-full mq450:max-w-[410px] mq450:px-[24px] mq450:py-[40px] mq450:rounded-[12px] mq450:mx-auto
                             "
                         >
@@ -1045,7 +1045,7 @@ const Cart = () => {
                                             >
                                                 {(isSubmitting && submittingButton === "strabl") ? "Processing..." : "Pay with Strabl"}
                                             </button>
-                                            
+
                                             {/* Tap Payment Button - Only show for non-India countries */}
                                             {isTapAvailable && (
                                                 <button

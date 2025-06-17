@@ -39,7 +39,7 @@ const Main1 = ({
   const [filteredTotal, setFilteredTotal] = useState(0);
   const router = useRouter();
   const { addToWishlist, removeFromWishlist, isInWishlist } = useWishlist();
-console.log(cart, "cart")
+  console.log(cart, "cart")
   // Use memoized function to prevent excessive calculations
   const updateFilteredCart = useCallback(() => {
     const items = getCartItemsByCurrency();
@@ -108,7 +108,7 @@ console.log(cart, "cart")
   const getCountryCode = (country) => {
     const countryCodes = {
       'UAE': '971',
-      'KSA': '966', 
+      'KSA': '966',
       'KUWAIT': '965',
       'QATAR': '974',
       'USA': '1',
@@ -181,7 +181,7 @@ console.log(cart, "cart")
           </button>
         </div>
       ) : (
-        <div className="self-stretch flex flex-row items-start justify-center gap-10 max-w-full lg:flex-wrap mq750:gap-5 mq450:flex-col">
+        <div className="self-stretch flex flex-row items-start justify-center gap-10 max-w-full lg:flex-wrap mq750:gap-5 mq750:flex-col mq450:flex-col mq1050:px-2 mq1050:gap-2 mq750:gap-2 mq750:px-2 mq750:ml-[-15px]">
           <div className="flex-1 flex flex-col gap-4 max-w-full mq750:min-w-full">
             {filteredCart.map((item) => {
               const displayCurrency = getDisplayCurrency(item.currency || currency);
@@ -219,7 +219,7 @@ console.log(cart, "cart")
                   key={itemKey}
                   className="rounded-2xl bg-[#f7f7f7] flex flex-col items-start justify-center max-w-full"
                 >
-                  <div className="self-stretch flex flex-row items-start justify-center py-0 pl-0 pr-6 box-border gap-6 max-w-full mq1050:flex-wrap mq1050:px-2">
+                  <div className="self-stretch flex flex-row items-start justify-center py-0 pl-0 pr-6 box-border gap-6 max-w-full  mq1050:px-2">
                     <Image
                       className="h-[188px] w-[188px] relative overflow-hidden shrink-0 object-contain bg-[#f7f7f7]"
                       loading="lazy"
@@ -445,7 +445,7 @@ console.log(cart, "cart")
                     >
                       {isTapPaymentLoading ? "Processing Tap Payment..." : "Pay with Tap"}
                     </button>
-                    
+
                     {/* Keep existing Place Order button as fallback */}
                     <button
                       className={`self-stretch rounded-[100px] bg-[#fff] text-[#000] border-[1px] border-solid border-[#000] h-[52px] flex flex-row items-center justify-center py-[13px] px-6 box-border ${isSubmitting ? 'opacity-70 cursor-not-allowed' : 'hover:bg-[#000] hover:text-[#fff]  cursor-pointer'} transition-colors`}

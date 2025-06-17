@@ -310,6 +310,7 @@ const Login = () => {
           </div>
 
           {/* Right image section */}
+
           <div className=" flex w-full w-1/2 items-center justify-center px-4 py-8 mq1050:hidden mq450:hidden">
             <div className="relative h-[500px] w-[400px] ">
               <Image

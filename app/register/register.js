@@ -136,6 +136,7 @@ const Register = () => {
       y: 0, opacity: 1, transition: { duration: 0.5 },
     },
   };
+  
 
 
   return (
@@ -370,9 +371,12 @@ const Register = () => {
         </div>
 
         {/* Right image section */}
+
         {/* Right image section - Hidden on screens smaller than lg (1024px) */}
         <div className=" flex w-full w-1/2 items-center justify-center px-4 py-8 mq1050:hidden mq450:hidden">
           <div className="relative h-[500px] w-[400px] ">
+
+       
             <Image
               src="/cat@3x.webp"
               alt="Register"

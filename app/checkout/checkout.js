@@ -751,6 +751,8 @@ const Cart = () => {
                     <div
                         className="
                             flex flex-row mq1050flex-col-reverse gap-12 items-start justify-center w-full
+
+                            flex flex-row lg:flex-col gap-12 items-start justify-center w-full
                             mq450:flex-col-reverse mq450:items-center mq1050:items-center mq450:gap-6
                         "
                     >

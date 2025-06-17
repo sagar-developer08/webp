@@ -133,7 +133,9 @@ function ProductDetailsContent({ className = "", textStyle = {} }) {
       </div>
 
       {/* Product details section */}
+
       <section className="w-[1360px] max-w-full bg-[#fff] overflow-hidden text-black overflow-hidden flex flex-row mq1050:flex-col items-center justify-center px-[8px] py-[60px] gap-[60px] mq450:gap-[24px] mq450:px-[8px] mq450:py-[16px] box-border  text-lg text-[#000] font-h5-24">
+
         <Left product={product?.data?.product} />
         <div className="w-full lg:flex-1 flex flex-col items-center justify-center gap-6 min-w-0 lg:min-w-[455px]">
           <R product={product?.data?.product} relatedProducts={product?.data?.relatedProducts} selectedCountry={selectedCountry} />

@@ -104,6 +104,7 @@ const Card = ({
 
   // Check for stock
   const countryKey = country.toLowerCase();
+
   
   // Add null/undefined check for stock object
   if (stock && typeof stock === "object" && countryKey) {

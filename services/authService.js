@@ -23,6 +23,8 @@ export const initiateAppleLogin = () => {
   });
 };
 
+
+
 // Handle Apple login response
 export const handleAppleLogin = async (appleAuthData) => {
   try {

@@ -1,8 +1,8 @@
 "use client";
 import { useState, useEffect } from "react";
 import Image from "next/image";
+import Link from "next/link";
 import PropTypes from "prop-types";
-import { useRouter } from "next/navigation";
 import { useCart } from "../context/CartContext";
 import { toast } from "react-hot-toast";
 import { useWishlist } from "../context/WishlistContext";
@@ -25,7 +25,6 @@ const Card = ({
   discountPrice,
   rating,
 }) => {
-  const router = useRouter();
   const { addToCart } = useCart();
   const { user } = useUser();
   const { addToWishlist, removeFromWishlist, isInWishlist } = useWishlist();
@@ -92,8 +91,9 @@ const Card = ({
     }
   };
 
-  const handleProductClick = () => {
-    router.push(`/products-details?productId=${_id || productId}`);
+  const handleProductClick = (e) => {
+    // Prevent default since we'll use Link component
+    e.preventDefault();
   };
 
   // Show actions based on device type and hover state
@@ -147,8 +147,8 @@ const Card = ({
   };
 
   return (
-    <div
-      onClick={handleProductClick}
+    <Link
+      href={`/products-details?productId=${_id || productId}`}
       className={`card-container w-full rounded-lg bg-gray-100 shadow-md overflow-hidden flex flex-col items-center justify-start text-center text-xs font-h5-24 relative cursor-pointer shadow-sm hover:shadow-md transition-shadow duration-300 focus:outline-none ${className}`}
       onMouseEnter={() => setShowActions(true)}
       onMouseLeave={() => setShowActions(false)}
@@ -327,7 +327,7 @@ const Card = ({
           )}
         </div>
       )}
-    </div>
+    </Link>
   );
 };
 

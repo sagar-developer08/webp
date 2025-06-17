@@ -167,38 +167,9 @@ const Navbar = ({
     }
   };
 
-  const handleHomeClick = useCallback(() => {
-    router.push("/");
-  }, [router]);
-
-  const handleAboutUsClick = useCallback(() => {
-    router.push("/about-us");
-  }, [router]);
-
-  const handleShopClick = useCallback(() => {
-    router.push("/shop");
-  }, [router]);
-
-  const handleBlogClick = useCallback(() => {
-    router.push("/blog");
-  }, [router]);
-
-  const handleContactClick = useCallback(() => {
-    router.push("/contact");
-  }, [router]);
-
-  const handleCartClick = useCallback(() => {
-    router.push("/cart");
-  }, [router]);
-
-  const handlewishlistClick = useCallback(() => {
-    router.push("/profile/wishlist");
-  }, [router, user]);
-
   const handleProfileClick = useCallback(() => {
     setShowAccountDropdown(false);
-    router.push("/profile");
-  }, [router]);
+  }, []);
 
   const handleLogout = useCallback(async () => {
     const confirmLogout = window.confirm("Are you sure you want to logout?");
@@ -359,15 +330,16 @@ const Navbar = ({
         <div className="w-full max-w-[1360px] flex items-center pr-[40px] pl-[40px] justify-between">
           {/* Logo */}
           <motion.div variants={logoVariants} initial="initial" animate="animate" className="flex items-center">
-            <Image
-              className="h-[40px] md:h-[50px] w-[90px] md:w-[110.3px] relative object-cover cursor-pointer"
-              loading="lazy"
-              width={110}
-              height={50}
-              alt="Tornado Logo"
-              src={logoSrc}
-              onClick={onLogoClick || handleHomeClick}
-            />
+            <Link href="/" onClick={onLogoClick}>
+              <Image
+                className="h-[40px] md:h-[50px] w-[90px] md:w-[110.3px] relative object-cover cursor-pointer"
+                loading="lazy"
+                width={110}
+                height={50}
+                alt="Tornado Logo"
+                src={logoSrc}
+              />
+            </Link>
           </motion.div>
 
           {/* Mobile view icons (shown <= 1050px) */}
@@ -403,28 +375,29 @@ const Navbar = ({
 
               {/* Cart icon */}
               <div className="flex items-center justify-center">
-                <motion.div
-                  whileHover={{ scale: 1.1 }}
-                  whileTap={{ scale: 0.9 }}
-                  onClick={handleCartClick}
-                  className="relative cursor-pointer flex items-center justify-center"
-                >
-                  {itemCount > 0 && (
-                    <div className="absolute -top-1 -right-1 w-6 h-6 bg-red-600 rounded-full flex items-center justify-center z-10">
-                      <div className="text-white text-xs font-semibold">
-                        {itemCount}
+                <Link href="/cart">
+                  <motion.div
+                    whileHover={{ scale: 1.1 }}
+                    whileTap={{ scale: 0.9 }}
+                    className="relative cursor-pointer flex items-center justify-center"
+                  >
+                    {itemCount > 0 && (
+                      <div className="absolute -top-1 -right-1 w-6 h-6 bg-red-600 rounded-full flex items-center justify-center z-10">
+                        <div className="text-white text-xs font-semibold">
+                          {itemCount}
+                        </div>
                       </div>
-                    </div>
-                  )}
-                  <Image
-                    className="h-6 w-6 relative cursor-pointer"
-                    loading="lazy"
-                    width={24}
-                    height={24}
-                    alt="Cart"
-                    src={sVG}
-                  />
-                </motion.div>
+                    )}
+                    <Image
+                      className="h-6 w-6 relative cursor-pointer"
+                      loading="lazy"
+                      width={24}
+                      height={24}
+                      alt="Cart"
+                      src={sVG}
+                    />
+                  </motion.div>
+                </Link>
               </div>
 
               {/* Hamburger menu toggle */}
@@ -461,35 +434,38 @@ const Navbar = ({
               animate="animate"
               style={{ marginLeft: '100px', marginRight: '0px', maxWidth: '800px' }}
             >
-              <motion.div
-                className="flex flex-row items-center justify-center py-1.5 px-3 cursor-pointer hover:text-gray-300 transition-colors"
-                onClick={onMenuItemsContainerClick || handleAboutUsClick}
-                variants={menuItemVariants}
-                whileHover={{ scale: 1.05 }}
-                whileTap={{ scale: 0.95 }}
-              >
-                <div className="relative leading-[150%] font-medium">About Us</div>
-              </motion.div>
+              <Link href="/about-us" onClick={onMenuItemsContainerClick}>
+                <motion.div
+                  className="flex flex-row items-center justify-center py-1.5 px-3 cursor-pointer hover:text-gray-300 transition-colors"
+                  variants={menuItemVariants}
+                  whileHover={{ scale: 1.05 }}
+                  whileTap={{ scale: 0.95 }}
+                >
+                  <div className="relative leading-[150%] font-medium">About Us</div>
+                </motion.div>
+              </Link>
 
-              <motion.div
-                className="flex flex-row items-center justify-center py-1.5 px-3 cursor-pointer hover:text-gray-300 transition-colors"
-                onClick={onMenuItemsContainerClick3 || handleShopClick}
-                variants={menuItemVariants}
-                whileHover={{ scale: 1.05 }}
-                whileTap={{ scale: 0.95 }}
-              >
-                <div className="relative leading-[150%] font-medium">Shop</div>
-              </motion.div>
+              <Link href="/shop" onClick={onMenuItemsContainerClick3}>
+                <motion.div
+                  className="flex flex-row items-center justify-center py-1.5 px-3 cursor-pointer hover:text-gray-300 transition-colors"
+                  variants={menuItemVariants}
+                  whileHover={{ scale: 1.05 }}
+                  whileTap={{ scale: 0.95 }}
+                >
+                  <div className="relative leading-[150%] font-medium">Shop</div>
+                </motion.div>
+              </Link>
 
-              <motion.div
-                className="flex flex-row items-center justify-center py-1.5 px-3 cursor-pointer hover:text-gray-300 transition-colors"
-                onClick={handleBlogClick}
-                variants={menuItemVariants}
-                whileHover={{ scale: 1.05 }}
-                whileTap={{ scale: 0.95 }}
-              >
-                <div className="relative leading-[150%] font-medium">Blog</div>
-              </motion.div>
+              <Link href="/blog">
+                <motion.div
+                  className="flex flex-row items-center justify-center py-1.5 px-3 cursor-pointer hover:text-gray-300 transition-colors"
+                  variants={menuItemVariants}
+                  whileHover={{ scale: 1.05 }}
+                  whileTap={{ scale: 0.95 }}
+                >
+                  <div className="relative leading-[150%] font-medium">Blog</div>
+                </motion.div>
+              </Link>
 
               {/* Collection dropdown */}
               <motion.div
@@ -540,9 +516,9 @@ const Navbar = ({
                 }}
               >
                 {collections.map((collection) => (
-                  <a
+                  <Link
                     key={collection.id || collection._id || collection.name}
-                    onClick={() => handleProductClick(collection.id || collection._id || collection.name)}
+                    href={`/collection?id=${collection.id || collection._id || collection.name}`}
                     className="flex items-center gap-2 px-4 py-2 text-sm text-white hover:bg-gray-800 transition-colors"
                   >
                     {collection.image && (
@@ -555,7 +531,7 @@ const Navbar = ({
                       />
                     )}
                     <span>{collection.name}</span>
-                  </a>
+                  </Link>
                 ))}
               </div>
 
@@ -607,13 +583,13 @@ const Navbar = ({
                 }}
               >
                 {categories.map((category) => (
-                  <a
+                  <Link
                     key={category.id || category._id || category.name}
-                    onClick={() => handleMovementClick(category.id || category._id || category.name)}
+                    href={`/movement?id=${category.id || category._id || category.name}`}
                     className="flex items-center text-center gap-2 px-4 py-2 text-sm text-white hover:bg-gray-800 transition-colors"
                   >
                     <span>{category.name}</span>
-                  </a>
+                  </Link>
                 ))}
               </div>
             </motion.div>
@@ -676,53 +652,55 @@ const Navbar = ({
                 </motion.button>
               </div>
 
-              <motion.div 
-                whileHover={{ scale: 1.1 }} 
-                whileTap={{ scale: 0.9 }}
-                onClick={handlewishlistClick}
-                className="relative"
-              >
-                <div className="relative">
-                  <Image
-                    className="h-11 w-11 relative"
-                    loading="lazy"
-                    width={44}
-                    height={44}
-                    alt="Wishlist"
-                    src="/wish.svg"
-                  />
-                  {wishlist && wishlist.length > 0 && (
-                    <div className="absolute -top-[-11px] -right-[-2px] w-5 h-5 bg-red-600 rounded-full flex items-center justify-center z-20">
+              <Link href="/profile/wishlist">
+                <motion.div 
+                  whileHover={{ scale: 1.1 }} 
+                  whileTap={{ scale: 0.9 }}
+                  className="relative"
+                >
+                  <div className="relative">
+                    <Image
+                      className="h-11 w-11 relative"
+                      loading="lazy"
+                      width={44}
+                      height={44}
+                      alt="Wishlist"
+                      src="/wish.svg"
+                    />
+                    {wishlist && wishlist.length > 0 && (
+                      <div className="absolute -top-[-11px] -right-[-2px] w-5 h-5 bg-red-600 rounded-full flex items-center justify-center z-20">
+                        <div className="text-white text-xs font-semibold">
+                          {wishlist.length}
+                        </div>
+                      </div>
+                    )}
+                  </div>
+                </motion.div>
+              </Link>
+
+              <Link href="/cart">
+                <motion.div
+                  className="w-11 flex flex-col items-center justify-center pt-0 pb-[5px] pl-[11px] pr-[6.1px] box-border relative cursor-pointer"
+                  whileHover={{ scale: 1.1 }}
+                  whileTap={{ scale: 0.9 }}
+                >
+                  {itemCount > 0 && (
+                    <div className="absolute top-0 right-0 w-5 h-5 bg-red-600 rounded-full flex items-center justify-center z-10">
                       <div className="text-white text-xs font-semibold">
-                        {wishlist.length}
+                        {itemCount}
                       </div>
                     </div>
                   )}
-                </div>
-              </motion.div>
-
-              <motion.div
-                className="w-11 flex flex-col items-center justify-center pt-0 pb-[5px] pl-[11px] pr-[6.1px] box-border relative cursor-pointer"
-                whileHover={{ scale: 1.1 }}
-                whileTap={{ scale: 0.9 }}
-                onClick={handleCartClick}
-              >
-                {itemCount > 0 && (
-                  <div className="absolute top-0 right-0 w-5 h-5 bg-red-600 rounded-full flex items-center justify-center z-10">
-                    <div className="text-white text-xs font-semibold">
-                      {itemCount}
-                    </div>
-                  </div>
-                )}
-                <Image
-                  className="w-[22px] h-[22px] relative z-[1]"
-                  loading="lazy"
-                  width={22}
-                  height={22}
-                  alt="Cart"
-                  src={sVG}
-                />
-              </motion.div>
+                  <Image
+                    className="w-[22px] h-[22px] relative z-[1]"
+                    loading="lazy"
+                    width={22}
+                    height={22}
+                    alt="Cart"
+                    src={sVG}
+                  />
+                </motion.div>
+              </Link>
             </motion.div>
           )}
         </div>
@@ -974,10 +952,7 @@ const Navbar = ({
                 <Link
                   href="/profile/orders"
                   className="flex items-center px-4 py-2 text-sm text-gray-300 hover:bg-gray-800 transition-colors"
-                  onClick={() => {
-                    setShowAccountDropdown(false);
-                    router.push("/profile/orders");
-                  }}
+                  onClick={() => setShowAccountDropdown(false)}
                 >
                   <svg xmlns="http://www.w3.org/2000/svg" className="h-4 w-4 mr-2" fill="none" viewBox="0 0 24 24" stroke="currentColor">
                     <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M16 11V7a4 4 0 00-8 0v4M5 9h14l1 12H4L5 9z" />
@@ -987,10 +962,7 @@ const Navbar = ({
                 <Link
                   href="/profile/wishlist"
                   className="flex items-center px-4 py-2 text-sm text-gray-300 hover:bg-gray-800 transition-colors"
-                  onClick={() => {
-                    setShowAccountDropdown(false);
-                    router.push("/profile/wishlist");
-                  }}
+                  onClick={() => setShowAccountDropdown(false)}
                 >
                   <svg xmlns="http://www.w3.org/2000/svg" className="h-4 w-4 mr-2" fill="none" viewBox="0 0 24 24" stroke="currentColor">
                     <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M4.318 6.318a4.5 4.5 0 000 6.364L12 20.364l7.682-7.682a4.5 4.5 0 00-6.364-6.364L12 7.636l-1.318-1.318a4.5 4.5 0 00-6.364 0z" />
@@ -1086,7 +1058,7 @@ const Navbar = ({
                         onClick={() => {
                           setShowSearch(false);
                           setSearchQuery('');
-                          router.push(`/products-details?productId=${productId}`);
+                          window.location.href = `/products-details?productId=${productId}`;
                         }}
                       >
                         {imageUrl && (

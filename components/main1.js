@@ -2,9 +2,9 @@ import Image from "next/image";
 import PropTypes from "prop-types";
 import { useState, useEffect, useCallback, useMemo } from "react";
 import { toast } from "react-hot-toast";
+import Link from "next/link";
 import { useCart } from "../context/CartContext";
 import { useCountry } from "../context/CountryContext";
-import { useRouter } from "next/navigation";
 import { useWishlist } from "../context/WishlistContext";
 
 const Main1 = ({
@@ -37,7 +37,6 @@ const Main1 = ({
   const { selectedCountry } = useCountry();
   const [filteredCart, setFilteredCart] = useState([]);
   const [filteredTotal, setFilteredTotal] = useState(0);
-  const router = useRouter();
   const { addToWishlist, removeFromWishlist, isInWishlist } = useWishlist();
 console.log(cart, "cart")
   // Use memoized function to prevent excessive calculations
@@ -162,9 +161,7 @@ console.log(cart, "cart")
     return "AED";
   };
 
-  const handleNavigate = (path) => {
-    router.push(path);
-  };
+  // Removed handleNavigate since we're using Link components now
 
   return (
     <section

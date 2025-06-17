@@ -20,11 +20,10 @@ import "swiper/css";
 import "swiper/css/navigation";
 import Collection from "../components/collection";
 import SkeletonLoader from "../components/SkeletonLoader";
-import { useRouter } from "next/navigation";
+import Link from "next/link";
 import Testimonials from "../components/testimonials";
 
 const Home = ({ initialData }) => {
-  const router = useRouter();
   const [products, setProducts] = useState(initialData?.countryProducts || []);
   const [home, setHome] = useState(initialData?.homeData || { data: [] });
   const [loading, setLoading] = useState(false); // Start with false since we have initial data
@@ -108,16 +107,8 @@ const Home = ({ initialData }) => {
     }
   }, [initialData]);
 
-  const handleProductClick = (collectionId) => {
-    router.push(`/collection?id=${collectionId}`);
-  };
-
   const handleSocialIcons = (path) => {
     window.open(path, "_blank", "noopener,noreferrer");
-  };
-
-  const handleNavigate = (path) => {
-    router.push(path);
   };
 
   // console.log(selectedCountry, "Country data from API");

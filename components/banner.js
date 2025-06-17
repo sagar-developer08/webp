@@ -6,7 +6,7 @@ import { motion } from "framer-motion";
 import { useInView } from "react-intersection-observer";
 import { useEffect, useState } from "react";
 import Head from "next/head";
-import { useRouter } from "next/navigation";
+import Link from "next/link";
 
 const MotionOverlay = ({ opacity }) => (
   <motion.div
@@ -24,11 +24,6 @@ const Banner = ({ className = "", property1 = "Default", country }) => {
   });
 
   const [scrollY, setScrollY] = useState(0);
-  const router = useRouter();
-
-  const handleNavigate = (path) => {
-    router.push(path);
-  };
 
   useEffect(() => {
     const handleScroll = () => {

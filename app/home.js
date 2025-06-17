@@ -104,7 +104,7 @@ const Home = ({ initialData }) => {
       fetchHome();
     }
     if (!initialData?.countryProducts?.length) {
-      fetchProducts();
+    fetchProducts();
     }
   }, [initialData]);
 

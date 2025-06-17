@@ -28,16 +28,18 @@ const Main1 = ({
   handleContinueShopping,
   wishlistFromcart,
   handleCashfreePay,
-  isCashfreeAvailable
+  isCashfreeAvailable,
+  handleTapPay,
+  isTapPaymentLoading
 }) => {
   const [isCouponInputVisible, setIsCouponInputVisible] = useState(false);
-  const { getCartItemsByCurrency, getCurrentCurrencyTotal, getCurrency, currency } = useCart();
+  const { getCartItemsByCurrency, getCurrentCurrencyTotal, getCurrency, currency, user } = useCart();
   const { selectedCountry } = useCountry();
   const [filteredCart, setFilteredCart] = useState([]);
   const [filteredTotal, setFilteredTotal] = useState(0);
   const router = useRouter();
   const { addToWishlist, removeFromWishlist, isInWishlist } = useWishlist();
-
+console.log(cart, "cart")
   // Use memoized function to prevent excessive calculations
   const updateFilteredCart = useCallback(() => {
     const items = getCartItemsByCurrency();
@@ -98,6 +100,21 @@ const Main1 = ({
       return;
     }
     handleApplyCoupon();
+  };
+
+
+
+  // Helper function to get country code for phone
+  const getCountryCode = (country) => {
+    const countryCodes = {
+      'UAE': '971',
+      'KSA': '966', 
+      'KUWAIT': '965',
+      'QATAR': '974',
+      'USA': '1',
+      'UK': '44'
+    };
+    return countryCodes[country?.toUpperCase()] || '971';
   };
 
   // Calculate totals based on filtered items - memoize for performance
@@ -406,10 +423,10 @@ const Main1 = ({
               </div>
             </div>
 
-            {/* Show Place Order button only if logged in */}
+            {/* Show payment buttons only if logged in */}
             {useCart().isLoggedIn && (
               <>
-                {/* Show only Cashfree if country is India/IND, else show Strabl and Cashfree (if available) */}
+                {/* Show only Cashfree if country is India/IND */}
                 {isCashfreeAvailable ? (
                   <button
                     className={`self-stretch rounded-[100px] bg-[#fff] text-[#000] border-[1px] border-solid border-[#000] h-[52px] flex flex-row items-center justify-center py-[13px] px-6 box-border ${isSubmitting ? 'opacity-70 cursor-not-allowed' : 'hover:bg-[#000] hover:text-[#fff]  cursor-pointer'} transition-colors`}
@@ -419,13 +436,25 @@ const Main1 = ({
                     {isSubmitting ? "Processing..." : "Pay with Cashfree"}
                   </button>
                 ) : (
-                  <button
-                    className={`self-stretch rounded-[100px] bg-[#fff] text-[#000] border-[1px] border-solid border-[#000] h-[52px] flex flex-row items-center justify-center py-[13px] px-6 box-border ${isSubmitting ? 'opacity-70 cursor-not-allowed' : 'hover:bg-[#000] hover:text-[#fff]  cursor-pointer'} transition-colors`}
-                    onClick={handlePlaceOrder}
-                    disabled={isSubmitting || filteredCart.length === 0}
-                  >
-                    {isSubmitting ? "Processing..." : "Place Order"}
-                  </button>
+                  <>
+                    {/* Show Tap Payment for all countries except India */}
+                    <button
+                      className={`self-stretch rounded-[100px] bg-[#fff] text-[#000] border-[1px] border-solid border-[#000] h-[52px] flex flex-row items-center justify-center py-[13px] px-6 box-border mb-3 ${isTapPaymentLoading || isSubmitting ? 'opacity-70 cursor-not-allowed' : 'hover:bg-[#000] hover:text-[#fff]  cursor-pointer'} transition-colors`}
+                      onClick={handleTapPay}
+                      disabled={isTapPaymentLoading || isSubmitting || filteredCart.length === 0}
+                    >
+                      {isTapPaymentLoading ? "Processing Tap Payment..." : "Pay with Tap"}
+                    </button>
+                    
+                    {/* Keep existing Place Order button as fallback */}
+                    <button
+                      className={`self-stretch rounded-[100px] bg-[#fff] text-[#000] border-[1px] border-solid border-[#000] h-[52px] flex flex-row items-center justify-center py-[13px] px-6 box-border ${isSubmitting ? 'opacity-70 cursor-not-allowed' : 'hover:bg-[#000] hover:text-[#fff]  cursor-pointer'} transition-colors`}
+                      onClick={handlePlaceOrder}
+                      disabled={isSubmitting || filteredCart.length === 0}
+                    >
+                      {isSubmitting ? "Processing..." : "Place Order"}
+                    </button>
+                  </>
                 )}
               </>
             )}
@@ -462,7 +491,9 @@ Main1.propTypes = {
   setPaymentMethod: PropTypes.func.isRequired,
   handleContinueShopping: PropTypes.func.isRequired,
   handleCashfreePay: PropTypes.func,
-  isCashfreeAvailable: PropTypes.bool
+  isCashfreeAvailable: PropTypes.bool,
+  handleTapPay: PropTypes.func,
+  isTapPaymentLoading: PropTypes.bool
 };
 
 export default Main1;

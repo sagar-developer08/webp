@@ -6,6 +6,17 @@ const nextConfig = {
 
   compress: true,
   
+  // API proxy to avoid CORS issues
+  async rewrites() {
+    return [
+      {
+        source: '/api/:path*',
+        destination: 'https://0vm9jauvgc.execute-api.us-east-1.amazonaws.com/stag/api/:path*',
+      },
+    ];
+  },
+
+  
   // Static file caching for fonts
   async headers() {
     return [

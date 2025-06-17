@@ -18,6 +18,7 @@ const Cart = () => {
   const router = useRouter();
   const {
     cart,
+    cartIdData,
     removeFromCart,
     updateQuantity,
     cartTotal,
@@ -42,6 +43,7 @@ const Cart = () => {
   const [couponDetails, setCouponDetails] = useState(null);
   const [filteredCart, setFilteredCart] = useState([]);
   const [filteredTotal, setFilteredTotal] = useState(0);
+  const [isTapPaymentLoading, setIsTapPaymentLoading] = useState(false);
 
   // Function to update filtered cart data - memoized to prevent rerenders
   const updateFilteredCart = useCallback(() => {
@@ -310,6 +312,157 @@ const Cart = () => {
     }
   };
 
+  const handleTapPay = async () => {
+    if (filteredCart.length === 0) {
+      toast.error("Your cart is empty");
+      return;
+    }
+
+    // Validate user and cart data
+    if (!user) {
+      toast.error("Please login to proceed with payment");
+      return;
+    }
+
+    if (!cartIdData) {
+      toast.error("Cart ID not found. Please refresh and try again.");
+      return;
+    }
+
+    setIsTapPaymentLoading(true);
+    try {
+      // Helper function to get country code for phone
+      const getCountryCode = (country) => {
+        const countryCodes = {
+          'UAE': '971',
+          'KSA': '966', 
+          'KUWAIT': '965',
+          'QATAR': '974',
+          'USA': '1',
+          'UK': '44'
+        };
+        return countryCodes[country?.toUpperCase()] || '971';
+      };
+
+      // Helper function to get display currency
+      const getDisplayCurrency = (currency) => {
+        if (!currency) return "AED";
+        const val = currency.toUpperCase();
+        if (val === "UAE") return "AED";
+        if (val === "INDIA") return "INR";
+        if (val === "KSA") return "SAR";
+        if (val === "KUWAIT") return "KWD";
+        if (val === "QATAR") return "QAR";
+        if (val === "INR" || val === "AED" || val === "SAR" || val === "KWD" || val === "QAR" || val === "USD" || val === "GBP") return val;
+        if (val === "USA") return "USD";
+        if (val === "UK") return "GBP";
+        return "AED";
+      };
+
+      // Generate unique references
+      const transactionRef = `txn_${Date.now()}_${Math.random().toString(36).substr(2, 9)}`;
+      const orderRef = `ORD-${new Date().getFullYear()}-${Date.now()}`;
+
+      // Prepare the payload with all required fields properly formatted
+      const tapPayload = {
+        cartId: cartIdData,
+        customerId: user?.id || user?._id || `customer_${Date.now()}`,
+        description: `Payment for Tornado Watch Order #${orderRef}`,
+        customer: {
+          first_name: user?.firstName || user?.name?.split(' ')[0] || "Customer",
+          last_name: user?.lastName || user?.name?.split(' ').slice(1).join(' ') || "User",
+          email: user?.email || "customer@example.com",
+          phone: {
+            country_code: getCountryCode(selectedCountry),
+            number: user?.phone || user?.phoneNumber || "501234567"
+          }
+        },
+        source: {
+          id: "src_card"  // Changed from "src_all" to "src_card" for better compatibility
+        },
+        save_card: false,
+        threeDSecure: true,
+        metadata: {
+          product_type: "watch",
+          order_number: orderRef,
+          customer_id: user?.id || user?._id,
+          cart_items_count: filteredCart.length,
+          store_location: selectedCountry || "UAE"
+        },
+        reference: {
+          transaction: transactionRef,
+          order: orderRef
+        },
+        receipt: {
+          email: true,
+          sms: false
+        },
+        shippingAddress: {
+          address: user?.shippingAddress?.address || "123 Main Street",
+          city: user?.shippingAddress?.city || selectedCountry === 'UAE' ? "Dubai" : "City",
+          country: selectedCountry || "UAE",
+          postal_code: user?.shippingAddress?.postalCode || "12345"
+        }
+      };
+
+      // Validate required fields before sending
+      if (!tapPayload.cartId || tapPayload.cartId === null) {
+        throw new Error('Cart ID is required');
+      }
+      
+      if (!tapPayload.customer.email || !tapPayload.customer.first_name) {
+        throw new Error('Customer email and name are required');
+      }
+
+      console.log('Tap Payment Payload:', tapPayload);
+
+      const response = await fetch('https://0vm9jauvgc.execute-api.us-east-1.amazonaws.com/stag/api/tap/charge', {
+        method: 'POST',
+        headers: {
+          'Content-Type': 'application/json',
+        },
+        body: JSON.stringify(tapPayload)
+      });
+
+      const result = await response.json();
+      console.log('Tap Payment Response:', result);
+
+      if (response.ok && result.success) {
+        // Handle successful payment initiation
+        if (result.data?.transaction_url || result.data?.redirect_url) {
+          const paymentUrl = result.data.transaction_url || result.data.redirect_url;
+          toast.success("Tap payment initiated successfully! Redirecting to payment...");
+          
+          // Redirect to payment page
+          window.open(paymentUrl, "_blank");
+          
+          // Clear discount and coupon after successful payment initiation
+          setDiscount(0);
+          setCouponDetails(null);
+          setCouponCode("");
+          
+          // If order was created (payment captured), redirect to success page
+          if (result.data?.order_id) {
+            setTimeout(() => {
+              router.push("/order-success");
+            }, 2000);
+          }
+        } else {
+          toast.success("Payment initiated successfully");
+          console.log("Payment response:", result.data);
+        }
+      } else {
+        console.error('Tap payment error response:', result);
+        toast.error(result.message || result.errors?.[0]?.description || "Payment initiation failed");
+      }
+    } catch (error) {
+      console.error('Tap payment error:', error);
+      toast.error(error.message || "Payment service unavailable. Please try again.");
+    } finally {
+      setIsTapPaymentLoading(false);
+    }
+  };
+
   // Only show Cashfree for India
   const isCashfreeAvailable = (selectedCountry && selectedCountry.toLowerCase() === "india");
 
@@ -343,6 +496,8 @@ const Cart = () => {
           setIsCouponInputVisible={setIsCouponInputVisible}
           handleCashfreePay={handleCashfreePay}
           isCashfreeAvailable={isCashfreeAvailable}
+          handleTapPay={handleTapPay}
+          isTapPaymentLoading={isTapPaymentLoading}
         />
       </section>
       <Footer

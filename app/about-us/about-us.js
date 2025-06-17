@@ -9,9 +9,9 @@ import React, { useEffect, useState } from "react";
 import axios from "axios";
 import { useCountry } from "../../context/CountryContext";
 
-const AboutUs = () => {
-  const [home, setHome] = useState({ data: [] });
-  const [loading, setLoading] = useState(true);
+const AboutUs = ({ initialData }) => {
+  const [home, setHome] = useState(initialData?.aboutData || { data: [] });
+  const [loading, setLoading] = useState(false); // Start with false since we have initial data
   const [error, setError] = useState(null);
   const { selectedCountry, updateCountry, countryData, setCountryData } = useCountry();
 
@@ -30,6 +30,13 @@ const AboutUs = () => {
     }
   };
 
+  // Initialize country data from SSR if available
+  useEffect(() => {
+    if (initialData?.countryData && !countryData) {
+      setCountryData(initialData.countryData);
+    }
+  }, [initialData?.countryData, countryData, setCountryData]);
+
   useEffect(() => {
     if (home && home[0]) {
       const countrySpecificData = home[0]?.[selectedCountry];
@@ -43,15 +50,18 @@ const AboutUs = () => {
     } else {
       console.log('No home data available yet');
     }
-  }, [selectedCountry, home.data]);
+  }, [selectedCountry, home.data, setCountryData]);
 
   const handleCountrySelect = (country) => {
     updateCountry(country);
   };
 
   useEffect(() => {
-    fetchHome();
-  }, []);
+    // Only fetch if we don't have initial data from SSR
+    if (!initialData?.aboutData?.data?.length) {
+      fetchHome();
+    }
+  }, [initialData]);
   return (
     <div className="w-full relative bg-white overflow-hidden flex flex-col items-center justify-start leading-[normal] tracking-[normal]">
       {/* <header className="self-stretch bg-black overflow-hidden flex flex-row items-start justify-start py-[13px] px-10 box-border top-[0] z-[99] sticky max-w-full text-center text-xs text-white font-h5-24">

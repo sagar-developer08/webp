@@ -2,12 +2,12 @@
 import { motion } from "framer-motion";
 import { useEffect, useState } from "react";
 import Image from "next/image";
+import Link from "next/link";
 import PropTypes from "prop-types";
 import { Swiper, SwiperSlide } from "swiper/react";
 import { Navigation } from "swiper/modules";
 import "swiper/css";
 import "swiper/css/navigation";
-import { useRouter } from "next/navigation";
 import { getTopCollections } from "../services/productService";
 import { useCountry } from "../context/CountryContext";
 
@@ -23,12 +23,7 @@ const MotionOverlay = ({ opacity }) => (
 const Collection = ({ className = "", property1 = "Default", limit = 10, country }) => {
   const [categories, setCategories] = useState([]);
   const [loading, setLoading] = useState(true);
-  const router = useRouter();
   const { selectedCountry, countryData } = useCountry();
-
-  const handleProductClick = (collectionId) => {
-    router.push(`/collection?id=${collectionId}`);
-  };
 
   useEffect(() => {
     const fetchCategories = async () => {
@@ -148,9 +143,9 @@ const Collection = ({ className = "", property1 = "Default", limit = 10, country
         >
           {categories.map((category) => (
             <SwiperSlide key={category._id}>
-              <div
+              <Link
+                href={`/collection?id=${category.id || category._id || category.name}`}
                 className="max-w-[400px] h-[500px] flex flex-col rounded-3xl overflow-hidden flex-shrink-0 bg-no-repeat bg-black relative mq450:max-w-[350px] mq450:rounded-2xl mq450:h-[500px]"
-                onClick={() => handleProductClick(category.id || category._id || category.name)}
                 style={{
                   backgroundImage: `url("${category.image || (Array.isArray(category.images) && category.images[0]) || "default-category.jpg"}")`,
                   backgroundSize: "contain",
@@ -176,7 +171,7 @@ const Collection = ({ className = "", property1 = "Default", limit = 10, country
                     </div>
                   </div>
                 </div>
-              </div>
+              </Link>
             </SwiperSlide>
           ))}
         </Swiper>

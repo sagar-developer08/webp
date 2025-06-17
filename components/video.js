@@ -1,13 +1,9 @@
 import Image from "next/image";
 import PropTypes from "prop-types";
 import BtnShop from "./btn-shop";
-import { useRouter } from "next/navigation";
+import Link from "next/link";
 
 const Video = ({ className = "" }) => {
-  const router = useRouter();
-  const handleNavigate = (path) => {
-    router.push(path);
-  }
   return (
     <section className={`w-full max-w-[1360px] overflow-hidden mx-auto px-[8px] mq450:px-[8px] box-border text-left text-[#fff] font-h5-24 items-center justify-center py-[60px] mq450:py-[40px] ${className}`}>
       <div className="w-full max-w-[1360px] mx-auto">
@@ -19,7 +15,9 @@ const Video = ({ className = "" }) => {
             <div className="relative text-xs sm:text-sm md:text-base leading-[150%] font-medium text-[rgba(255,255,255,0.8)]">
               Tornado looks for ways to support and celebrate the planet.
             </div>
-            <BtnShop contact_us="Shop Now" onClick={() => handleNavigate("/shop")} />
+            <Link href="/shop">
+              <BtnShop contact_us="Shop Now" />
+            </Link>
           </div>
           <Image
             className="h-6 w-6 sm:h-8 sm:w-8 md:h-10 md:w-10 lg:h-11 lg:w-11 relative rounded-[100px] overflow-hidden shrink-0 cursor-pointer"

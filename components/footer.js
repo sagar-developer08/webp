@@ -4,7 +4,6 @@ import Image from "next/image";
 import PropTypes from "prop-types";
 import { getTopCollections, getTopProducts } from "../services/productService";
 import Link from "next/link";
-import { useRouter } from "next/navigation";
 import { useCountry } from "../context/CountryContext";
 import { toast } from "react-hot-toast"; // <-- Add this import
 
@@ -22,7 +21,6 @@ const Footer = ({
   const [topCollections, setTopCollections] = useState([]);
   const [topProducts, setTopProducts] = useState([]);
   const [loading, setLoading] = useState(true);
-  const router = useRouter();
   const { selectedCountry, updateCountry } = useCountry();
 
   // Collapsible state for mobile
@@ -58,9 +56,7 @@ const Footer = ({
     window.open(path, "_blank", "noopener,noreferrer");
   };
 
-  const handleNavigate = (path) => {
-    router.push(path);
-  };
+  // Removed handleNavigate since we're using Link components now
 
   // Helper for mobile: toggle section
   const handleToggleSection = (section) => {
@@ -389,41 +385,31 @@ const Footer = ({
                   Company
                 </div>
                 <div className="self-stretch flex flex-col items-start justify-start text-sm font-h5-24">
-                  <div className="self-stretch flex flex-row items-start justify-start py-1 px-0 cursor-pointer"
-                    onClick={() => handleNavigate("/contact")}
-                  >
+                  <Link href="/contact" className="self-stretch flex flex-row items-start justify-start py-1 px-0 cursor-pointer">
                     <div className="flex-1 relative leading-[150%] font-medium">
                       Contact Us
                     </div>
-                  </div>
-                  <div className="self-stretch flex flex-row items-start justify-start py-1 px-0  cursor-pointer"
-                    onClick={() => handleNavigate("/about-us")}
-                  >
+                  </Link>
+                  <Link href="/about-us" className="self-stretch flex flex-row items-start justify-start py-1 px-0 cursor-pointer">
                     <div className="flex-1 relative leading-[150%] font-medium">
                       About Us
                     </div>
-                  </div>
-                  <div className="self-stretch flex flex-row items-start justify-start py-1 px-0 cursor-pointer"
-                    onClick={() => handleNavigate("/blog")}
-                  >
+                  </Link>
+                  <Link href="/blog" className="self-stretch flex flex-row items-start justify-start py-1 px-0 cursor-pointer">
                     <div className="flex-1 relative leading-[150%] font-medium">
                       Blogs
                     </div>
-                  </div>
-                  <div className="self-stretch flex flex-row items-start justify-start py-1 px-0 cursor-pointer"
-                    onClick={() => handleNavigate("/faqs")}
-                  >
+                  </Link>
+                  <Link href="/faqs" className="self-stretch flex flex-row items-start justify-start py-1 px-0 cursor-pointer">
                     <div className="flex-1 relative leading-[150%] font-medium">
                       FAQs
                     </div>
-                  </div>
-                  <div className="self-stretch flex flex-row items-start justify-start py-1 px-0 cursor-pointer"
-                    onClick={() => handleNavigate("/profile")}
-                  >
+                  </Link>
+                  <Link href="/profile" className="self-stretch flex flex-row items-start justify-start py-1 px-0 cursor-pointer">
                     <div className="flex-1 relative leading-[150%] font-medium">
                       My Account
                     </div>
-                  </div>
+                  </Link>
                 </div>
               </>
             )}
@@ -447,30 +433,26 @@ const Footer = ({
                 </button>
                 {openSection === "policy" && (
                   <div className="self-stretch flex flex-col px-[24px] items-start justify-start text-sm">
-                    <div className="self-stretch flex flex-row items-start justify-start py-1 px-0 cursor-pointer"
-                      onClick={() => handleNavigate("/shipping&delivery")}
-                    >
+                    <Link href="/shipping&delivery" className="self-stretch flex flex-row items-start justify-start py-1 px-0 cursor-pointer">
                       <div className="flex-1 relative leading-[150%] font-medium">
                         Shipping & Delivery
                       </div>
-                    </div>
+                    </Link>
                     <div className="self-stretch flex flex-row items-start justify-start py-1 px-0">
                       <div className="flex-1 relative leading-[150%] font-medium">
                         Returns & Exchange
                       </div>
                     </div>
-                    <div className="self-stretch flex flex-row items-start justify-start py-1 px-0 cursor-pointer"
-                      onClick={() => handleNavigate("/privacy-policy")}>
+                    <Link href="/privacy-policy" className="self-stretch flex flex-row items-start justify-start py-1 px-0 cursor-pointer">
                       <div className="flex-1 relative leading-[150%] font-medium">
                         Privacy Policy
                       </div>
-                    </div>
-                    <div className="self-stretch flex flex-row items-start justify-start py-1 px-0 cursor-pointer"
-                      onClick={() => handleNavigate("/term-of-use")}>
+                    </Link>
+                    <Link href="/term-of-use" className="self-stretch flex flex-row items-start justify-start py-1 px-0 cursor-pointer">
                       <div className="flex-1 relative leading-[150%] font-medium">
                         Terms of Service
                       </div>
-                    </div>
+                    </Link>
                   </div>
                 )}
               </>
@@ -480,30 +462,26 @@ const Footer = ({
                   Policy
                 </div>
                 <div className="self-stretch flex flex-col items-start justify-start text-sm">
-                  <div className="self-stretch flex flex-row items-start justify-start py-1 px-0 cursor-pointer"
-                    onClick={() => handleNavigate("/shipping&delivery")}
-                  >
+                  <Link href="/shipping&delivery" className="self-stretch flex flex-row items-start justify-start py-1 px-0 cursor-pointer">
                     <div className="flex-1 relative leading-[150%] font-medium">
                       Shipping & Delivery
                     </div>
-                  </div>
+                  </Link>
                   <div className="self-stretch flex flex-row items-start justify-start py-1 px-0">
                     <div className="flex-1 relative leading-[150%] font-medium">
                       Returns & Exchange
                     </div>
                   </div>
-                  <div className="self-stretch flex flex-row items-start justify-start py-1 px-0 cursor-pointer"
-                    onClick={() => handleNavigate("/privacy-policy")}>
+                  <Link href="/privacy-policy" className="self-stretch flex flex-row items-start justify-start py-1 px-0 cursor-pointer">
                     <div className="flex-1 relative leading-[150%] font-medium">
                       Privacy Policy
                     </div>
-                  </div>
-                  <div className="self-stretch flex flex-row items-start justify-start py-1 px-0 cursor-pointer"
-                    onClick={() => handleNavigate("/term-of-use")}>
+                  </Link>
+                  <Link href="/term-of-use" className="self-stretch flex flex-row items-start justify-start py-1 px-0 cursor-pointer">
                     <div className="flex-1 relative leading-[150%] font-medium">
                       Terms of Service
                     </div>
-                  </div>
+                  </Link>
                 </div>
               </>
             )}

@@ -79,21 +79,10 @@ export function getCountrySpecificData(data, country = 'uae') {
   return data.data;
 }
 
-// Utility to detect country from request headers (optional)
-export function getCountryFromHeaders(headers) {
-  // You can implement country detection logic here
-  // For example, from CF-IPCountry header or Accept-Language
-  const cfCountry = headers.get('CF-IPCountry');
-  const acceptLanguage = headers.get('Accept-Language');
-  
-  // Map country codes to your supported countries
-  const countryMap = {
-    'AE': 'uae',
-    'SA': 'ksa',
-    'IN': 'india',
-    'QA': 'qatar',
-    'KW': 'kuwait',
-  };
-  
-  return countryMap[cfCountry] || 'uae'; // default to UAE
+// Utility to get default country for static generation
+// Country switching will be handled on client-side via context
+export function getCountryFromHeaders(headers = null) {
+  // For static generation, always return default country
+  // Client-side country switching will be handled by CountryContext
+  return 'uae';
 } 

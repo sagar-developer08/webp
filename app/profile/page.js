@@ -1,13 +1,11 @@
-import ProfilePageComponent from "./profile-component";
 import { getCountryFromHeaders } from "../../services/serverApi";
-import { headers } from 'next/headers';
+import Profile from "./profile-component";
 
-// Server-side data fetching for profile page
+// Server-side data fetching
 async function getProfilePageData() {
   try {
-    // Get country from headers or default to UAE
-    const headersList = headers();
-    const detectedCountry = getCountryFromHeaders(headersList);
+    // Use default country for static generation
+    const detectedCountry = getCountryFromHeaders();
     
     return {
       detectedCountry,
@@ -23,5 +21,5 @@ async function getProfilePageData() {
 export default async function Page() {
   const pageData = await getProfilePageData();
   
-  return <ProfilePageComponent initialData={pageData} />;
+  return <Profile initialData={pageData} />;
 }

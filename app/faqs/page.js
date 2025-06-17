@@ -1,45 +1,35 @@
-import { Suspense } from 'react';
 import Faqs from "./faqs";
 import { getFaqData, getCountrySpecificData, getCountryFromHeaders } from "../../services/serverApi";
-import { headers } from 'next/headers';
 
 // Server-side data fetching
-async function getFaqPageData() {
+async function getFaqsPageData() {
   try {
-    // Get country from headers or default to UAE
-    const headersList = headers();
-    const detectedCountry = getCountryFromHeaders(headersList);
+    // Use default country for static generation
+    const detectedCountry = getCountryFromHeaders();
     
     // Fetch FAQ data
     const faqData = await getFaqData();
-    
-    // Extract country-specific FAQ data
-    const countryKey = (detectedCountry || "india").toLowerCase();
-    const countryFaqs = faqData && faqData.data && faqData.data.length > 0 && faqData.data[0][countryKey] 
-      ? faqData.data[0][countryKey].faqs 
-      : [];
+
+    // Extract country-specific data
+    const countrySpecificData = faqData ? getCountrySpecificData(faqData, detectedCountry) : null;
 
     return {
       faqData: faqData || { data: [] },
-      countryFaqs,
+      countryData: countrySpecificData,
       detectedCountry,
     };
   } catch (error) {
-    console.error('Error fetching FAQ page data:', error);
+    console.error('Error fetching faqs page data:', error);
     return {
       faqData: { data: [] },
-      countryFaqs: [],
+      countryData: null,
       detectedCountry: 'uae',
     };
   }
 }
 
 export default async function Page() {
-    const pageData = await getFaqPageData();
-    
-    return (
-        <Suspense fallback={<div className="w-full h-screen flex items-center justify-center bg-black text-white">Loading...</div>}>
-            <Faqs initialData={pageData} />
-        </Suspense>
-    );
+  const pageData = await getFaqsPageData();
+  
+  return <Faqs initialData={pageData} />;
 }

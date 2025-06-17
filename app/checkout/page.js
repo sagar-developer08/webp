@@ -1,13 +1,11 @@
-import Checkout from "./checkout";
 import { getCountryFromHeaders } from "../../services/serverApi";
-import { headers } from 'next/headers';
+import Checkout from "./checkout";
 
-// Server-side data fetching for checkout page
+// Server-side data fetching
 async function getCheckoutPageData() {
   try {
-    // Get country from headers or default to UAE
-    const headersList = headers();
-    const detectedCountry = getCountryFromHeaders(headersList);
+    // Use default country for static generation
+    const detectedCountry = getCountryFromHeaders();
     
     return {
       detectedCountry,
@@ -21,7 +19,7 @@ async function getCheckoutPageData() {
 }
 
 export default async function Page() {
-    const pageData = await getCheckoutPageData();
-    
-    return <Checkout initialData={pageData} />;
+  const pageData = await getCheckoutPageData();
+  
+  return <Checkout initialData={pageData} />;
 }

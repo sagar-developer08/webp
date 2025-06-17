@@ -1,53 +1,44 @@
-import { Suspense } from 'react';
+import { Suspense } from "react";
 import ProductsDetails from "./products-details";
 import { getProductDetails, getCountrySpecificData, getCountryFromHeaders } from "../../services/serverApi";
-import { headers } from 'next/headers';
 
-// Server-side data fetching for product details
-async function getProductDetailsPageData(searchParams) {
+// Loading component for Suspense fallback
+function ProductDetailsLoading() {
+  return (
+    <div className="w-full h-screen flex items-center justify-center bg-black text-white">
+      <div className="text-lg">Loading Product Details...</div>
+    </div>
+  );
+}
+
+// Server-side data fetching
+async function getProductDetailsPageData() {
   try {
-    // Get country from headers or default to UAE
-    const headersList = headers();
-    const detectedCountry = getCountryFromHeaders(headersList);
+    // Use default country for static generation
+    const detectedCountry = getCountryFromHeaders();
     
-    // Get product ID from search params
-    const productId = searchParams.id;
-    
-    let productData = null;
-    let countrySpecificData = null;
-    
-    if (productId) {
-      // Fetch product details
-      productData = await getProductDetails(productId);
-      
-      // Extract country-specific data if available
-      if (productData) {
-        countrySpecificData = getCountrySpecificData(productData, detectedCountry);
-      }
-    }
-
+    // For static generation, don't fetch specific product data
+    // Product data will be fetched client-side based on URL params
     return {
-      productData: productData || { data: null },
-      countryData: countrySpecificData,
-      productId,
+      productData: { data: [] },
+      countryData: null,
       detectedCountry,
     };
   } catch (error) {
     console.error('Error fetching product details page data:', error);
     return {
-      productData: { data: null },
+      productData: { data: [] },
       countryData: null,
-      productId: null,
       detectedCountry: 'uae',
     };
   }
 }
 
-export default async function Page({ searchParams }) {
-  const pageData = await getProductDetailsPageData(searchParams);
+export default async function Page() {
+  const pageData = await getProductDetailsPageData();
   
   return (
-    <Suspense fallback={<div className="w-full h-screen flex items-center justify-center bg-black text-white">Loading...</div>}>
+    <Suspense fallback={<ProductDetailsLoading />}>
       <ProductsDetails initialData={pageData} />
     </Suspense>
   );

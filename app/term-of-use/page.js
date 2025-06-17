@@ -1,13 +1,11 @@
-import Term from "./term";
 import { getCountryFromHeaders } from "../../services/serverApi";
-import { headers } from 'next/headers';
+import Term from "./term";
 
-// Server-side data fetching for terms page
+// Server-side data fetching
 async function getTermsPageData() {
   try {
-    // Get country from headers or default to UAE
-    const headersList = headers();
-    const detectedCountry = getCountryFromHeaders(headersList);
+    // Use default country for static generation
+    const detectedCountry = getCountryFromHeaders();
     
     return {
       detectedCountry,
@@ -21,7 +19,7 @@ async function getTermsPageData() {
 }
 
 export default async function Page() {
-    const pageData = await getTermsPageData();
-    
-    return <Term initialData={pageData} />;
+  const pageData = await getTermsPageData();
+  
+  return <Term initialData={pageData} />;
 }

@@ -1,13 +1,11 @@
-import WishlistPageComponent from "./wishlist-component";
 import { getCountryFromHeaders } from "../../../services/serverApi";
-import { headers } from 'next/headers';
+import WishlistComponent from "./wishlist-component";
 
-// Server-side data fetching for wishlist page
+// Server-side data fetching
 async function getWishlistPageData() {
   try {
-    // Get country from headers or default to UAE
-    const headersList = headers();
-    const detectedCountry = getCountryFromHeaders(headersList);
+    // Use default country for static generation
+    const detectedCountry = getCountryFromHeaders();
     
     return {
       detectedCountry,
@@ -23,5 +21,5 @@ async function getWishlistPageData() {
 export default async function Page() {
   const pageData = await getWishlistPageData();
   
-  return <WishlistPageComponent initialData={pageData} />;
+  return <WishlistComponent initialData={pageData} />;
 }

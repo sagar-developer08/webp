@@ -35,7 +35,7 @@ const Faqs = ({ initialData }) => {
 
         // Only fetch if we don't have initial data from SSR
         if (!initialData?.faqData) {
-            fetchFaqData();
+        fetchFaqData();
         }
     }, [initialData]);
     console.log(faqData, "faqData");

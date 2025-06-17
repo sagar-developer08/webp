@@ -59,7 +59,7 @@ const AboutUs = ({ initialData }) => {
   useEffect(() => {
     // Only fetch if we don't have initial data from SSR
     if (!initialData?.aboutData?.data?.length) {
-      fetchHome();
+    fetchHome();
     }
   }, [initialData]);
   return (
